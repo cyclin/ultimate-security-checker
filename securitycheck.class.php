@@ -26,6 +26,9 @@ class SecurityCheck {
     public $test_results = False;
     public $earned_points = 0;
     public $total_possible_points = 0;
+
+    public $possible_theme_vulnearbilities = array();
+
     public $all_issues = array(
         array(
             'id' => 1,
@@ -187,6 +190,13 @@ class SecurityCheck {
             'points' => 5,
             'category' => 'server',
             'callback' => 'run_test_23'
+        ),
+        array(
+            'id' => 24,
+            'title' => 'You have some suspicious code in your template files.',
+            'points' => 5,
+            'category' => 'code',
+            'callback' => 'run_test_24'
         )
     );
     
@@ -384,6 +394,7 @@ class SecurityCheck {
         update_option( 'wp_ultimate_security_checker_color', $res['color']);
         update_option( 'wp_ultimate_security_checker_issues', implode(',', $test_results));
         update_option( 'wp_ultimate_security_checker_lastcheck', time());
+        update_option( 'wp_ultimate_security_checker_template_issues', $this->possible_theme_vulnearbilities);
     }
     
     public function run_test_1(){
@@ -726,6 +737,55 @@ class SecurityCheck {
             return False;
         } 
         return True;
+    }
+    public function run_test_24(){
+
+        $themes = get_themes();
+        
+    	$theme_names = array_keys($themes);
+    	natcasesort($theme_names);
+    	foreach ($theme_names as $theme_name) {
+
+            $template_files = $themes[$theme_name]["Template Files"];
+    
+    
+        	foreach ($template_files as $tfile)
+        	{	
+        	
+        			
+        		$lines = file($tfile, FILE_IGNORE_NEW_LINES); 
+                $line_index = 0;
+        		foreach($lines as $this_line)
+        		{
+        			if (stristr ($this_line, "base64")) 
+        			{
+        				$danger_lines[] = "<div class=\"danger-found\"><strong>File: ". $tfile ." Line " . ($line_index+1) . ":</strong> \"" . trim(htmlspecialchars(substr(stristr($this_line, "base64"), 0, 45))) . "...\"</div>";
+        			}
+                    
+                    $url_re='([[:alnum:]\-\.])+(\\.)([[:alnum:]]){2,4}([[:blank:][:alnum:]\/\+\=\%\&\_\\\.\~\?\-]*)';
+        		    $title_re='[[:blank:][:alnum:][:punct:]]*';	// 0 or more: any num, letter(upper/lower) or any punc symbol
+                    $space_re='(\\s*)'; 
+                    
+                    if (preg_match_all ("/(<a)(\\s+)(href".$space_re."=".$space_re."\"".$space_re."((http|https|ftp):\\/\\/)?)".$url_re."(\"".$space_re.$title_re.$space_re.">)".$title_re."(<\\/a>)/is", $this_line, $out, PREG_SET_ORDER))
+            		{						  
+      				      $static_urls[] = "<div class=\"static-url-found\"><strong>File: ". $tfile ." Line " . ($line_index+1) . ":</strong>" . htmlspecialchars($out[0][0]) . "</div>";
+            		}  
+                    
+        			$line_index++;
+                    
+        		}
+            }
+            if (!isset($danger_lines) && !isset($static_urls)) {
+            		return True;
+           	} else {
+            	    $this->possible_theme_vulnearbilities = array(
+                    'danger_lines' => $danger_lines,
+                    'static_urls' => $static_urls
+                    );
+            		return False;
+            }
+            
+        }
     }
 }
 ?>

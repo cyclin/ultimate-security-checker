@@ -139,6 +139,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                     <li><a href="#db">Database changes.</a></li>
                     <li><a href="#uploads">Your uploads directory is browsable from the web.</a></li>
                     <li><a href="#server-config">Your server shows too much information about installed software.</a></li>
+                    <li><a href="#template-files">You have some suspicious code in your template files.</a></li>
                     <li><a href="#security-check">How to keep everything secured?</a></li>
                 </ul>
                 <div class="clear"></div>
@@ -332,6 +333,22 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 If you're using Apache web server and have root access(or can edit httpd.conf) - you can define <i>ServerTokens</i> directive with preffered options(less info - better). <a href="http://httpd.apache.org/docs/2.0/mod/core.html#servertokens">See details</a>.
                 </p>
                 <!-- end server-config -->
+                <!-- template-files -->
+                <h3>You have some suspicious code in your template files.<a name="template-files"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+                <p>
+                <?php
+                $theme_tests_results = get_option('wp_ultimate_security_checker_template_issues');
+                ?>
+                <h5>Suspicious code</h5>
+                <?php foreach($theme_tests_results['danger_lines'] as $danger_line){
+                    echo $danger_line;
+                } ?>
+                <h5>Hardcoded links</h5>
+                <?php foreach($theme_tests_results['static_urls'] as $static_url){
+                    echo $static_url;
+                } ?>
+                </p>
+                <!-- end template-files -->
                 <!-- security-check -->
                 <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
                 <p>
