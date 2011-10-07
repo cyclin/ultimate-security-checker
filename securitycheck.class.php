@@ -28,6 +28,10 @@ class SecurityCheck {
     public $total_possible_points = 0;
 
     public $possible_theme_vulnearbilities = array();
+    public $changed_core_files = array();
+    public $wp_files = array();
+    public $wp_files_checks_result = array();
+    public $wp_db_check_results = array();
 
     public $all_issues = array(
         array(
@@ -191,13 +195,34 @@ class SecurityCheck {
             'category' => 'server',
             'callback' => 'run_test_23'
         ),
-        array(
+        /*array(
             'id' => 24,
             'title' => 'You have some suspicious code in your template files.',
             'points' => 5,
             'category' => 'code',
             'callback' => 'run_test_24'
-        )
+        ),*/
+        array(
+            'id' => 25,
+            'title' => 'Your blog core files is changed.',
+            'points' => 5,
+            'category' => 'code',
+            'callback' => 'run_test_25'
+        ),
+        array(
+            'id' => 26,
+            'title' => 'You have some suspicious code in your site files.',
+            'points' => 5,
+            'category' => 'code',
+            'callback' => 'run_test_26'
+        ),
+        array(
+            'id' => 27,
+            'title' => 'You have some suspicious code in your posts and/or comments.',
+            'points' => 5,
+            'category' => 'db',
+            'callback' => 'run_test_27'
+        ),
     );
     
     public $categories = array(
@@ -249,6 +274,64 @@ class SecurityCheck {
         return ((int)$string_chmod[0]+(int)$string_chmod[1]+(int)$string_chmod[2])*100+((int)$string_chmod[3]+(int)$string_chmod[4]+(int)$string_chmod[5])*10+((int)$string_chmod[6]+(int)$string_chmod[7]+(int)$string_chmod[8]);
 	}
     
+    function get_file_diff( $file ) {
+    	global $wp_version;
+    	// core file names have a limited character set
+    	$file = preg_replace( '#[^a-zA-Z0-9/_.-]#', '', $file );
+    	if ( empty( $file ) || ! is_file( ABSPATH . $file ) )
+    		return '<p>Sorry, an error occured. This file might not exist!</p>';
+    
+    	$key = $wp_version . '-' . $file;
+    	$cache = get_option( 'source_files_cache' );
+    	if ( ! $cache || ! is_array($cache) || ! isset($cache[$key]) ) {
+    		$url = "http://core.svn.wordpress.org/tags/$wp_version/$file";
+    		$response = wp_remote_get( $url );
+    		if ( is_wp_error( $response ) || 200 != $response['response']['code'] )
+    			return '<p>Sorry, an error occured. Please try again later.</p>';
+    
+    		$clean = $response['body'];
+    
+    		if ( is_array($cache) ) {
+    			if ( count($cache) > 4 ) array_shift( $cache );
+    			$cache[$key] = $clean;
+    		} else {
+    			$cache = array( $key => $clean );
+    		}
+    		update_option( 'source_files_cache', $cache );
+    	} else {
+    		$clean = $cache[$key];
+    	}
+    
+    	$modified = file_get_contents( ABSPATH . $file );
+    
+    	$text_diff = new Text_Diff( explode( "\n", $clean ), explode( "\n", $modified ) );
+    	$renderer = new USC_Text_Diff_Renderer();
+    	$diff = $renderer->render( $text_diff );
+        
+    	$r  = "<div class=\"danger-found\">\n";
+        $r .= "<strong>File: ". ABSPATH . $file ."</strong>\n";
+    	$r .= "\n$diff\n\n";
+    	$r .= "</div>";
+    	return $r;
+    }
+   	public function recurse_directory( $dir ) {
+		if ( $handle = @opendir( $dir ) ) {
+			while ( false !== ( $file = readdir( $handle ) ) ) {
+				if ( $file != '.' && $file != '..' ) {
+					$file = $dir . '/' . $file;
+					if ( is_dir( $file ) ) {
+						$this->recurse_directory( $file );
+					} elseif ( is_file( $file ) ) {
+						$this->wp_files[] = str_replace( ABSPATH.'/', '', $file );
+					}
+				}
+			}
+			closedir( $handle );
+		}
+	}
+    function replace( $matches ) {
+		return '$#$#' . $matches[0] . '#$#$';
+	}
     public function get_stats(){
     }
     public function display_stats_by_categories($categories){
@@ -395,6 +478,9 @@ class SecurityCheck {
         update_option( 'wp_ultimate_security_checker_issues', implode(',', $test_results));
         update_option( 'wp_ultimate_security_checker_lastcheck', time());
         update_option( 'wp_ultimate_security_checker_template_issues', $this->possible_theme_vulnearbilities);
+        update_option( 'wp_ultimate_security_checker_hashes_issues', $this->changed_core_files);
+        update_option( 'wp_ultimate_security_checker_files_issues', $this->wp_files_checks_result);
+        update_option( 'wp_ultimate_security_checker_posts_issues', $this->wp_db_check_results);
     }
     
     public function run_test_1(){
@@ -786,6 +872,204 @@ class SecurityCheck {
             }
             
         }
+    //end function    
     }
+    
+    public function run_test_25(){
+            
+            global $wp_version;
+            
+            unset( $filehashes );
+			$hashes = dirname(__FILE__) . '/hashes/hashes-'. $wp_version .'.php';
+			if ( file_exists( $hashes ) )
+				include( $hashes );
+			else{
+			 //throw error
+			}
+	
+			$this->recurse_directory( ABSPATH );
+
+			foreach( $this->wp_files as $k => $file ) {
+			 //$chkk[] = ABSPATH.'/'.$file;
+				// don't scan unmodified core files
+				if ( isset( $filehashes[$file] ) ) {
+				   
+					if ( $filehashes[$file] == md5_file( ABSPATH.$file ) ) {
+						unset( $this->wp_files[$k] );
+						continue;
+					} else {
+				        $diffs[] = $this->get_file_diff($file);
+                        //$diffs[] = $file;
+					}
+				}
+
+				// don't scan files larger than given limit For later use
+				/*if ( filesize($this->path . $file) > ($this->filesize_limit * 1024) ) {
+					unset( $this->files[$k] );
+					$this->add_result( 'note', array(
+						'loc' => $file,
+						'desc' => 'File skipped due to size',
+						'class' => 'skipped-file'
+					) );
+				}*/
+				
+				// detect old export files
+				if ( substr( $file, -9 ) == '.xml_.txt' ) {
+			         $old_export[] = $file;
+				}
+			}
+
+            if (!isset($diffs) && !isset($old_export)) {
+            		return True;
+           	} else {
+            	    $this->changed_core_files = array(
+                    'diffs' => $diffs,
+                    'old_export' => $old_export
+                    );
+            		return False;
+            }
+			
+		return $diffs;
+    //end function    
+    }
+    public function run_test_26() {
+        
+        $patterns = array(
+		'/(\$wpdb->|mysql_).+DROP/siU' => 'Possible database table deletion',
+		'/(echo|print|<\?=).+(\$GLOBALS|\$_SERVER|\$_GET|\$_REQUEST|\$_POST)/siU' => 'Possible output of restricted variables',
+		'/ShellBOT/i' => 'This may be a script used by hackers to get control of your server',
+		'/uname -a/i' => 'Tells a hacker what operating system your server is running',
+		'/YW55cmVzdWx0cy5uZXQ=/i' => 'base64 encoded text found in Search Engine Redirect hack <a href="http://blogbuildingu.com/wordpress/wordpress-search-engine-redirect-hack">[1]</a>' ,
+		'/eval\s*\(/i' => 'Often used to execute malicious code',
+		'/\$_COOKIE\[\'yahg\'\]/i' => 'YAHG Googlerank.info exploit code <a href="http://creativebriefing.com/wordpress-hacked-googlerankinfo/">[1]</a>',
+		'/ekibastos/i' => 'Possible Ekibastos attack <a href="http://ocaoimh.ie/did-your-wordpress-site-get-hacked/">[1]</a>',
+		'/base64_decode\s*\(/i' => 'Used by malicious scripts to decode previously obscured data/programs',
+		'/<script>\/\*(GNU GPL|LGPL)\*\/ try\{window.onload.+catch\(e\) \{\}<\/script>/siU' => 'Possible "Gumblar" JavaScript attack <a href="http://threatinfo.trendmicro.com/vinfo/articles/securityarticles.asp?xmlfile=042710-GUMBLAR.xml">[1]</a> <a href="http://justcoded.com/article/gumblar-family-virus-removal-tool/">[2]</a>',
+		'/php \$[a-zA-Z]*=\'as\';/i' => 'Symptom of the "Pharma Hack" <a href="http://blog.sucuri.net/2010/07/understanding-and-cleaning-the-pharma-hack-on-wordpress.html">[1]</a>',
+		'/defined?\(\'wp_class_support/i' => 'Symptom of the "Pharma Hack" <a href="http://blog.sucuri.net/2010/07/understanding-and-cleaning-the-pharma-hack-on-wordpress.html">[1]</a>' ,
+		'/str_rot13/i' => 'Decodes/encodes text using ROT13. Could be used to hide malicious code.',
+		'/uudecode/i' => 'Decodes text using uuencoding. Could be used to hide malicious code.',
+		//'/[^_]unescape/i' => 'JavaScript function to decode encoded text. Could be used to hide malicious code.',
+		'/<!--[A-Za-z0-9]+--><\?php/i' => 'Symptom of a link injection attack <a href="http://www.kyle-brady.com/2009/11/07/wordpress-mediatemple-and-an-injection-attack/">[1]</a>',
+		'/<iframe/i' => 'iframes are sometimes used to load unwanted adverts and code on your site',
+		'/String\.fromCharCode/i' => 'JavaScript sometimes used to hide suspicious code',
+		'/preg_replace\s*\(\s*(["\'])(.).*(?<!\\\\)(?>\\\\\\\\)*\\2([a-z]|\\\x[0-9]{2})*(e|\\\x65)([a-z]|\\\x[0-9]{2})*\\1/si' => 'The e modifier in preg_replace can be used to execute malicious code' ,
+        //'/(<a)(\\s+)(href(\\s*)=(\\s*)\"(\\s*)((http|https|ftp):\\/\\/)?)([[:alnum:]\-\.])+(\\.)([[:alnum:]]){2,4}([[:blank:][:alnum:]\/\+\=\%\&\_\\\.\~\?\-]*)(\"(\\s*)[[:blank:][:alnum:][:punct:]]*(\\s*)>)[[:blank:][:alnum:][:punct:]]*(<\\/a>)/is' => 'Hardcoded hyperlinks in code is not a real threat, but they may lead to phishing websites.',
+        );
+        if (sizeof($this->wp_files) > 0) {
+    		foreach ( $this->wp_files as $file ) {
+    				$contents = file( ABSPATH . $file );
+    				foreach ( $contents as $n => $line ) {
+    					foreach ( $patterns as $pattern => $description ) {
+    						$test = preg_replace_callback( $pattern, array( &$this, 'replace' ), $line );
+    						if ( $line !== $test )
+                            $this->wp_files_checks_result[] = "<div class=\"danger-found\"><strong>File: ". ABSPATH . $file ." Line " . ($n+1) . ":</strong> \"<code>".esc_html( $test )."</code>\" - <span class=\"danger-description\">".$description."</span></div>";
+
+ 
+    					}
+    				}
+    		}
+            if (sizeof($this->wp_files_checks_result)>0)
+                return False;
+            else
+                return True;
+        }
+        $this->wp_files_checks_result[] = "<div class=\"danger-found\"><strong>Error: Code check is incomplete - please rerun tests.</strong></div>";
+        return False;
+    //end function    
+	}
+
+	function run_test_27() {
+		global $wpdb;
+
+	   $suspicious_post_text = array(
+            'eval\(' => 'Often used by hackers to execute malicious code',
+    		'<iframe' => 'iframes are sometimes used to load unwanted adverts and code on your site',
+    		'<noscript' => 'Could be used to hide spam in posts/comments',
+    		'display:' => 'Could be used to hide spam in posts/comments',
+    		'visibility:' => 'Could be used to hide spam in posts/comments',
+    		'<script' => 'Malicious scripts loaded in posts by hackers perform redirects, inject spam, etc.',
+    	);
+
+		foreach ( $suspicious_post_text as $text => $description ) {
+			$posts = $wpdb->get_results( "SELECT ID, post_title, post_content FROM {$wpdb->posts} WHERE post_type<>'revision' AND post_content LIKE '%{$text}%'" );
+			if ( $posts )
+				foreach ( $posts as $post ) {
+                    
+                    $s = strpos( $post->post_content, $text ) - 25;
+            		if ( $s < 0 ) $s = 0;
+            
+            		$content = preg_replace( '/('.$text.')/', '$#$#\1#$#$', $post->post_content );
+            		$content = substr( $content, $s, 150 );
+                    $posts_found[] = "<div class=\"danger-found\"><strong>Post: ". esc_html($post->post_title) ." Post ID " . $post->ID . ":</strong> \"<code>".esc_html($content)."</code>\" - ".$description."</div>";
+
+				}
+
+			$comments = $wpdb->get_results( "SELECT comment_ID, comment_author, comment_content FROM {$wpdb->comments} WHERE comment_content LIKE '%{$text}%'" );
+			if ( $comments )
+				foreach ( $comments as $comment ) {
+                    
+                    $s = strpos( $comment->comment_content, $text ) - 25;
+            		if ( $s < 0 ) $s = 0;
+            
+            		$content = preg_replace( '/('.$text.')/', '$#$#\1#$#$', $comment->comment_content );
+            		$content = substr( $content, $s, 150 );
+                    
+                    $comments_found[] = "<div class=\"danger-found\"><strong>Comment by " . esc_html($comment->comment_author) ." Comment ID " . $comment->comment_ID . ":</strong> \"<code>".esc_html($content)."</code>\" - ".$description."</div>";
+
+				}
+		}
+        if (!isset($posts_found) && !isset($comments_found)) {
+            return True;
+        }
+        else{
+            $this->wp_db_check_results = array(
+                'posts_found' => $posts_found,
+                'comments_found' => $comments_found,
+            );
+            return False;
+        }
+    //end function
+	}
+    
+//end class
 }
+include_once( ABSPATH . WPINC . '/wp-diff.php' );
+
+if ( class_exists( 'Text_Diff_Renderer' ) ) :
+class USC_Text_Diff_Renderer extends Text_Diff_Renderer {
+	function USC_Text_Diff_Renderer() {
+		parent::Text_Diff_Renderer();
+	}
+
+	function _startBlock( $header ) {
+		return "<strong>Lines: $header</strong>\n";
+	}
+
+	function _lines( $lines, $prefix, $class ) {
+		$r = '';
+		foreach ( $lines as $line ) {
+			$line = esc_html( $line );
+			$r .= "<span class='{$class}'>{$prefix}<code>{$line}</code></span>\n";
+		}
+		return $r;
+	}
+
+	function _added( $lines ) {
+		return $this->_lines( $lines, 'Added', 'diff-addedline' );
+	}
+
+	function _deleted( $lines ) {
+		return $this->_lines( $lines, 'Deleted', 'diff-deletedline' );
+	}
+
+	function _context( $lines ) {
+		return $this->_lines( $lines, 'Original', 'diff-context' );
+	}
+
+	function _changed( $orig, $final ) {
+		return $this->_deleted( $orig ) . $this->_added( $final );
+	}
+}
+endif;
 ?>

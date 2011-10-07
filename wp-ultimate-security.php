@@ -89,7 +89,50 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
             #icon-security-check {
                 background: transparent url(<?php echo plugins_url( 'img/shield_32.png', __FILE__ ); ?>) no-repeat;
             }
+            div.core-hashes, div.blog-files, div.blog-posts {
+                display: none;
+            }
+            div.visible {
+                display: block;
+            }
+            a.trigger-button {
+                text-decoration: none;
+                font-weight: bold;
+                color: black;
+                margin: 5px;
+                padding: 5px;
+                border: 1px solid black;
+                display: block;
+                width: 35px;
+                background: #EAEAEA;
+                cursor: pointer;
+            }
+            a.trigger-button:hover {
+                color: red;
+            }
             </style>
+            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+            <script type="text/javascript">
+	           $('document').ready(function(){
+                    $("a.trigger-button").click(function(){
+                        if ($(this).hasClass('core-hashes')) {
+                            $('div.core-hashes').toggleClass('visible');
+                        }
+                        if ($(this).hasClass('blog-files')) {
+                            $('div.blog-files').toggleClass('visible');
+                        }
+                        if ($(this).hasClass('blog-posts')) {
+                            $('div.blog-posts').toggleClass('visible');
+                        }
+                        var text = $(this).html();
+                        if (text == 'Show')
+                            $(this).html('Hide');
+
+                        if (text == 'Hide')
+                            $(this).html('Show');   
+                    })
+                });
+            </script>
 
                 <?php screen_icon( 'security-check' );?>
             <h2 style="padding-left:5px;">Ultimate Security Checker
@@ -139,7 +182,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                     <li><a href="#db">Database changes.</a></li>
                     <li><a href="#uploads">Your uploads directory is browsable from the web.</a></li>
                     <li><a href="#server-config">Your server shows too much information about installed software.</a></li>
-                    <li><a href="#template-files">You have some suspicious code in your template files.</a></li>
+                    <li><a href="#hashes">Your blog core files is changed.</a></li>
+                    <li><a href="#blog-files">You have some suspicious code in your blog files.</a></li>
+                    <li><a href="#blog-posts">You have some suspicious code in your blog posts or comments.</a></li>
                     <li><a href="#security-check">How to keep everything secured?</a></li>
                 </ul>
                 <div class="clear"></div>
@@ -333,22 +378,81 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 If you're using Apache web server and have root access(or can edit httpd.conf) - you can define <i>ServerTokens</i> directive with preffered options(less info - better). <a href="http://httpd.apache.org/docs/2.0/mod/core.html#servertokens">See details</a>.
                 </p>
                 <!-- end server-config -->
-                <!-- template-files -->
-                <h3>You have some suspicious code in your template files.<a name="template-files"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+                <!-- hashes -->
+                <h3>Your blog core files is changed.<a name="hashes"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
                 <p>
                 <?php
-                $theme_tests_results = get_option('wp_ultimate_security_checker_template_issues');
+                $core_tests_results = get_option('wp_ultimate_security_checker_hashes_issues');
                 ?>
-                <h5>Suspicious code</h5>
-                <?php foreach($theme_tests_results['danger_lines'] as $danger_line){
-                    echo $danger_line;
-                } ?>
-                <h5>Hardcoded links</h5>
-                <?php foreach($theme_tests_results['static_urls'] as $static_url){
-                    echo $static_url;
-                } ?>
+                <a class="trigger-button core-hashes">Show</a>
+                <div class="core-hashes">
+                <h5>Files and lines different from original wordpress core files:</h5>
+                <?php 
+                if ($core_tests_results['diffs']) {
+                    foreach($core_tests_results['diffs'] as $diff){
+                        echo $diff;
+                    } 
+                }else echo 'No code changes found in your blog core files!'
+                ?>
+                <?php 
+                if ($core_tests_results['old_export']) {
+                    echo "<h5>This is old export files. You should delete them.</h5>";
+                    foreach($core_tests_results['old_export'] as $static_url){
+                        echo $static_url;
+                    } 
+                }
+                ?>
+                </div>
                 </p>
-                <!-- end template-files -->
+                <!-- end hashes -->
+                <!-- blog-files -->
+                <h3>You have some suspicious code in your blog files.<a name="blog-files"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+                <p>
+                This long list of warnings doesn't mean that all of this files was hacked or broken. We just highlighting points of potential vulnerabilities.
+                <?php
+                $files_tests_results = get_option('wp_ultimate_security_checker_files_issues');
+                ?>
+                <a class="trigger-button blog-files">Show</a>
+                <div class="blog-files">
+                <h5>Suspicious code</h5>
+                <?php 
+                if (sizeof($files_tests_results) > 0) {
+                    foreach($files_tests_results as $file){
+                        echo $file;
+                    } 
+                }else echo 'You are lucky - no potential code vulnerabilities foud in your blog!'
+                ?>
+                </div>
+                </p>
+                <!-- end blog-files -->
+                <!-- blog-posts -->
+                <h3>You have some suspicious code in your blog posts or comments.<a name="blog-posts"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+                <p>
+                This list of post and comments highlighting most dangerous posts and comments in your system. However, maybe this records is not a threat or you made them. But if you not sure - please check records from this list.
+                <?php
+                $posts_tests_results = get_option('wp_ultimate_security_checker_posts_issues');
+                ?>
+                <a class="trigger-button blog-posts">Show</a>
+                <div class="blog-posts">
+                <h5>Suspicious posts</h5>
+                <?php 
+                if ($posts_tests_results['posts_found']) {
+                    foreach($posts_tests_results['posts_found'] as $post){
+                        echo $post;
+                    } 
+                }else echo 'You are lucky - no potential code vulnerabilities foud in your posts!'
+                ?>
+                <h5>Suspicious comments</h5>
+                <?php 
+                if ($posts_tests_results['comments_found']) {
+                    foreach($posts_tests_results['comments_found'] as $comment){
+                        echo $comment;
+                    } 
+                }else echo 'You are lucky - no potential code vulnerabilities foud in your comments!'
+                ?>
+                </div>
+                </p>
+                <!-- end blog-posts -->
                 <!-- security-check -->
                 <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
                 <p>
