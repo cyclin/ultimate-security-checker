@@ -95,3 +95,10 @@ Our plugin and service is designed to be used by anyone from a complete newbie t
 = 2.6.0 =
 * bug fixes in bbq plugin test
 * other fixes
+
+= 2.6.5 =
+* bug fixes according to suggests in forum
+* added core files test based on md5 hash check.
+* added serach of suspicious code patterns in wp core, themes and plugin files.
+* added search of suspicious code patterns in posts and comments.
+* added report pages for new tests.

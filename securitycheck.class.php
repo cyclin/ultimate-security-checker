@@ -195,33 +195,26 @@ class SecurityCheck {
             'category' => 'server',
             'callback' => 'run_test_23'
         ),
-        /*array(
+        array(
             'id' => 24,
-            'title' => 'You have some suspicious code in your template files.',
+            'title' => 'Some of blog core files have been changed. <a href="?page=ultimate-security-checker&tab=core-files">View Report</a>',
             'points' => 5,
             'category' => 'code',
             'callback' => 'run_test_24'
-        ),*/
+        ),
         array(
             'id' => 25,
-            'title' => 'Your blog core files is changed.',
+            'title' => 'You have some suspicious code in your site files. <a href="?page=ultimate-security-checker&tab=wp-files">View Report</a>',
             'points' => 5,
             'category' => 'code',
             'callback' => 'run_test_25'
         ),
         array(
             'id' => 26,
-            'title' => 'You have some suspicious code in your site files.',
-            'points' => 5,
-            'category' => 'code',
-            'callback' => 'run_test_26'
-        ),
-        array(
-            'id' => 27,
-            'title' => 'You have some suspicious code in your posts and/or comments.',
+            'title' => 'You have some suspicious code in your posts and/or comments. <a href="?page=ultimate-security-checker&tab=wp-posts">View Report</a>',
             'points' => 5,
             'category' => 'db',
-            'callback' => 'run_test_27'
+            'callback' => 'run_test_26'
         ),
     );
     
@@ -309,7 +302,6 @@ class SecurityCheck {
     	$diff = $renderer->render( $text_diff );
         
     	$r  = "<div class=\"danger-found\">\n";
-        $r .= "<strong>File: ". ABSPATH . $file ."</strong>\n";
     	$r .= "\n$diff\n\n";
     	$r .= "</div>";
     	return $r;
@@ -825,57 +817,6 @@ class SecurityCheck {
         return True;
     }
     public function run_test_24(){
-
-        $themes = get_themes();
-        
-    	$theme_names = array_keys($themes);
-    	natcasesort($theme_names);
-    	foreach ($theme_names as $theme_name) {
-
-            $template_files = $themes[$theme_name]["Template Files"];
-    
-    
-        	foreach ($template_files as $tfile)
-        	{	
-        	
-        			
-        		$lines = file($tfile, FILE_IGNORE_NEW_LINES); 
-                $line_index = 0;
-        		foreach($lines as $this_line)
-        		{
-        			if (stristr ($this_line, "base64")) 
-        			{
-        				$danger_lines[] = "<div class=\"danger-found\"><strong>File: ". $tfile ." Line " . ($line_index+1) . ":</strong> \"" . trim(htmlspecialchars(substr(stristr($this_line, "base64"), 0, 45))) . "...\"</div>";
-        			}
-                    
-                    $url_re='([[:alnum:]\-\.])+(\\.)([[:alnum:]]){2,4}([[:blank:][:alnum:]\/\+\=\%\&\_\\\.\~\?\-]*)';
-        		    $title_re='[[:blank:][:alnum:][:punct:]]*';	// 0 or more: any num, letter(upper/lower) or any punc symbol
-                    $space_re='(\\s*)'; 
-                    
-                    if (preg_match_all ("/(<a)(\\s+)(href".$space_re."=".$space_re."\"".$space_re."((http|https|ftp):\\/\\/)?)".$url_re."(\"".$space_re.$title_re.$space_re.">)".$title_re."(<\\/a>)/is", $this_line, $out, PREG_SET_ORDER))
-            		{						  
-      				      $static_urls[] = "<div class=\"static-url-found\"><strong>File: ". $tfile ." Line " . ($line_index+1) . ":</strong>" . htmlspecialchars($out[0][0]) . "</div>";
-            		}  
-                    
-        			$line_index++;
-                    
-        		}
-            }
-            if (!isset($danger_lines) && !isset($static_urls)) {
-            		return True;
-           	} else {
-            	    $this->possible_theme_vulnearbilities = array(
-                    'danger_lines' => $danger_lines,
-                    'static_urls' => $static_urls
-                    );
-            		return False;
-            }
-            
-        }
-    //end function    
-    }
-    
-    public function run_test_25(){
             
             global $wp_version;
             
@@ -898,7 +839,7 @@ class SecurityCheck {
 						unset( $this->wp_files[$k] );
 						continue;
 					} else {
-				        $diffs[] = $this->get_file_diff($file);
+				        $diffs[$file][] = $this->get_file_diff($file);
                         //$diffs[] = $file;
 					}
 				}
@@ -932,7 +873,7 @@ class SecurityCheck {
 		return $diffs;
     //end function    
     }
-    public function run_test_26() {
+    public function run_test_25() {
         
         $patterns = array(
 		'/(\$wpdb->|mysql_).+DROP/siU' => 'Possible database table deletion',
@@ -963,7 +904,7 @@ class SecurityCheck {
     					foreach ( $patterns as $pattern => $description ) {
     						$test = preg_replace_callback( $pattern, array( &$this, 'replace' ), $line );
     						if ( $line !== $test )
-                            $this->wp_files_checks_result[] = "<div class=\"danger-found\"><strong>File: ". ABSPATH . $file ." Line " . ($n+1) . ":</strong> \"<code>".esc_html( $test )."</code>\" - <span class=\"danger-description\">".$description."</span></div>";
+                            $this->wp_files_checks_result[$file][] = "<div class=\"danger-found\"><strong>Line " . ($n+1) . ":</strong><pre>".esc_html( substr($test, 0, 50) )."...</pre><span class=\"danger-description\">".$description."</span></div>";
 
  
     					}
@@ -979,7 +920,7 @@ class SecurityCheck {
     //end function    
 	}
 
-	function run_test_27() {
+	function run_test_26() {
 		global $wpdb;
 
 	   $suspicious_post_text = array(
@@ -1001,7 +942,8 @@ class SecurityCheck {
             
             		$content = preg_replace( '/('.$text.')/', '$#$#\1#$#$', $post->post_content );
             		$content = substr( $content, $s, 150 );
-                    $posts_found[] = "<div class=\"danger-found\"><strong>Post: ". esc_html($post->post_title) ." Post ID " . $post->ID . ":</strong> \"<code>".esc_html($content)."</code>\" - ".$description."</div>";
+                    $posts_found[$post->ID]['post-title'] = esc_html($post->post_title);
+                    $posts_found[$post->ID]['content'][] = "<pre>".esc_html(substr($content, 0, 70))."</pre>".$description;
 
 				}
 
@@ -1014,8 +956,8 @@ class SecurityCheck {
             
             		$content = preg_replace( '/('.$text.')/', '$#$#\1#$#$', $comment->comment_content );
             		$content = substr( $content, $s, 150 );
-                    
-                    $comments_found[] = "<div class=\"danger-found\"><strong>Comment by " . esc_html($comment->comment_author) ." Comment ID " . $comment->comment_ID . ":</strong> \"<code>".esc_html($content)."</code>\" - ".$description."</div>";
+                    $comments_found[$comment->comment_ID]['comment-autor'] = esc_html($comment->comment_author);
+                    $comments_found[$comment->comment_ID]['content'][] = "<pre>".esc_html(substr($content, 0, 70))."</pre>".$description;
 
 				}
 		}
@@ -1043,28 +985,28 @@ class USC_Text_Diff_Renderer extends Text_Diff_Renderer {
 	}
 
 	function _startBlock( $header ) {
-		return "<strong>Lines: $header</strong>\n";
+		return "<span class=\"textdiff-line\">Lines: $header</span>\n";
 	}
 
 	function _lines( $lines, $prefix, $class ) {
 		$r = '';
 		foreach ( $lines as $line ) {
 			$line = esc_html( $line );
-			$r .= "<span class='{$class}'>{$prefix}<code>{$line}</code></span>\n";
+			$r .= "<div class='{$class}'>{$prefix} {$line}</div>\n";
 		}
 		return $r;
 	}
 
 	function _added( $lines ) {
-		return $this->_lines( $lines, 'Added', 'diff-addedline' );
+		return $this->_lines( $lines, '+', 'diff-addedline' );
 	}
 
 	function _deleted( $lines ) {
-		return $this->_lines( $lines, 'Deleted', 'diff-deletedline' );
+		return $this->_lines( $lines, '-', 'diff-deletedline' );
 	}
 
 	function _context( $lines ) {
-		return $this->_lines( $lines, 'Original', 'diff-context' );
+		return $this->_lines( $lines, '', 'diff-context' );
 	}
 
 	function _changed( $orig, $final ) {

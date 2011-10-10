@@ -56,7 +56,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         /* Register our plugin page */
         $page = add_submenu_page( 'tools.php', 
                                   __('Ultimate Security Checker', 'wp_ultimate_security_checker'), 
-                                  __('Ultimate Security Checker', 'wp_ultimate_security_checker'), 9,  'ultimate-security-checker', 
+                                  __('Ultimate Security Checker', 'wp_ultimate_security_checker'), 'manage_options',  'ultimate-security-checker', 
                                   'wp_ultimate_security_checker_main');
    
         /* Using registered $page handle to hook script load */
@@ -71,7 +71,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         // wp_enqueue_script('myPluginScript');
     }
     function wp_ultimate_security_checker_main(){
-        $tabs  = array('run-the-tests', 'how-to-fix');
+        $tabs  = array('run-the-tests', 'how-to-fix', 'core-files', 'wp-files', 'wp-posts');
         $tab = '';
         if(!isset($_GET['tab']) || !in_array($_GET['tab'],$tabs)){
             $tab = 'run-the-tests';
@@ -89,50 +89,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
             #icon-security-check {
                 background: transparent url(<?php echo plugins_url( 'img/shield_32.png', __FILE__ ); ?>) no-repeat;
             }
-            div.core-hashes, div.blog-files, div.blog-posts {
-                display: none;
-            }
-            div.visible {
-                display: block;
-            }
-            a.trigger-button {
-                text-decoration: none;
-                font-weight: bold;
-                color: black;
-                margin: 5px;
-                padding: 5px;
-                border: 1px solid black;
-                display: block;
-                width: 35px;
-                background: #EAEAEA;
-                cursor: pointer;
-            }
-            a.trigger-button:hover {
-                color: red;
-            }
             </style>
-            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-            <script type="text/javascript">
-	           $('document').ready(function(){
-                    $("a.trigger-button").click(function(){
-                        if ($(this).hasClass('core-hashes')) {
-                            $('div.core-hashes').toggleClass('visible');
-                        }
-                        if ($(this).hasClass('blog-files')) {
-                            $('div.blog-files').toggleClass('visible');
-                        }
-                        if ($(this).hasClass('blog-posts')) {
-                            $('div.blog-posts').toggleClass('visible');
-                        }
-                        var text = $(this).html();
-                        if (text == 'Show')
-                            $(this).html('Hide');
-
-                        if (text == 'Hide')
-                            $(this).html('Show');   
-                    })
-                });
-            </script>
 
                 <?php screen_icon( 'security-check' );?>
             <h2 style="padding-left:5px;">Ultimate Security Checker
@@ -182,9 +139,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                     <li><a href="#db">Database changes.</a></li>
                     <li><a href="#uploads">Your uploads directory is browsable from the web.</a></li>
                     <li><a href="#server-config">Your server shows too much information about installed software.</a></li>
-                    <li><a href="#hashes">Your blog core files is changed.</a></li>
-                    <li><a href="#blog-files">You have some suspicious code in your blog files.</a></li>
-                    <li><a href="#blog-posts">You have some suspicious code in your blog posts or comments.</a></li>
                     <li><a href="#security-check">How to keep everything secured?</a></li>
                 </ul>
                 <div class="clear"></div>
@@ -378,81 +332,6 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 If you're using Apache web server and have root access(or can edit httpd.conf) - you can define <i>ServerTokens</i> directive with preffered options(less info - better). <a href="http://httpd.apache.org/docs/2.0/mod/core.html#servertokens">See details</a>.
                 </p>
                 <!-- end server-config -->
-                <!-- hashes -->
-                <h3>Your blog core files is changed.<a name="hashes"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
-                <p>
-                <?php
-                $core_tests_results = get_option('wp_ultimate_security_checker_hashes_issues');
-                ?>
-                <a class="trigger-button core-hashes">Show</a>
-                <div class="core-hashes">
-                <h5>Files and lines different from original wordpress core files:</h5>
-                <?php 
-                if ($core_tests_results['diffs']) {
-                    foreach($core_tests_results['diffs'] as $diff){
-                        echo $diff;
-                    } 
-                }else echo 'No code changes found in your blog core files!'
-                ?>
-                <?php 
-                if ($core_tests_results['old_export']) {
-                    echo "<h5>This is old export files. You should delete them.</h5>";
-                    foreach($core_tests_results['old_export'] as $static_url){
-                        echo $static_url;
-                    } 
-                }
-                ?>
-                </div>
-                </p>
-                <!-- end hashes -->
-                <!-- blog-files -->
-                <h3>You have some suspicious code in your blog files.<a name="blog-files"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
-                <p>
-                This long list of warnings doesn't mean that all of this files was hacked or broken. We just highlighting points of potential vulnerabilities.
-                <?php
-                $files_tests_results = get_option('wp_ultimate_security_checker_files_issues');
-                ?>
-                <a class="trigger-button blog-files">Show</a>
-                <div class="blog-files">
-                <h5>Suspicious code</h5>
-                <?php 
-                if (sizeof($files_tests_results) > 0) {
-                    foreach($files_tests_results as $file){
-                        echo $file;
-                    } 
-                }else echo 'You are lucky - no potential code vulnerabilities foud in your blog!'
-                ?>
-                </div>
-                </p>
-                <!-- end blog-files -->
-                <!-- blog-posts -->
-                <h3>You have some suspicious code in your blog posts or comments.<a name="blog-posts"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
-                <p>
-                This list of post and comments highlighting most dangerous posts and comments in your system. However, maybe this records is not a threat or you made them. But if you not sure - please check records from this list.
-                <?php
-                $posts_tests_results = get_option('wp_ultimate_security_checker_posts_issues');
-                ?>
-                <a class="trigger-button blog-posts">Show</a>
-                <div class="blog-posts">
-                <h5>Suspicious posts</h5>
-                <?php 
-                if ($posts_tests_results['posts_found']) {
-                    foreach($posts_tests_results['posts_found'] as $post){
-                        echo $post;
-                    } 
-                }else echo 'You are lucky - no potential code vulnerabilities foud in your posts!'
-                ?>
-                <h5>Suspicious comments</h5>
-                <?php 
-                if ($posts_tests_results['comments_found']) {
-                    foreach($posts_tests_results['comments_found'] as $comment){
-                        echo $comment;
-                    } 
-                }else echo 'You are lucky - no potential code vulnerabilities foud in your comments!'
-                ?>
-                </div>
-                </p>
-                <!-- end blog-posts -->
                 <!-- security-check -->
                 <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
                 <p>
@@ -464,6 +343,307 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 <!-- end security-check -->
                 </div>
         </div>
+        <?php
+    }
+    function wp_ultimate_security_checker_core_files(){
+        $core_tests_results = get_option('wp_ultimate_security_checker_hashes_issues');
+        ?>
+        <div class="wrap">
+            <style>
+            #icon-security-check {
+                background: transparent url(<?php echo plugins_url( 'img/shield_32.png', __FILE__ ); ?>) no-repeat;
+            }
+            div.diff-addedline {
+                font-family: monospace;
+                display: block;
+                font-size: 13px;
+                font-weight: normal;
+                padding: 10px;
+                background-color: #DDFFDD;
+            }
+            div.diff-deletedline {
+                font-family: monospace;
+                display: block;
+                font-size: 13px;
+                font-weight: normal;
+                padding: 10px;
+                background-color: #FBA9A9;
+            }
+            div.diff-context {
+                font-family: monospace;
+                display: block;
+                font-size: 13px;
+                font-weight: normal;
+                padding: 10px;
+                background-color: #F3F3F3;
+            }
+            </style>
+
+                <?php screen_icon( 'security-check' );?>
+            <h2 style="padding-left:5px;">Ultimate Security Checker
+            <span style="position:absolute;padding-left:25px;">
+            <a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
+            <a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
+            <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
+            </span>
+            </h2>
+            <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <style>
+                h3.nav-tab-wrapper .nav-tab {
+                    padding-top:7px;
+                }
+            </style>
+
+            <h3 class="nav-tab-wrapper">
+                <a href="?page=ultimate-security-checker&tab=run-the-tests" style="text-decoration: none;">&lt;- Back to Tests results</a>
+            </h3>
+
+            <style>
+            pre {
+                padding:10px;
+                background:#f3f3f3;
+                margin-top:10px;
+            }
+            .answers p, .answers ul, .answers pre {
+                margin-left:10px;
+                line-height:19px;
+            }
+            .answers ul{
+                list-style-type:disc !important;
+                padding-left:17px !important;
+            }
+            </style>
+                <a name="#top"></a>
+                <h2>Your blog core files check results:</h2>
+                <?php if ($core_tests_results['diffs']): ?>
+                <h3>Some files from the core of your blog have been changed. Files and lines different from original wordpress core files:</h3>
+                <?php
+                    $i = 1; 
+                    foreach($core_tests_results['diffs'] as $filename => $lines){
+                        $li[]  .= "<li><a href=\"#$i\">$filename</a></li>\n";
+                        $out .= "<h4>$filename<a name=\"$i\"></a><a href=\"#top\" style=\"font-size:13px;margin-left:10px;\">&uarr; Back</a></h4>";
+                        $out .= implode("\n", $lines);
+                        $i++;
+                    }
+                ?>
+                <?php if(sizeof($li) > 4){
+                 echo "<ul>\n".implode("\n", $li)."</ul>\n"; 
+                 }
+                 ?>
+                <div class="clear"></div>
+                <div class="errors-found">
+                <p>
+                <?php echo $out; ?>
+                <?php else: echo '<h3>No code changes found in your blog core files!</h3>'; ?>
+                <?php endif;?>
+                </p>
+                </div>
+                <?php 
+                if ($core_tests_results['old_export']) {
+                    echo "<h5>This is old export files. You should delete them.</h5>";
+                    echo "<ul>";
+                    foreach($core_tests_results['old_export'] as $export){
+                        echo "<li>".$static_url."</li>";
+                    }
+                    echo "</ul>"; 
+                }
+                ?>
+                <!-- end hashes -->
+                
+                <!-- security-check -->
+                <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+                <p>
+                    You need to run checks more often using this plugin or <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">register at our service</a> to receive emails after weekly checks and fix all this stuff automatically. 
+                </p>
+                <!-- end security-check -->
+                <div class="clear"></div>
+                </div>
+        <?php
+    }
+    function wp_ultimate_security_checker_wp_files(){
+        $files_tests_results = get_option('wp_ultimate_security_checker_files_issues');
+        ?>
+        <div class="wrap">
+            <style>
+            #icon-security-check {
+                background: transparent url(<?php echo plugins_url( 'img/shield_32.png', __FILE__ ); ?>) no-repeat;
+            }
+            div.danger-found {
+                margin-bottom: 25px;
+            }
+            </style>
+
+                <?php screen_icon( 'security-check' );?>
+            <h2 style="padding-left:5px;">Ultimate Security Checker
+            <span style="position:absolute;padding-left:25px;">
+            <a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
+            <a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
+            <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
+            </span>
+            </h2>
+            <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <style>
+                h3.nav-tab-wrapper .nav-tab {
+                    padding-top:7px;
+                }
+            </style>
+
+            <h3 class="nav-tab-wrapper">
+                <a href="?page=ultimate-security-checker&tab=run-the-tests" style="text-decoration: none;">&lt;- Back to Tests results</a>
+            </h3>
+
+            <style>
+            pre {
+                padding:10px;
+                background:#f3f3f3;
+                margin-top:10px;
+            }
+            .answers p, .answers ul, .answers pre {
+                margin-left:10px;
+                line-height:19px;
+            }
+            .answers ul{
+                list-style-type:disc !important;
+                padding-left:17px !important;
+            }
+            </style>
+                <a name="#top"></a>
+                <h2>Your blog files vulnerability scan results:</h2>
+                <?php if ($files_tests_results): ?>
+                <h3>Some files from themes and plugins may have potential vulnerabilities:</h3>
+                <?php
+                    $i = 1; 
+                    foreach($files_tests_results as $filename => $lines){
+                        $li[]  .= "<li><a href=\"#$i\">$filename</a></li>\n";
+                        $out .= "<h3>$filename<a name=\"$i\"></a><a href=\"#top\" style=\"font-size:13px;margin-left:10px;\">&uarr; Back</a></h3>";
+                        $out .= implode("\n", $lines);
+                        $i++;
+                    }
+                ?>
+                <?php if(sizeof($li) > 4){
+                 echo "<ul>\n".implode("\n", $li)."</ul>\n"; 
+                 }
+                 ?>
+                <div class="clear"></div>
+                <div class="errors-found">
+                <p>
+                <?php echo $out; ?>
+                <?php elseif($files_tests_results[0]): ?>
+                <?php echo $files_tests_results[0];?>
+                <?php else: echo '<h3>No code changes found in your blog files!</h3>'; ?>
+                <?php endif;?>
+                </p>
+                </div>
+                
+                <!-- security-check -->
+                <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+                <p>
+                    You need to run checks more often using this plugin or <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">register at our service</a> to receive emails after weekly checks and fix all this stuff automatically. 
+                </p>
+                <!-- end security-check -->
+                <div class="clear"></div>
+                </div>
+        <?php
+    }
+    function wp_ultimate_security_checker_wp_posts(){
+        $posts_tests_results = get_option('wp_ultimate_security_checker_posts_issues');
+        ?>
+        <div class="wrap">
+            <style>
+            #icon-security-check {
+                background: transparent url(<?php echo plugins_url( 'img/shield_32.png', __FILE__ ); ?>) no-repeat;
+            }
+            </style>
+
+                <?php screen_icon( 'security-check' );?>
+            <h2 style="padding-left:5px;">Ultimate Security Checker
+            <span style="position:absolute;padding-left:25px;">
+            <a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
+            <a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
+            <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
+            </span>
+            </h2>
+            <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <style>
+                h3.nav-tab-wrapper .nav-tab {
+                    padding-top:7px;
+                }
+            </style>
+
+            <h3 class="nav-tab-wrapper">
+                <a href="?page=ultimate-security-checker&tab=run-the-tests" style="text-decoration: none;">&lt;- Back to Tests results</a>
+            </h3>
+
+            <style>
+            pre {
+                padding:10px;
+                background:#f3f3f3;
+                margin-top:10px;
+            }
+            .answers p, .answers ul, .answers pre {
+                margin-left:10px;
+                line-height:19px;
+            }
+            .answers ul{
+                list-style-type:disc !important;
+                padding-left:17px !important;
+            }
+            </style>
+                <a name="#top"></a>
+                <h2>Your blog records scan results:</h2>
+                
+                <?php if ($posts_tests_results['posts_found']){
+                    $postsHdr = "<h3>Some posts in your blog contains suspicious code:</h3>\n";
+                    $i = 1; 
+                    foreach($posts_tests_results['posts_found'] as $postId => $postData){
+                        $postsList[] = "<li><a href=\"#p$i\">{$postData['post-title']}($postId)</a></li>\n";
+                        $pout .= "<h4>{$postData['post-title']}($postId) - <a href=\"".get_edit_post_link($postId)."\" title=\"Edit\">Edit</a><a name=\"p$i\"></a><a href=\"#top\" style=\"font-size:13px;margin-left:10px;\">&uarr; Back</a></h4>";
+                        $pout .= implode("\n", $postData['content']);
+                        $i++;
+                    }
+                   
+                    $postsOut .= "<div class=\"clear\"></div>\n<div class=\"errors-found\">\n<p>";
+                    $postsOut .= $pout;
+                    $postsOut .= "</p>\n</div>\n";
+
+                }else{
+                    $postsHdr = "<h3>No potential code vulnerabilities foud in your posts!</h3>\n";
+                }
+                ?>
+                
+                <?php if ($posts_tests_results['comments_found']){
+                    $commentsHdr = "<h3>Some comments in your blog contains suspicious code:</h3>\n";
+                    $i = 1; 
+                    foreach($posts_tests_results['comments_found'] as $commentId => $commentData){
+                        $commentsList[] = "<li><a href=\"#c$i\">{$commentData['comment-autor']}($commentId)</a></li>\n";
+                        $cout .= "<h4>{$commentData['comment-autor']}($commentId) - <a href=\"".get_edit_comment_link($commentId)."\" title=\"Edit\">Edit</a><a name=\"c$i\"></a><a href=\"#top\" style=\"font-size:13px;margin-left:10px;\">&uarr; Back</a></h4>";
+                        $cout .= implode("\n", $commentData['content']);
+                        $i++;
+                    }
+                    $commentsOut .= "<div class=\"clear\"></div>\n<div class=\"errors-found\">\n<p>";
+                    $commentsOut .= $cout;
+                    $commentsOut .= "</p>\n</div>\n";
+
+                }else{
+                    $commentsHdr = "<h3>No potential code vulnerabilities foud in your comments!</h3>\n";
+                }
+                ?>
+                <?php echo $postsHdr; ?>
+                <?php if(sizeof($postsList) > 4) echo "<ul>\n".implode("\n", $postsList)."</ul>\n"; ?>
+                <?php echo $postsOut; ?>
+                
+                <?php echo $commentsHdr; ?>
+                <?php if(sizeof($commentsList) > 4) echo "<ul>\n".implode("\n", $commentsList)."</ul>\n"; ?>
+                <?php echo $commentsOut; ?>
+                
+                
+                <!-- security-check -->
+                <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+                <p>
+                    You need to run checks more often using this plugin or <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">register at our service</a> to receive emails after weekly checks and fix all this stuff automatically. 
+                </p>
+                <!-- end security-check -->
+                </div>
         <?php
     }
     function wp_ultimate_security_checker_run_the_tests()
