@@ -324,6 +324,15 @@ class SecurityCheck {
     function replace( $matches ) {
 		return '$#$#' . $matches[0] . '#$#$';
 	}
+    function highlight_matches( $text ) {
+    	$start = strpos( $text, '$#$#' ) - 50;
+    	if ( $start < 0 ) $start = 0;
+    	$end = strrpos( $text, '#$#$' ) + 50;
+    
+    	$text = substr( $text, $start, $end - $start + 1 );
+    
+    	return str_replace( array('$#$#','#$#$'), array('<span style="background:#ff0">','</span>'), $text );
+    }
     public function get_stats(){
     }
     public function display_stats_by_categories($categories){
@@ -825,13 +834,13 @@ class SecurityCheck {
 			if ( file_exists( $hashes ) )
 				include( $hashes );
 			else{
-			 //throw error
+                return False;
 			}
 	
 			$this->recurse_directory( ABSPATH );
 
 			foreach( $this->wp_files as $k => $file ) {
-			 //$chkk[] = ABSPATH.'/'.$file;
+
 				// don't scan unmodified core files
 				if ( isset( $filehashes[$file] ) ) {
 				   
@@ -843,6 +852,10 @@ class SecurityCheck {
                         //$diffs[] = $file;
 					}
 				}
+                //for avoiding false alerts in 25 test
+                if ($file == "wp-content/plugins/ultimate-security-checker/securitycheck.class.php" || $file == "wp-content/plugins/ultimate-security-checker/wp-ultimate-security.php") {
+                    unset( $this->wp_files[$k] );
+                }
 
 				// don't scan files larger than given limit For later use
 				/*if ( filesize($this->path . $file) > ($this->filesize_limit * 1024) ) {
@@ -904,7 +917,7 @@ class SecurityCheck {
     					foreach ( $patterns as $pattern => $description ) {
     						$test = preg_replace_callback( $pattern, array( &$this, 'replace' ), $line );
     						if ( $line !== $test )
-                            $this->wp_files_checks_result[$file][] = "<div class=\"danger-found\"><strong>Line " . ($n+1) . ":</strong><pre>".esc_html( substr($test, 0, 50) )."...</pre><span class=\"danger-description\">".$description."</span></div>";
+                            $this->wp_files_checks_result[$file][] = "<div class=\"danger-found\"><strong>Line " . ($n+1) . ":</strong><pre>".$this->highlight_matches(esc_html($test))."</pre><span class=\"danger-description\">".$description."</span></div>";
 
  
     					}
@@ -943,7 +956,7 @@ class SecurityCheck {
             		$content = preg_replace( '/('.$text.')/', '$#$#\1#$#$', $post->post_content );
             		$content = substr( $content, $s, 150 );
                     $posts_found[$post->ID]['post-title'] = esc_html($post->post_title);
-                    $posts_found[$post->ID]['content'][] = "<pre>".esc_html(substr($content, 0, 70))."</pre>".$description;
+                    $posts_found[$post->ID]['content'][] = "<pre>".$this->highlight_matches(esc_html($content))."</pre>".$description;
 
 				}
 
@@ -957,7 +970,7 @@ class SecurityCheck {
             		$content = preg_replace( '/('.$text.')/', '$#$#\1#$#$', $comment->comment_content );
             		$content = substr( $content, $s, 150 );
                     $comments_found[$comment->comment_ID]['comment-autor'] = esc_html($comment->comment_author);
-                    $comments_found[$comment->comment_ID]['content'][] = "<pre>".esc_html(substr($content, 0, 70))."</pre>".$description;
+                    $comments_found[$comment->comment_ID]['content'][] = "<pre>".$this->highlight_matches(esc_html($content))."</pre>".$description;
 
 				}
 		}
