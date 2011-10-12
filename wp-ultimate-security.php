@@ -71,7 +71,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         // wp_enqueue_script('myPluginScript');
     }
     function wp_ultimate_security_checker_main(){
-        $tabs  = array('run-the-tests', 'how-to-fix', 'core-files', 'wp-files', 'wp-posts');
+        $tabs  = array('run-the-tests', 'how-to-fix', 'core-files', 'wp-files', 'wp-posts', 'settings');
         $tab = '';
         if(!isset($_GET['tab']) || !in_array($_GET['tab'],$tabs)){
             $tab = 'run-the-tests';
@@ -99,7 +99,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
             <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
             </span>
             </h2>
-            <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
+                <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <?php endif; ?>
             <style>
                 h3.nav-tab-wrapper .nav-tab {
                     padding-top:7px;
@@ -108,6 +110,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
             <h3 class="nav-tab-wrapper">
                 <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab">Run the Tests</a>
                 <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab nav-tab-active">How to Fix</a>
+                <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
             <style>
             pre {
@@ -345,6 +348,120 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
         </div>
         <?php
     }
+    function wp_ultimate_security_checker_settings(){
+            if (isset($_GET['flike']) || isset($_GET['rescan'])) {
+                switch ($_GET['flike']) {
+                   case 'k' :
+                                update_option('wp_ultimate_security_checker_flike_deactivated', false);
+                                update_option('wp_ultimate_security_checker_flike_period', 0);
+                                break;
+                   case 'w' :
+                                update_option('wp_ultimate_security_checker_flike_deactivated', true);
+                                update_option('wp_ultimate_security_checker_flike_time', time());
+                                update_option('wp_ultimate_security_checker_flike_period', 14);
+                                break;
+                   case 'm' :
+                                update_option('wp_ultimate_security_checker_flike_deactivated', true);
+                                update_option('wp_ultimate_security_checker_flike_time', time());
+                                update_option('wp_ultimate_security_checker_flike_period', 30);
+                                break;
+                   case 'n' :
+                                update_option('wp_ultimate_security_checker_flike_deactivated', true);
+                                update_option('wp_ultimate_security_checker_flike_period', 0);
+                                break;
+                }
+                switch ($_GET['rescan']) {
+                   case 'w' :
+                                update_option('wp_ultimate_security_checker_rescan_period', 14);
+                                break;
+                   case 'm' :
+                                update_option('wp_ultimate_security_checker_rescan_period', 30);
+                                break;
+                   case 'n' :
+                                update_option('wp_ultimate_security_checker_rescan_period', 0);
+                                break;
+                }
+            }
+            ?>
+            
+            <div class="wrap">
+                <style>
+                #icon-security-check {
+                    background: transparent url(<?php echo plugins_url( 'img/shield_32.png', __FILE__ ); ?>) no-repeat;
+                }
+                </style>
+    
+                    <?php screen_icon( 'security-check' );?>
+                <h2 style="padding-left:5px;">Ultimate Security Checker
+                <span style="position:absolute;padding-left:25px;">
+                <a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
+                <a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
+                <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
+                </span>
+                </h2>
+                <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
+                <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+                <?php endif; ?>
+                <style>
+                    h3.nav-tab-wrapper .nav-tab {
+                        padding-top:7px;
+                    }
+                </style>
+    
+                <h3 class="nav-tab-wrapper">
+                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab">Run the Tests</a>
+                    <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
+                    <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab nav-tab-active">Settings</a>
+                </h3>
+    
+                <style>
+                pre {
+                    padding:10px;
+                    background:#f3f3f3;
+                    margin-top:10px;
+                }
+                .answers p, .answers ul, .answers pre {
+                    margin-left:10px;
+                    line-height:19px;
+                }
+                .answers ul{
+                    list-style-type:disc !important;
+                    padding-left:17px !important;
+                }
+                </style>
+                    <a name="#top"></a>
+                    <h2>Plugin options</h2>
+                    
+                    <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-settings">
+                    <h4>Disable Facebook Like and remind me in:</h4>
+                    <input type="hidden" value="ultimate-security-checker" name="page" />
+                    <input type="hidden" value="settings" name="tab" />
+                    <ul>
+                    <li><input type="radio" <?php if(! get_option('wp_ultimate_security_checker_flike_deactivated', false)) echo 'checked="checked"';?> value="k" name="flike" />Keep Facebook Like</li>
+                    <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_flike_period') == 14) echo 'checked="checked"';?> value="w" name="flike" />2 weeks</li>
+                    <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_flike_period') == 30) echo 'checked="checked"';?> value="m" name="flike" />1 month</li>
+                    <li><input type="radio" <?php if((get_option('wp_ultimate_security_checker_flike_period') == 0) && get_option('wp_ultimate_security_checker_flike_deactivated', true)) echo 'checked="checked"';?> value="n" name="flike" />Newer remind</li>
+                    </ul>
+                    <h4>Remind me about re-scan in:</h4>
+                    <ul>
+                    <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 14) echo 'checked="checked"';?> value="w" name="rescan" />2 weeks</li>
+                    <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 30) echo 'checked="checked"';?> value="m" name="rescan" />1 month</li>
+                    <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 0) echo 'checked="checked"';?> value="n" name="rescan" />Newer remind</li>
+                    <li><input type="submit" value="Save Settings" /></li>
+                    </ul>
+                    </form>
+                    <div class="clear"></div>
+                    
+                    <!-- security-check -->
+                    <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+                    <p>
+                        You need to run checks more often using this plugin or <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">register at our service</a> to receive emails after weekly checks and fix all this stuff automatically. 
+                    </p>
+                    <!-- end security-check -->
+                    <div class="clear"></div>
+                    </div>
+                    <?php
+    }
     function wp_ultimate_security_checker_core_files(){
         $core_tests_results = get_option('wp_ultimate_security_checker_hashes_issues');
         ?>
@@ -387,7 +504,9 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
             </span>
             </h2>
-            <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
+                <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <?php endif; ?>
             <style>
                 h3.nav-tab-wrapper .nav-tab {
                     padding-top:7px;
@@ -481,7 +600,9 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
             </span>
             </h2>
-            <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
+                <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <?php endif; ?>
             <style>
                 h3.nav-tab-wrapper .nav-tab {
                     padding-top:7px;
@@ -563,7 +684,9 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
             </span>
             </h2>
-            <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
+                <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <?php endif; ?>
             <style>
                 h3.nav-tab-wrapper .nav-tab {
                     padding-top:7px;
@@ -665,7 +788,9 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
             </span>
             </h2>
-            <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
+                <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+            <?php endif; ?>
             <style>
                 h3.nav-tab-wrapper .nav-tab {
                     padding-top:7px;
@@ -674,6 +799,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             <h3 class="nav-tab-wrapper">
                 <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab nav-tab-active">Run the Tests</a>
                 <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
+                <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
             <!-- <p>We are checking your blog for security right now. We won't do anything bad to your blog, relax :)</p> -->
             <div id="test_results">
@@ -715,11 +841,39 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             <?php
             endif;
         }*/
-        if((time() - get_option( 'wp_ultimate_security_checker_lastcheck',time())) > 14 * 24 * 3600 ){
-            ?>
-                <div class='update-nag'>You didn't check your security score more then 2 weeks. <a href="<?php echo admin_url('tools.php') ?>?page=ultimate-security-checker">Do it now.</a></div>
-            <?php
+        $period = get_option('wp_ultimate_security_checker_rescan_period');
+        if ($period) {
+            if((time() - get_option( 'wp_ultimate_security_checker_lastcheck',time())) > $period * 24 * 3600 ){
+                switch ($period) {
+                   case '14' :
+                                $out = '2 weeks';
+                                break;
+                   case '30' :
+                                $out = 'a month';
+                                break;
+                }
+                ?>
+                    <div class='update-nag'>You didn't check your security score more then <?php echo $out; ?>. <a href="<?php echo admin_url('tools.php') ?>?page=ultimate-security-checker">Do it now.</a></div>
+                <?php
+            }
         }
+        if (get_option('wp_ultimate_security_checker_flike_time') && get_option('wp_ultimate_security_checker_flike_deactivated') && (get_option('wp_ultimate_security_checker_flike_period') > 0)) {
+            $period = get_option('wp_ultimate_security_checker_flike_period');
+            if((time() - get_option( 'wp_ultimate_security_checker_flike_time',time())) > $period * 24 * 3600 ){
+                switch ($period) {
+                   case '14' :
+                                $out = '2 weeks';
+                                break;
+                   case '30' :
+                                $out = 'a month';
+                                break;
+                }
+                ?>
+                    <div class='updated'>You have disabled Facebook Like for this plugun <?php echo $out; ?> ago. Want to activate it? <a href="<?php echo admin_url('tools.php') ?>?page=ultimate-security-checker&tab=settings">Do it now.</a></div>
+                <?php
+            }
+        }
+    
         
     }
 	add_action( 'admin_notices', 'wp_ultimate_security_checker_old_check' );
