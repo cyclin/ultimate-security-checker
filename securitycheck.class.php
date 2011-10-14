@@ -19,6 +19,7 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+@ini_set( 'max_execution_time', 240 );
 class SecurityCheck {
     private $_wp_version = '';
     public $results_from = '';
@@ -857,15 +858,10 @@ class SecurityCheck {
                     unset( $this->wp_files[$k] );
                 }
 
-				// don't scan files larger than given limit For later use
-				/*if ( filesize($this->path . $file) > ($this->filesize_limit * 1024) ) {
-					unset( $this->files[$k] );
-					$this->add_result( 'note', array(
-						'loc' => $file,
-						'desc' => 'File skipped due to size',
-						'class' => 'skipped-file'
-					) );
-				}*/
+				// don't scan files larger than 400 KB
+				if ( filesize(ABSPATH . $file) > (400 * 1024) ) {
+					unset( $this->wp_files[$k] );
+				}
 				
 				// detect old export files
 				if ( substr( $file, -9 ) == '.xml_.txt' ) {
