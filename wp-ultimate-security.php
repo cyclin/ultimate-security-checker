@@ -108,9 +108,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                 }
             </style>
             <h3 class="nav-tab-wrapper">
-                <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab">Run the Tests</a>
-                <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab nav-tab-active">How to Fix</a>
-                <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
+                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab">Run the Tests</a>
+                    <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab nav-tab-active">How to Fix</a>
+                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">Files Heuristic Analysis</a>
+                    <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
             <style>
             pre {
@@ -353,21 +354,9 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 switch ($_GET['flike']) {
                    case 'k' :
                                 update_option('wp_ultimate_security_checker_flike_deactivated', false);
-                                update_option('wp_ultimate_security_checker_flike_period', 0);
-                                break;
-                   case 'w' :
-                                update_option('wp_ultimate_security_checker_flike_deactivated', true);
-                                update_option('wp_ultimate_security_checker_flike_time', time());
-                                update_option('wp_ultimate_security_checker_flike_period', 14);
-                                break;
-                   case 'm' :
-                                update_option('wp_ultimate_security_checker_flike_deactivated', true);
-                                update_option('wp_ultimate_security_checker_flike_time', time());
-                                update_option('wp_ultimate_security_checker_flike_period', 30);
                                 break;
                    case 'n' :
                                 update_option('wp_ultimate_security_checker_flike_deactivated', true);
-                                update_option('wp_ultimate_security_checker_flike_period', 0);
                                 break;
                 }
                 switch ($_GET['rescan']) {
@@ -411,6 +400,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 <h3 class="nav-tab-wrapper">
                     <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab">Run the Tests</a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
+                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">Files Heuristic Analysis</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab nav-tab-active">Settings</a>
                 </h3>
     
@@ -433,14 +423,12 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <h2>Plugin options</h2>
                     
                     <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-settings">
-                    <h4>Disable Facebook Like and remind me in:</h4>
+                    <h4>Disable Facebook Like:</h4>
                     <input type="hidden" value="ultimate-security-checker" name="page" />
                     <input type="hidden" value="settings" name="tab" />
                     <ul>
                     <li><input type="radio" <?php if(! get_option('wp_ultimate_security_checker_flike_deactivated', false)) echo 'checked="checked"';?> value="k" name="flike" />Keep Facebook Like</li>
-                    <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_flike_period') == 14) echo 'checked="checked"';?> value="w" name="flike" />2 weeks</li>
-                    <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_flike_period') == 30) echo 'checked="checked"';?> value="m" name="flike" />1 month</li>
-                    <li><input type="radio" <?php if((get_option('wp_ultimate_security_checker_flike_period') == 0) && get_option('wp_ultimate_security_checker_flike_deactivated', true)) echo 'checked="checked"';?> value="n" name="flike" />Newer remind</li>
+                    <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_flike_deactivated', true)) echo 'checked="checked"';?> value="n" name="flike" />Disable it</li>
                     </ul>
                     <h4>Remind me about re-scan in:</h4>
                     <ul>
@@ -579,9 +567,68 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 </div>
         <?php
     }
+    function wp_ultimate_security_checker_ajax_handler(){
+	check_ajax_referer( 'ultimate-security-checker_scan' );
+    
+    $security_check = new SecurityCheck();
+    $responce = $security_check->run_heuristic_check(); 
+    echo json_encode($responce);
+	exit;
+}
+add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_security_checker_ajax_handler' );
+
     function wp_ultimate_security_checker_wp_files(){
         $files_tests_results = get_option('wp_ultimate_security_checker_files_issues');
         ?>
+        <script type="text/javascript">
+	jQuery(document).ready(function($) {
+		$('#run-scanner').click( function() {
+
+			$.ajaxSetup({
+				type: 'POST',
+				url: ajaxurl,
+				complete: function(xhr,status) {
+					if ( status != 'success' ) {
+						$('#scan-loader img').hide();
+						$('#scan-loader span').html( 'An error occurred. Please try again later.' );
+					}
+				}
+			});
+
+			$('#scan-results').hide();
+			$('#scan-loader').show();
+            $('#run-scanner').hide();
+			usc_file_scan();
+			return false;
+		});
+	});
+
+        usc_file_scan = function() {
+		jQuery.ajax({
+			data: {
+				action: 'ultimate_security_checker_ajax_handler',
+				_ajax_nonce: '<?php echo wp_create_nonce( 'ultimate-security-checker_scan' ); ?>',
+			}, success: function(r) {
+				var res = jQuery.parseJSON(r);
+				if ( 'processing' == res.status ) {
+					jQuery('#scan-loader span').html(res.data);
+					usc_file_scan();
+				} else if ( 'error' == res.status ) {
+					// console.log( r );
+					jQuery('#scan-loader img').hide();
+					jQuery('#scan-loader span').html(
+						'An error occurred: <pre style="overflow:auto">' + r.toString() + '</pre>'
+					);
+				} else {
+				    jQuery('#scan-loader img').hide();
+				    jQuery('#scan-loader span').html('Scan complete. Refresh the page to view the results.');
+				    window.location.reload(false);
+				}
+			}
+		});
+	};
+
+</script>
         <div class="wrap">
             <style>
             #icon-security-check {
@@ -589,6 +636,25 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             }
             div.danger-found {
                 margin-bottom: 25px;
+            }
+            pre {
+                padding:10px;
+                background:#f3f3f3;
+                margin-top:10px;
+            }
+            .answers p, .answers ul, .answers pre {
+                margin-left:10px;
+                line-height:19px;
+            }
+            .answers ul{
+                list-style-type:disc !important;
+                padding-left:17px !important;
+            }
+            div#scan-loader{
+                display: none;
+            }
+            h3.nav-tab-wrapper .nav-tab {
+                padding-top:7px;
             }
             </style>
 
@@ -603,34 +669,24 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
                 <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
             <?php endif; ?>
-            <style>
-                h3.nav-tab-wrapper .nav-tab {
-                    padding-top:7px;
-                }
-            </style>
-
             <h3 class="nav-tab-wrapper">
-                <a href="?page=ultimate-security-checker&tab=run-the-tests" style="text-decoration: none;">&lt;- Back to Tests results</a>
+                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab">Run the Tests</a>
+                    <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
+                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab nav-tab-active">Files Heuristic Analysis</a>
+                    <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
-
-            <style>
-            pre {
-                padding:10px;
-                background:#f3f3f3;
-                margin-top:10px;
-            }
-            .answers p, .answers ul, .answers pre {
-                margin-left:10px;
-                line-height:19px;
-            }
-            .answers ul{
-                list-style-type:disc !important;
-                padding-left:17px !important;
-            }
-            </style>
                 <a name="#top"></a>
                 <h2>Your blog files vulnerability scan results:</h2>
+                <span style="margin: 15xp; display: inline-block;">This scanner will test your blog on suspicious code patterns. Even if it finds something - it does not mean that code is malicious code actually. Also this test could stop respond or throw some errors. Anyway - all results of this test is NOT affect your blog security score. We provide it only for more complex security scaning.</span>
+                
+                <a style="float:left;margin-top:20px;font-weight:bold;" href="#" class="button-primary" id="run-scanner">Scan my blog files now!</a>
+                <div class="clear"></div>
+                <div id="scan-loader">
+                <img src="<?php echo plugins_url( 'img/loader.gif', __FILE__ ); ?>" alt="" />
+                <span style="color: red;"></span>
+                </div>
                 <?php if ($files_tests_results): ?>
+                <div id="scan-results">
                 <h3>Some files from themes and plugins may have potential vulnerabilities:</h3>
                 <?php
                     $i = 1; 
@@ -655,7 +711,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 <?php endif;?>
                 </p>
                 </div>
-                
+                </div>
                 <!-- security-check -->
                 <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
                 <p>
@@ -797,9 +853,10 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 }
             </style>
             <h3 class="nav-tab-wrapper">
-                <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab nav-tab-active">Run the Tests</a>
-                <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
-                <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
+                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab nav-tab-active">Run the Tests</a>
+                    <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
+                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">Files Heuristic Analysis</a>
+                    <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
             <!-- <p>We are checking your blog for security right now. We won't do anything bad to your blog, relax :)</p> -->
             <div id="test_results">
@@ -856,26 +913,94 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <div class='update-nag'>You didn't check your security score more then <?php echo $out; ?>. <a href="<?php echo admin_url('tools.php') ?>?page=ultimate-security-checker">Do it now.</a></div>
                 <?php
             }
-        }
-        if (get_option('wp_ultimate_security_checker_flike_time') && get_option('wp_ultimate_security_checker_flike_deactivated') && (get_option('wp_ultimate_security_checker_flike_period') > 0)) {
-            $period = get_option('wp_ultimate_security_checker_flike_period');
-            if((time() - get_option( 'wp_ultimate_security_checker_flike_time',time())) > $period * 24 * 3600 ){
-                switch ($period) {
-                   case '14' :
-                                $out = '2 weeks';
-                                break;
-                   case '30' :
-                                $out = 'a month';
-                                break;
-                }
-                ?>
-                    <div class='updated'>You have disabled Facebook Like for this plugun <?php echo $out; ?> ago. Want to activate it? <a href="<?php echo admin_url('tools.php') ?>?page=ultimate-security-checker&tab=settings">Do it now.</a></div>
-                <?php
-            }
-        }
-    
-        
+        }           
     }
+// JSON functions    
+if ( !function_exists('json_decode') ){
+function json_decode($json)
+{
+    $comment = false;
+    $out = '$x=';
+  
+    for ($i=0; $i<strlen($json); $i++)
+    {
+        if (!$comment)
+        {
+            if (($json[$i] == '{') || ($json[$i] == '['))       $out .= ' array(';
+            else if (($json[$i] == '}') || ($json[$i] == ']'))   $out .= ')';
+            else if ($json[$i] == ':')    $out .= '=>';
+            else                         $out .= $json[$i];          
+        }
+        else $out .= $json[$i];
+        if ($json[$i] == '"' && $json[($i-1)]!="\\")    $comment = !$comment;
+    }
+    eval($out . ';');
+    return $x;
+}
+}
+if ( !function_exists('json_encode') ){
+function json_encode( $data ) {            
+    if( is_array($data) || is_object($data) ) { 
+        $islist = is_array($data) && ( empty($data) || array_keys($data) === range(0,count($data)-1) ); 
+        
+        if( $islist ) { 
+            $json = '[' . implode(',', array_map('__json_encode', $data) ) . ']'; 
+        } else { 
+            $items = Array(); 
+            foreach( $data as $key => $value ) { 
+                $items[] = __json_encode("$key") . ':' . __json_encode($value); 
+            } 
+            $json = '{' . implode(',', $items) . '}'; 
+        } 
+    } elseif( is_string($data) ) { 
+        # Escape non-printable or Non-ASCII characters. 
+        # I also put the \\ character first, as suggested in comments on the 'addclashes' page. 
+        $string = '"' . addcslashes($data, "\\\"\n\r\t/" . chr(8) . chr(12)) . '"'; 
+        $json    = ''; 
+        $len    = strlen($string); 
+        # Convert UTF-8 to Hexadecimal Codepoints. 
+        for( $i = 0; $i < $len; $i++ ) { 
+            
+            $char = $string[$i]; 
+            $c1 = ord($char); 
+            
+            # Single byte; 
+            if( $c1 <128 ) { 
+                $json .= ($c1 > 31) ? $char : sprintf("\\u%04x", $c1); 
+                continue; 
+            } 
+            
+            # Double byte 
+            $c2 = ord($string[++$i]); 
+            if ( ($c1 & 32) === 0 ) { 
+                $json .= sprintf("\\u%04x", ($c1 - 192) * 64 + $c2 - 128); 
+                continue; 
+            } 
+            
+            # Triple 
+            $c3 = ord($string[++$i]); 
+            if( ($c1 & 16) === 0 ) { 
+                $json .= sprintf("\\u%04x", (($c1 - 224) <<12) + (($c2 - 128) << 6) + ($c3 - 128)); 
+                continue; 
+            } 
+                
+            # Quadruple 
+            $c4 = ord($string[++$i]); 
+            if( ($c1 & 8 ) === 0 ) { 
+                $u = (($c1 & 15) << 2) + (($c2>>4) & 3) - 1; 
+            
+                $w1 = (54<<10) + ($u<<6) + (($c2 & 15) << 2) + (($c3>>4) & 3); 
+                $w2 = (55<<10) + (($c3 & 15)<<6) + ($c4-128); 
+                $json .= sprintf("\\u%04x\\u%04x", $w1, $w2); 
+            } 
+        } 
+    } else { 
+        # int, floats, bools, null 
+        $json = strtolower(var_export( $data, true )); 
+    } 
+    return $json; 
+}
+}
 	add_action( 'admin_notices', 'wp_ultimate_security_checker_old_check' );
     // add_action('all_admin_notices','wp_ultimate_security_checker_upgrade_notice');
     add_action( 'admin_bar_menu', 'wp_ultimate_security_checker_add_menu_admin_bar' ,  70);

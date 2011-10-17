@@ -28,7 +28,6 @@ class SecurityCheck {
     public $earned_points = 0;
     public $total_possible_points = 0;
 
-    public $possible_theme_vulnearbilities = array();
     public $changed_core_files = array();
     public $wp_files = array();
     public $wp_files_checks_result = array();
@@ -205,17 +204,10 @@ class SecurityCheck {
         ),
         array(
             'id' => 25,
-            'title' => 'You have some suspicious code in your site files. <a href="?page=ultimate-security-checker&tab=wp-files">View Report</a>',
-            'points' => 5,
-            'category' => 'code',
-            'callback' => 'run_test_25'
-        ),
-        array(
-            'id' => 26,
             'title' => 'You have some suspicious code in your posts and/or comments. <a href="?page=ultimate-security-checker&tab=wp-posts">View Report</a>',
             'points' => 5,
             'category' => 'db',
-            'callback' => 'run_test_26'
+            'callback' => 'run_test_25'
         ),
     );
     
@@ -479,9 +471,8 @@ class SecurityCheck {
         update_option( 'wp_ultimate_security_checker_color', $res['color']);
         update_option( 'wp_ultimate_security_checker_issues', implode(',', $test_results));
         update_option( 'wp_ultimate_security_checker_lastcheck', time());
-        update_option( 'wp_ultimate_security_checker_template_issues', $this->possible_theme_vulnearbilities);
+        update_option( 'wp_ultimate_security_checker_wp_files', $this->wp_files);
         update_option( 'wp_ultimate_security_checker_hashes_issues', $this->changed_core_files);
-        update_option( 'wp_ultimate_security_checker_files_issues', $this->wp_files_checks_result);
         update_option( 'wp_ultimate_security_checker_posts_issues', $this->wp_db_check_results);
     }
     
@@ -882,7 +873,8 @@ class SecurityCheck {
 		return $diffs;
     //end function    
     }
-    public function run_test_25() {
+    public function run_heuristic_check() {
+        global $wp_version;
         
         $patterns = array(
 		'/(\$wpdb->|mysql_).+DROP/siU' => 'Possible database table deletion',
@@ -906,30 +898,74 @@ class SecurityCheck {
 		'/preg_replace\s*\(\s*(["\'])(.).*(?<!\\\\)(?>\\\\\\\\)*\\2([a-z]|\\\x[0-9]{2})*(e|\\\x65)([a-z]|\\\x[0-9]{2})*\\1/si' => 'The e modifier in preg_replace can be used to execute malicious code' ,
         //'/(<a)(\\s+)(href(\\s*)=(\\s*)\"(\\s*)((http|https|ftp):\\/\\/)?)([[:alnum:]\-\.])+(\\.)([[:alnum:]]){2,4}([[:blank:][:alnum:]\/\+\=\%\&\_\\\.\~\?\-]*)(\"(\\s*)[[:blank:][:alnum:][:punct:]]*(\\s*)>)[[:blank:][:alnum:][:punct:]]*(<\\/a>)/is' => 'Hardcoded hyperlinks in code is not a real threat, but they may lead to phishing websites.',
         );
-        if (sizeof($this->wp_files) > 0) {
-    		foreach ( $this->wp_files as $file ) {
-    				$contents = file( ABSPATH . $file );
-    				foreach ( $contents as $n => $line ) {
-    					foreach ( $patterns as $pattern => $description ) {
-    						$test = preg_replace_callback( $pattern, array( &$this, 'replace' ), $line );
-    						if ( $line !== $test )
-                            $this->wp_files_checks_result[$file][] = "<div class=\"danger-found\"><strong>Line " . ($n+1) . ":</strong><pre>".$this->highlight_matches(esc_html($test))."</pre><span class=\"danger-description\">".$description."</span></div>";
+        $this->wp_files = get_transient('wp_ultimate_security_checker_wp_files');
+        $this->wp_files_checks_result = get_transient('wp_ultimate_security_checker_files_issues');
+        if ((sizeof($this->wp_files) <= 0) || (!is_array($this->wp_files))) {
+            unset( $filehashes );
+            
+            $hashes = dirname(__FILE__) . '/hashes/hashes-'. $wp_version .'.php';
+			if ( file_exists( $hashes ) )
+				include( $hashes );
+			else{
+                return array('status'=>'error', 'data'=>'Hashes file not found!');
+			}
+			$this->recurse_directory( ABSPATH );
+			foreach( $this->wp_files as $k => $file ) {
+				if ( isset( $filehashes[$file] ) ) {
+				   unset( $this->wp_files[$k] );
+				   continue;
+				}
+                if ($file == "wp-content/plugins/ultimate-security-checker/securitycheck.class.php" || $file == "wp-content/plugins/ultimate-security-checker/wp-ultimate-security.php") {
+                    unset( $this->wp_files[$k] );
+                    continue;
+                }
+				if ( filesize(ABSPATH . $file) > (400 * 1024) ) {
+					unset( $this->wp_files[$k] );
+				}
+			}
+            $total = count($this->wp_files);
+            $options = array(
+            'total'=>$total,
+            );
+            set_transient('wp_ultimate_security_checker_utility', $options, 3600);
 
- 
-    					}
-    				}
-    		}
-            if (sizeof($this->wp_files_checks_result)>0)
-                return False;
-            else
-                return True;
         }
-        $this->wp_files_checks_result[] = "<div class=\"danger-found\"><strong>Error: Code check is incomplete - please rerun tests.</strong></div>";
-        return False;
+        for ($i=1;$i<=100;$i++) {
+            if ($file = array_shift($this->wp_files)) {
+				$contents = file( ABSPATH . $file );
+				foreach ( $contents as $n => $line ) {
+					foreach ( $patterns as $pattern => $description ) {
+						$test = preg_replace_callback( $pattern, array( &$this, 'replace' ), $line );
+						if ( $line !== $test )
+                        $this->wp_files_checks_result[$file][] = "<div class=\"danger-found\"><strong>Line " . ($n+1) . ":</strong><pre>".$this->highlight_matches(esc_html($test))."</pre><span class=\"danger-description\">".$description."</span></div>";
+
+
+					}
+				}
+            }else
+                break;
+		}
+        
+        $utility = get_transient('wp_ultimate_security_checker_utility');
+        $scanned_count = intval($utility['total']) - count($this->wp_files);
+        $data = "Scanned $scanned_count from {$utility['total']} files...";
+		if (count($this->wp_files) > 0 ) {
+            set_transient( 'wp_ultimate_security_checker_wp_files', $this->wp_files, 3600 );
+            set_transient( 'wp_ultimate_security_checker_files_issues', $this->wp_files_checks_result, 3600 );
+            return array('status'=>'processing', 'data'=>$data);
+		} else {
+			if (sizeof($this->wp_files_checks_result)>0){
+                update_option( 'wp_ultimate_security_checker_files_issues', $this->wp_files_checks_result);
+            }
+            delete_transient('wp_ultimate_security_checker_utility');
+            delete_transient('wp_ultimate_security_checker_wp_files');
+            delete_transient('wp_ultimate_security_checker_files_issues');
+            return array('status'=>'finished', 'data'=>$this->wp_files);
+		}
     //end function    
 	}
 
-	function run_test_26() {
+	function run_test_25() {
 		global $wpdb;
 
 	   $suspicious_post_text = array(
