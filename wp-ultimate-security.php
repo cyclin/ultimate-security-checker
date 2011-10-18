@@ -3,7 +3,7 @@
 Plugin Name: Ultimate Security Checker
 Plugin URI: http://www.ultimateblogsecurity.com/
 Description: Security plugin which performs all set of security checks on your WordPress installation.<br>Please go to <a href="tools.php?page=wp-ultimate-security.php">Tools->Ultimate Security Checker</a> to check your website.
-Version: 2.6.5
+Version: 2.7.0
 Author: Eugene Pyvovarov
 Author URI: http://www.ultimateblogsecurity.com/
 License: GPL2
@@ -109,8 +109,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
             </style>
             <h3 class="nav-tab-wrapper">
                     <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab">Run the Tests</a>
+                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">Files Analysis</a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab nav-tab-active">How to Fix</a>
-                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">Files Heuristic Analysis</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
             <style>
@@ -399,8 +399,8 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
     
                 <h3 class="nav-tab-wrapper">
                     <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab">Run the Tests</a>
+                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">Files Analysis</a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
-                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">Files Heuristic Analysis</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab nav-tab-active">Settings</a>
                 </h3>
     
@@ -671,13 +671,13 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
             <?php endif; ?>
             <h3 class="nav-tab-wrapper">
                     <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab">Run the Tests</a>
+                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab nav-tab-active">Files Analysis</a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
-                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab nav-tab-active">Files Heuristic Analysis</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
                 <a name="#top"></a>
                 <h2>Your blog files vulnerability scan results:</h2>
-                <span style="margin: 15xp; display: inline-block;">This scanner will test your blog on suspicious code patterns. Even if it finds something - it does not mean that code is malicious code actually. Also this test could stop respond or throw some errors. Anyway - all results of this test is NOT affect your blog security score. We provide it only for more complex security scaning.</span>
+                <span style="margin: 15xp; display: inline-block;">This scanner will test your blog on suspicious code patterns. Even if it finds something - it doesn't mean, that code is malicious code actually. Also, this test is in beta, so may stop responding. Results of this test <strong>DO NOT</strong> affect your blog security score. We provide it as additional scanning to find possible danger inclusions in your code.</span>
                 
                 <a style="float:left;margin-top:20px;font-weight:bold;" href="#" class="button-primary" id="run-scanner">Scan my blog files now!</a>
                 <div class="clear"></div>
@@ -715,7 +715,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                 <!-- security-check -->
                 <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
                 <p>
-                    You need to run checks more often using this plugin or <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">register at our service</a> to receive emails after weekly checks and fix all this stuff automatically. 
+                    You need to run checks more often using this plugin or <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">register at our service</a> to receive emails after weekly checks and fix your issues automatically. 
                 </p>
                 <!-- end security-check -->
                 <div class="clear"></div>
@@ -854,8 +854,8 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
             </style>
             <h3 class="nav-tab-wrapper">
                     <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab nav-tab-active">Run the Tests</a>
+                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">Files Analysis</a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
-                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">Files Heuristic Analysis</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
             <!-- <p>We are checking your blog for security right now. We won't do anything bad to your blog, relax :)</p> -->

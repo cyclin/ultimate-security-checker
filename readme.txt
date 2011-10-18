@@ -3,7 +3,7 @@ Contributors: bsndev
 Tags: security, administration, admin, database
 Requires at least: 2.8
 Tested up to: 3.2.1
-Stable tag: 2.6.5
+Stable tag: 2.7.0
 
 Plugin helps you identify security problems with your wordpress installation. It scans your blog and give a security grade based on passed tests.
 
@@ -102,3 +102,8 @@ Our plugin and service is designed to be used by anyone from a complete newbie t
 * added serach of suspicious code patterns in wp core, themes and plugin files.
 * added search of suspicious code patterns in posts and comments.
 * added report pages for new tests.
+
+= 2.7.0 =
+* we separated file check in different tab
+* FIX main test don't go out of memory or time limit
+* added settings page(notifications settings can be changed and facebook like block can be disabled)
