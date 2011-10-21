@@ -820,15 +820,21 @@ class SecurityCheck {
     public function run_test_24(){
             
             global $wp_version;
-            
+            global $wp_local_package;
             unset( $filehashes );
 			$hashes = dirname(__FILE__) . '/hashes/hashes-'. $wp_version .'.php';
-			if ( file_exists( $hashes ) )
+            $localisations = dirname(__FILE__) . '/hashes/hashes-'. $wp_version .'_international.php';
+			if ( file_exists( $hashes ) ){
 				include( $hashes );
-			else{
+                include( $localisations );
+			}else{
                 return False;
 			}
-	
+            
+            if (isset($$wp_local_package)) {
+                $filehashes = array_merge($filehashes, $$wp_local_package);
+            }
+        
 			$this->recurse_directory( ABSPATH );
 
 			foreach( $this->wp_files as $k => $file ) {
@@ -841,7 +847,6 @@ class SecurityCheck {
 						continue;
 					} else {
 				        $diffs[$file][] = $this->get_file_diff($file);
-                        //$diffs[] = $file;
 					}
 				}
                 //for avoiding false alerts in 25 test
@@ -869,8 +874,6 @@ class SecurityCheck {
                     );
             		return False;
             }
-			
-		return $diffs;
     //end function    
     }
     public function run_heuristic_check() {
@@ -904,7 +907,7 @@ class SecurityCheck {
             unset( $filehashes );
             
             $hashes = dirname(__FILE__) . '/hashes/hashes-'. $wp_version .'.php';
-			if ( file_exists( $hashes ) )
+            if ( file_exists( $hashes ) )
 				include( $hashes );
 			else{
                 return array('status'=>'error', 'data'=>'Hashes file not found!');
