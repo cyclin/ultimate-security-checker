@@ -834,6 +834,23 @@ class SecurityCheck {
             if (isset($$wp_local_package)) {
                 $filehashes = array_merge($filehashes, $$wp_local_package);
             }
+
+            if ((!isset($$wp_local_package)) && (isset($wp_local_package))) {
+                unset(
+                $filehashes['license.txt'],
+                $filehashes['wp-config-sample.php'],
+                $filehashes['readme.html'],
+                $filehashes['wp-includes/version.php'],
+                $filehashes['wp-includes/ms-settings.php'],
+                $filehashes['wp-includes/functions.php'],
+                $filehashes['wp-includes/ms-load.php'],
+                $filehashes['wp-includes/wp-db.php'],
+                $filehashes['wp-includes/default-constants.php'],
+                $filehashes['wp-includes/load.php'],
+                $filehashes['wp-load.php'],
+                $filehashes['wp-admin/setup-config.php']
+                );
+            }
         
 			$this->recurse_directory( ABSPATH );
 
