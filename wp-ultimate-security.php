@@ -3,7 +3,7 @@
 Plugin Name: Ultimate Security Checker
 Plugin URI: http://www.ultimateblogsecurity.com/
 Description: Security plugin which performs all set of security checks on your WordPress installation.<br>Please go to <a href="tools.php?page=wp-ultimate-security.php">Tools->Ultimate Security Checker</a> to check your website.
-Version: 2.7.0
+Version: 2.7.2
 Author: Eugene Pyvovarov
 Author URI: http://www.ultimateblogsecurity.com/
 License: GPL2
@@ -113,6 +113,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab nav-tab-active">How to Fix</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
+			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
+				Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
+				<a style="color:#e05b3c;text-decoration:underline;" href="http://wordpress.org/extend/plugins/wp-appstore/" target="_blank">Check it out!</a>
+			</p>
             <style>
             pre {
                 padding:10px;
@@ -403,7 +407,10 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab nav-tab-active">Settings</a>
                 </h3>
-    
+    			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
+					Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
+					<a style="color:#e05b3c;text-decoration:underline;" href="http://wordpress.org/extend/plugins/wp-appstore/" target="_blank">Check it out!</a>
+				</p>
                 <style>
                 pre {
                     padding:10px;
@@ -675,6 +682,10 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
+			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
+				Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
+				<a style="color:#e05b3c;text-decoration:underline;" href="http://wordpress.org/extend/plugins/wp-appstore/" target="_blank">Check it out!</a>
+			</p>
                 <a name="#top"></a>
                 <h2>Your blog files vulnerability scan results:</h2>
                 <span style="margin: 15xp; display: inline-block;">This scanner will test your blog on suspicious code patterns. Even if it finds something - it doesn't mean, that code is malicious code actually. Also, this test is in beta, so may stop responding. Results of this test <strong>DO NOT</strong> affect your blog security score. We provide it as additional scanning to find possible danger inclusions in your code.</span>
@@ -858,6 +869,10 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
+			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
+				Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
+				<a style="color:#e05b3c;text-decoration:underline;" href="http://wordpress.org/extend/plugins/wp-appstore/" target="_blank">Check it out!</a>
+			</p>
             <!-- <p>We are checking your blog for security right now. We won't do anything bad to your blog, relax :)</p> -->
             <div id="test_results">
              <?php 
