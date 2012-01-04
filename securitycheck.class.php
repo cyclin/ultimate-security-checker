@@ -209,6 +209,13 @@ class SecurityCheck {
             'category' => 'db',
             'callback' => 'run_test_25'
         ),
+        array(
+            'id' => 26,
+            'title' => 'Core files check cancelled. Please wait till update of this plugin.',
+            'points' => 1,
+            'category' => 'code',
+            'callback' => 'run_test_26'
+        ),
     );
     
     public $categories = array(
@@ -828,7 +835,7 @@ class SecurityCheck {
 				include( $hashes );
                 include( $localisations );
 			}else{
-                return False;
+                return True;
 			}
             
             if (isset($$wp_local_package)) {
@@ -893,6 +900,7 @@ class SecurityCheck {
             }
     //end function    
     }
+    
     public function run_heuristic_check() {
         global $wp_version;
         
@@ -1041,6 +1049,15 @@ class SecurityCheck {
         }
     //end function
 	}
+    
+    public function run_test_26() {
+            global $wp_version;
+			if ( file_exists( dirname(__FILE__) . '/hashes/hashes-'. $wp_version .'.php' ) ){
+				return True;
+			}else{
+                return False;
+			}
+    }
     
 //end class
 }
