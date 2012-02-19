@@ -113,10 +113,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab nav-tab-active">How to Fix</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
-			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
+<!--			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
 				Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
 				<a style="color:#e05b3c;text-decoration:underline;" href="http://wordpress.org/extend/plugins/wp-appstore/" target="_blank">Check it out!</a>
-			</p>
+			</p>-->
             <style>
             pre {
                 padding:10px;
@@ -241,7 +241,7 @@ add_filter( 'the_generator', 'no_generator' );"); ?></pre>
                 
                 <h3>Removing unnecessary error messages on failed log-ins.<a name="code-edits-login"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
                 <p>
-                    As per default WordPress will show you what was wrong with your login credentials - login or password. This will allow hackers to start broot forcing your password once they know the login.
+                    By default WordPress will show you what was wrong with your login credentials - login or password. This will allow hackers to start a brute force attack to get your password once they know the login.
                 </p>
                 <p>
                     Add few lines of code to functions.php in your current theme:
@@ -284,7 +284,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     According to <a href="http://codex.wordpress.org/Hardening_WordPress#Securing_wp-config.php">WordPress Codex</a> you should change rights to wp-config.php to 400 or 440 to lock it from other users.
                 </p>
                 <p>
-                    In real life a lot of hosts won't allow you to set last digit to 0, because they configured their webservers the wrong way. Be careful hosting on web hostings like this.
+                    In real life a lot of hosts won't allow you to set the last digit to 0, because they configured their webservers the wrong way. Be careful hosting on web hostings like this.
                 </p>
                 <!-- end config-rights -->
                 <!-- rights-htaccess -->
@@ -341,12 +341,10 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 </p>
                 <!-- end server-config -->
                 <!-- security-check -->
-                <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+                <h3>Keep your blog secure with automated checks.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
                 <p>
-                    As you see - a lot of fixes are going through changes in your current theme files and can be overwritten by theme or wordpress upgrade and issues will appear again.
-                </p>
-                <p>
-                    You need to run checks more often using this plugin or <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">register at our service</a> to receive emails after weekly checks and fix all this stuff automatically. 
+                    A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.</p>
+					<p>We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:<br><a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
                 </p>
                 <!-- end security-check -->
                 </div>
@@ -403,14 +401,14 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
     
                 <h3 class="nav-tab-wrapper">
                     <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab">Run the Tests</a>
-                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">Files Analysis</a>
+                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">File Analysis</a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab nav-tab-active">Settings</a>
                 </h3>
-    			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
+<!--    			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
 					Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
 					<a style="color:#e05b3c;text-decoration:underline;" href="http://wordpress.org/extend/plugins/wp-appstore/" target="_blank">Check it out!</a>
-				</p>
+				</p> -->
                 <style>
                 pre {
                     padding:10px;
@@ -441,17 +439,18 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <ul>
                     <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 14) echo 'checked="checked"';?> value="w" name="rescan" />2 weeks</li>
                     <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 30) echo 'checked="checked"';?> value="m" name="rescan" />1 month</li>
-                    <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 0) echo 'checked="checked"';?> value="n" name="rescan" />Newer remind</li>
+                    <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 0) echo 'checked="checked"';?> value="n" name="rescan" />Never remind me</li>
                     <li><input type="submit" value="Save Settings" /></li>
                     </ul>
                     </form>
                     <div class="clear"></div>
                     
                     <!-- security-check -->
-                    <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
-                    <p>
-                        You need to run checks more often using this plugin or <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">register at our service</a> to receive emails after weekly checks and fix all this stuff automatically. 
-                    </p>
+	                <h3>Keep your blog secure with automated checks.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+	                <p>
+	                    A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.</p>
+						<p>We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:<br> <a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
+	                </p>
                     <!-- end security-check -->
                     <div class="clear"></div>
                     </div>
@@ -509,7 +508,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             </style>
 
             <h3 class="nav-tab-wrapper">
-                <a href="?page=ultimate-security-checker&tab=run-the-tests" style="text-decoration: none;">&lt;- Back to Tests results</a>
+                <a href="?page=ultimate-security-checker&tab=run-the-tests" style="text-decoration: none;">&lt;- Back to Test results</a>
             </h3>
 
             <style>
@@ -530,7 +529,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 <a name="#top"></a>
                 <h2>Your blog core files check results:</h2>
                 <?php if ($core_tests_results['diffs']): ?>
-                <h3>Some files from the core of your blog have been changed. Files and lines different from original wordpress core files:</h3>
+                <h3>Some files from the core of your blog have been changed. Files and lines different from original WordPress core files:</h3>
                 <?php
                     $i = 1; 
                     foreach($core_tests_results['diffs'] as $filename => $lines){
@@ -565,9 +564,10 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 <!-- end hashes -->
                 
                 <!-- security-check -->
-                <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+                <h3>Keep your blog secure with automated checks.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
                 <p>
-                    You need to run checks more often using this plugin or <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">register at our service</a> to receive emails after weekly checks and fix all this stuff automatically. 
+                    A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.</p>
+					<p>We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:<br><a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
                 </p>
                 <!-- end security-check -->
                 <div class="clear"></div>
@@ -682,10 +682,10 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
-			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
+<!--			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
 				Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
 				<a style="color:#e05b3c;text-decoration:underline;" href="http://wordpress.org/extend/plugins/wp-appstore/" target="_blank">Check it out!</a>
-			</p>
+			</p>-->
                 <a name="#top"></a>
                 <h2>Your blog files vulnerability scan results:</h2>
                 <span style="margin: 15xp; display: inline-block;">This scanner will test your blog on suspicious code patterns. Even if it finds something - it doesn't mean, that code is malicious code actually. Also, this test is in beta, so may stop responding. Results of this test <strong>DO NOT</strong> affect your blog security score. We provide it as additional scanning to find possible danger inclusions in your code.</span>
@@ -724,9 +724,10 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                 </div>
                 </div>
                 <!-- security-check -->
-                <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+                <h3>Keep your blog secure with automated checks.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
                 <p>
-                    You need to run checks more often using this plugin or <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">register at our service</a> to receive emails after weekly checks and fix your issues automatically. 
+                    A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.</p>
+					<p>We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:<br><a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
                 </p>
                 <!-- end security-check -->
                 <div class="clear"></div>
@@ -828,9 +829,10 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                 
                 
                 <!-- security-check -->
-                <h3>How to keep everything secured?.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
+                <h3>Keep your blog secure with automated checks.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
                 <p>
-                    You need to run checks more often using this plugin or <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">register at our service</a> to receive emails after weekly checks and fix all this stuff automatically. 
+                    A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.</p>
+					<p>We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:<br><a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
                 </p>
                 <!-- end security-check -->
                 </div>
@@ -869,10 +871,10 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
             </h3>
-			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
+<!--			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
 				Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
 				<a style="color:#e05b3c;text-decoration:underline;" href="http://wordpress.org/extend/plugins/wp-appstore/" target="_blank">Check it out!</a>
-			</p>
+			</p>-->
             <!-- <p>We are checking your blog for security right now. We won't do anything bad to your blog, relax :)</p> -->
             <div id="test_results">
              <?php 

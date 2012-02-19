@@ -417,8 +417,8 @@ class SecurityCheck {
         ?>
         <p style="margin:0 10px 10px 70px;">
         <a style="float:right;margin-top:20px;font-weight:bold;" href="?page=ultimate-security-checker&tab=run-the-tests&dotest" class="button-primary">Run the tests again!</a>
-        The most recent test was taken on <b><?php echo date('d M, Y', get_option( 'wp_ultimate_security_checker_lastcheck')); ?></b>. <br>Your blog earns <b><?php echo $this->earned_points?> of <?php echo $this->total_possible_points?></b> security points. <br /><?php echo $result_messages[$letter]; ?> <br />
-        If you need a help in fixing these issues <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">contact us</a>.</p>
+        The most recent test was taken on <b><?php echo date('d M, Y', get_option( 'wp_ultimate_security_checker_lastcheck')); ?></b>. <br>Your blog earned <b><?php echo $this->earned_points?> of <?php echo $this->total_possible_points?></b> security points. <br /><?php echo $result_messages[$letter]; ?> <br />
+        We have a service which can automate the fix of some of these. <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin_results_link">Click Here to try it.</a></p>
         </div>
         <?php
     }
