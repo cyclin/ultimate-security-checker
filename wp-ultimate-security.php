@@ -3,7 +3,7 @@
 Plugin Name: Ultimate Security Checker
 Plugin URI: http://www.ultimateblogsecurity.com/
 Description: Security plugin which performs all set of security checks on your WordPress installation.<br>Please go to <a href="tools.php?page=wp-ultimate-security.php">Tools->Ultimate Security Checker</a> to check your website.
-Version: 2.7.4
+Version: 2.7.5
 Author: Eugene Pyvovarov
 Author URI: http://www.ultimateblogsecurity.com/
 License: GPL2
