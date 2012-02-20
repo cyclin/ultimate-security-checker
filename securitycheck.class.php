@@ -32,6 +32,9 @@ class SecurityCheck {
     public $wp_files = array();
     public $wp_files_checks_result = array();
     public $wp_db_check_results = array();
+    
+    public $wp_content_dir = '';
+    public $wp_plugins_dir = '';
 
     public $all_issues = array(
         array(
@@ -235,6 +238,7 @@ class SecurityCheck {
         array_shift($version);
         $ver = $ver . implode($version);
         $this->_wp_version = floatval($ver);
+        $this->get_defined_filesystem_constants();
     }
     
     private function gen_random_string($len) {
@@ -413,8 +417,8 @@ class SecurityCheck {
         ?>
         <p style="margin:0 10px 10px 70px;">
         <a style="float:right;margin-top:20px;font-weight:bold;" href="?page=ultimate-security-checker&tab=run-the-tests&dotest" class="button-primary">Run the tests again!</a>
-        The most recent test was taken on <b><?php echo date('d M, Y', get_option( 'wp_ultimate_security_checker_lastcheck')); ?></b>. <br>Your blog earns <b><?php echo $this->earned_points?> of <?php echo $this->total_possible_points?></b> security points. <br /><?php echo $result_messages[$letter]; ?> <br />
-        If you need a help in fixing these issues <a href="http://www.ultimateblogsecurity.com/?campaignid=plugin">contact us</a>.</p>
+        The most recent test was taken on <b><?php echo date('d M, Y', get_option( 'wp_ultimate_security_checker_lastcheck')); ?></b>. <br>Your blog earned <b><?php echo $this->earned_points?> of <?php echo $this->total_possible_points?></b> security points. <br /><?php echo $result_messages[$letter]; ?> <br />
+        We have a service which can automate the fix of some of these. <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin_results_link">Click Here to try it.</a></p>
         </div>
         <?php
     }
@@ -456,6 +460,36 @@ class SecurityCheck {
                 $this->earned_points += $one['points'];
             }
         }
+    }
+    
+    public function get_defined_filesystem_constants(){
+        $wp_content_dir = '';
+        $wp_plugins_dir = '';
+        if(defined(WP_CONTENT_DIR)){
+            if(is_dir(WP_CONTENT_DIR))
+                $this->wp_content_dir = WP_CONTENT_DIR;
+            else
+                $this->wp_content_dir = ABSPATH . 'wp-content';
+        }else
+            $this->wp_content_dir = ABSPATH . 'wp-content';
+        if (is_multisite()) {
+            if (defined(WPMU_PLUGIN_DIR)){
+                if(is_dir(WPMU_PLUGIN_DIR))
+                    $this->wp_plugins_dir = WPMU_PLUGIN_DIR;
+                else
+                    $this->wp_plugins_dir = $this->wp_content_dir . '/mu-plugins';
+            }else
+                $this->wp_plugins_dir = $this->wp_content_dir . '/mu-plugins';
+        }else{
+            if(defined(WP_PLUGIN_DIR)){
+                if(is_dir(WP_PLUGIN_DIR))
+                    $this->wp_plugins_dir = WP_PLUGIN_DIR;
+                else
+                    $this->wp_plugins_dir = $this->wp_content_dir . '/plugins';
+            }else
+                $this->wp_plugins_dir = $this->wp_content_dir . '/plugins';   
+        }
+        
     }
     
     public function run_tests(){
@@ -632,16 +666,18 @@ class SecurityCheck {
             }
         }
     }
+    
     public function run_test_9(){
         if(file_exists( ABSPATH . '/readme.html' )){
             return False;
-        } 
+        }
         return True;
     }
+    
     public function run_test_10(){
         if(file_exists( ABSPATH . 'wp-admin/install.php' )){
             return False;
-        } 
+        }
         return True;
     }
     
@@ -712,7 +748,7 @@ class SecurityCheck {
     }
     public function run_test_15(){
         //check wp-content
-		$file = ABSPATH . '/wp-content/';
+		$file = $this->wp_content_dir . '/';
 		if ( file_exists( $file ) ) {
 			$perms = $this->get_permissions($file);
 			if(in_array($perms, array(755, 775, 777))){
@@ -724,7 +760,7 @@ class SecurityCheck {
     }
     public function run_test_16(){
         //check themes
-		$file = ABSPATH . '/wp-content/themes/';
+		$file = $this->wp_content_dir . '/themes/';
 		if ( file_exists( $file ) ) {
 			$perms = $this->get_permissions($file);
 			if(in_array($perms, array(755, 775))){
@@ -736,7 +772,7 @@ class SecurityCheck {
     }
     public function run_test_17(){
         //check plugins
-		$file = ABSPATH . '/wp-content/plugins/';
+		$file = $this->wp_plugins_dir . '/';
 		if ( file_exists( $file ) ) {
 			$perms = $this->get_permissions($file);
 			if(in_array($perms, array(755, 775))){
