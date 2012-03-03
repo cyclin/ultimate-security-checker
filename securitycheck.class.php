@@ -963,6 +963,7 @@ class SecurityCheck {
         '/\$allowedSites\s*=\s*array\s*\(/i' => 'Signature of Uploadify hack',
 		'/String\.fromCharCode/i' => 'JavaScript sometimes used to hide suspicious code',
 		'/preg_replace\s*\(\s*(["\'])(.).*(?<!\\\\)(?>\\\\\\\\)*\\2([a-z]|\\\x[0-9]{2})*(e|\\\x65)([a-z]|\\\x[0-9]{2})*\\1/si' => 'The e modifier in preg_replace can be used to execute malicious code' ,
+        '/\\\x63\\\x72\\\x65\\\x61\\\x74\\\x65\\\x5f\\\x66/i'=>'Signature of UTF8GAT.PHP Backdoor <a href="http://blog.sucuri.net/2012/03/dangerous-backdoors-utf8gat.html">[1]</a>',
         //'/(<a)(\\s+)(href(\\s*)=(\\s*)\"(\\s*)((http|https|ftp):\\/\\/)?)([[:alnum:]\-\.])+(\\.)([[:alnum:]]){2,4}([[:blank:][:alnum:]\/\+\=\%\&\_\\\.\~\?\-]*)(\"(\\s*)[[:blank:][:alnum:][:punct:]]*(\\s*)>)[[:blank:][:alnum:][:punct:]]*(<\\/a>)/is' => 'Hardcoded hyperlinks in code is not a real threat, but they may lead to phishing websites.',
         );
         $this->wp_files = get_transient('wp_ultimate_security_checker_wp_files');
