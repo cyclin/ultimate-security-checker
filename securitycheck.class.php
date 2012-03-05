@@ -39,182 +39,182 @@ class SecurityCheck {
     public $all_issues = array(
         array(
             'id' => 1,
-            'title' => 'Some installed plugins have updates.',
+            'title' => __('Some installed plugins have updates.'),
             'points' => 5,
             'category' => 'updates',
             'callback' => 'run_test_1'
         ),
         array(
             'id' => 2,
-            'title' => 'Some installed themes have updates.',
+            'title' => __('Some installed themes have updates.'),
             'points' => 5,
             'category' => 'updates',
             'callback' => 'run_test_2'
         ),
         array(
             'id' => 3,
-            'title' => 'Your WordPress version is outdated.',
+            'title' => __('Your WordPress version is outdated.'),
             'points' => 10,
             'category' => 'updates',
             'callback' => 'run_test_3'
         ),
         array(
             'id' => 4,
-            'title' => 'Config file is located in an unsecured place.',
+            'title' => __('Config file is located in an unsecured place.'),
             'points' => 3,
             'category' => 'config',
             'callback' => 'run_test_4'
         ),
         array(
             'id' => 5,
-            'title' => 'Some of keys AUTH_KEY, SECURE_AUTH_KEY, LOGGED_IN_KEY, NONCE_KEY are not set.',
+            'title' => __('Some of keys AUTH_KEY, SECURE_AUTH_KEY, LOGGED_IN_KEY, NONCE_KEY are not set.'),
             'points' => 5,
             'category' => 'config',
             'callback' => 'run_test_5'
         ),
         array(
             'id' => 6,
-            'title' => 'It\'s better to turn off the file editor for plugins and themes in WordPress admin.',
+            'title' => __('It\'s better to turn off the file editor for plugins and themes in WordPress admin.'),
             'points' => 2,
             'category' => 'config',
             'callback' => 'run_test_6'
         ),
         array(
             'id' => 7,
-            'title' => 'WP_DEBUG option should be turned off on LIVE website.',
+            'title' => __('WP_DEBUG option should be turned off on LIVE website.'),
             'points' => 3,
             'category' => 'config',
             'callback' => 'run_test_7'
         ),
         array(
             'id' => 8,
-            'title' => 'Users can see the version of WordPress you are running.',
+            'title' => __('Users can see the version of WordPress you are running.'),
             'points' => 3,
             'category' => 'code',
             'callback' => 'run_test_8'
         ),
         array(
             'id' => 9,
-            'title' => 'Users can see the version of WordPress you are running from the readme.html file.',
+            'title' => __('Users can see the version of WordPress you are running from the readme.html file.'),
             'points' => 3,
             'category' => 'code',
             'callback' => 'run_test_9'
         ),
         array(
             'id' => 10,
-            'title' => 'Installation script is still available in your WordPress files.',
+            'title' => __('Installation script is still available in your WordPress files.'),
             'points' => 3,
             'category' => 'code',
             'callback' => 'run_test_10'
         ),
         array(
             'id' => 11,
-            'title' => 'WordPress displays unnecessary error messages on failed log-ins.',
+            'title' => __('WordPress displays unnecessary error messages on failed log-ins.'),
             'points' => 3,
             'category' => 'code',
             'callback' => 'run_test_11'
         ),
         array(
             'id' => 12,
-            'title' => 'Your blog can be hacked with malicious URL requests.',
+            'title' => __('Your blog can be hacked with malicious URL requests.'),
             'points' => 6,
             'category' => 'code',
             'callback' => 'run_test_12'
         ),
         array(
             'id' => 13,
-            'title' => 'Your wp-config.php is readable\writeable by others!',
+            'title' => __('Your wp-config.php is readable\writeable by others!'),
             'points' => 5,
             'category' => 'files',
             'callback' => 'run_test_13'
         ),
         array(
             'id' => 14,
-            'title' => 'Your .htaccess is unsecured!',
+            'title' => __('Your .htaccess is unsecured!'),
             'points' => 5,
             'category' => 'files',
             'callback' => 'run_test_14'
         ),
         array(
             'id' => 15,
-            'title' => 'Insufficient rights on wp-content folder!',
+            'title' => __('Insufficient rights on wp-content folder!'),
             'points' => 5,
             'category' => 'files',
             'callback' => 'run_test_15'
         ),
         array(
             'id' => 16,
-            'title' => 'Insufficient rights on wp-content/themes folder!',
+            'title' => __('Insufficient rights on wp-content/themes folder!'),
             'points' => 5,
             'category' => 'files',
             'callback' => 'run_test_16'
         ),
         array(
             'id' => 17,
-            'title' => 'Insufficient rights on wp-content/plugins folder!',
+            'title' => __('Insufficient rights on wp-content/plugins folder!'),
             'points' => 5,
             'category' => 'files',
             'callback' => 'run_test_17'
         ),
         array(
             'id' => 18,
-            'title' => 'Insufficient rights on core wordpress folders!',
+            'title' => __('Insufficient rights on core wordpress folders!'),
             'points' => 5,
             'category' => 'files',
             'callback' => 'run_test_18'
         ),
         array(
             'id' => 19,
-            'title' => 'Default admin login is not safe.',
+            'title' => __('Default admin login is not safe.'),
             'points' => 5,
             'category' => 'db',
             'callback' => 'run_test_19'
         ),
         array(
             'id' => 20,
-            'title' => 'Default database prefix is not safe.',
+            'title' => __('Default database prefix is not safe.'),
             'points' => 3,
             'category' => 'db',
             'callback' => 'run_test_20'
         ),
         array(
             'id' => 21,
-            'title' => 'Your uploads directory is browsable from the web.',
+            'title' => __('Your uploads directory is browsable from the web.'),
             'points' => 5,
             'category' => 'server',
             'callback' => 'run_test_21'
         ),
         array(
             'id' => 22,
-            'title' => 'Your server shows the PHP version in response.',
+            'title' => __('Your server shows the PHP version in response.'),
             'points' => 5,
             'category' => 'server',
             'callback' => 'run_test_22'
         ),
         array(
             'id' => 23,
-            'title' => 'Your server shows too much information about installed software.',
+            'title' => __('Your server shows too much information about installed software.'),
             'points' => 5,
             'category' => 'server',
             'callback' => 'run_test_23'
         ),
         array(
             'id' => 24,
-            'title' => 'Some of blog core files have been changed. <a href="?page=ultimate-security-checker&tab=core-files">View Report</a>',
+            'title' => __('Some of blog core files have been changed. <a href="?page=ultimate-security-checker&tab=core-files">View Report</a>'),
             'points' => 5,
             'category' => 'code',
             'callback' => 'run_test_24'
         ),
         array(
             'id' => 25,
-            'title' => 'You have some suspicious code in your posts and/or comments. <a href="?page=ultimate-security-checker&tab=wp-posts">View Report</a>',
+            'title' => __('You have some suspicious code in your posts and/or comments. <a href="?page=ultimate-security-checker&tab=wp-posts">View Report</a>'),
             'points' => 5,
             'category' => 'db',
             'callback' => 'run_test_25'
         ),
         array(
             'id' => 26,
-            'title' => 'Core files check cancelled. Please wait till update of this plugin.',
+            'title' => __('Core files check cancelled. Please wait till update of this plugin.'),
             'points' => 1,
             'category' => 'code',
             'callback' => 'run_test_26'
@@ -222,12 +222,12 @@ class SecurityCheck {
     );
     
     public $categories = array(
-        'updates' => 'Check for updates',
-        'config' => 'Check configuration file',
-        'code' => 'Code check',
-        'files' => 'Files & folders permission check',
-        'db' => 'Database check',
-        'server' => 'Server configuration check'
+        'updates' => __('Check for updates'),
+        'config' => __('Check configuration file'),
+        'code' => __('Code check'),
+        'files' => __('Files & folders permission check'),
+        'db' => __('Database check'),
+        'server' => __('Server configuration check')
     );
     
     public function __construct(){
@@ -276,7 +276,7 @@ class SecurityCheck {
     	// core file names have a limited character set
     	$file = preg_replace( '#[^a-zA-Z0-9/_.-]#', '', $file );
     	if ( empty( $file ) || ! is_file( ABSPATH . $file ) )
-    		return '<p>Sorry, an error occured. This file might not exist!</p>';
+    		return __('<p>Sorry, an error occured. This file might not exist!</p>');
     
     	$key = $wp_version . '-' . $file;
     	$cache = get_option( 'source_files_cache' );
@@ -284,7 +284,7 @@ class SecurityCheck {
     		$url = "http://core.svn.wordpress.org/tags/$wp_version/$file";
     		$response = wp_remote_get( $url );
     		if ( is_wp_error( $response ) || 200 != $response['response']['code'] )
-    			return '<p>Sorry, an error occured. Please try again later.</p>';
+    			return __('<p>Sorry, an error occured. Please try again later.</p>');
     
     		$clean = $response['body'];
     
@@ -341,7 +341,7 @@ class SecurityCheck {
     }
     public function display_stats_by_categories($categories){
         if($this->test_results === False){
-            echo '<p>No test results yet</p>';
+            _e('<p>No test results yet</p>');
             return False;
         }
         foreach($categories as $cat_title=>$cat_description){
@@ -408,17 +408,17 @@ class SecurityCheck {
         </div>
         <?php
             $result_messages = array(
-                'A' => 'You\'re doing very well. Your blog is currently secure.',
-                'B' => 'Some security issues. These issues are not critical, but leave you vulnerable. ',
-                'C' => 'A few security issues. Fix them immediately to prevent attacks. ',
-                'D' => 'Some medium sized security holes have been found in your blog. ',
-                'F' => 'Fix your security issues immediately! '
+                'A' => __('You\'re doing very well. Your blog is currently secure.'),
+                'B' => __('Some security issues. These issues are not critical, but leave you vulnerable. '),
+                'C' => __('A few security issues. Fix them immediately to prevent attacks. '),
+                'D' => __('Some medium sized security holes have been found in your blog. '),
+                'F' => __('Fix your security issues immediately! ')
             );
         ?>
         <p style="margin:0 10px 10px 70px;">
-        <a style="float:right;margin-top:20px;font-weight:bold;" href="?page=ultimate-security-checker&tab=run-the-tests&dotest" class="button-primary">Run the tests again!</a>
-        The most recent test was taken on <b><?php echo date('d M, Y', get_option( 'wp_ultimate_security_checker_lastcheck')); ?></b>. <br>Your blog earned <b><?php echo $this->earned_points?> of <?php echo $this->total_possible_points?></b> security points. <br /><?php echo $result_messages[$letter]; ?> <br />
-        We have a service which can automate the fix of some of these. <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin_results_link">Click Here to try it.</a></p>
+        <a style="float:right;margin-top:20px;font-weight:bold;" href="?page=ultimate-security-checker&tab=run-the-tests&dotest" class="button-primary"><?php _e('Run the tests again!'); ?></a>
+        <?php _e('The most recent test was taken on'); ?> <b><?php echo date('d M, Y', get_option( 'wp_ultimate_security_checker_lastcheck')); ?></b>. <br/><?php printf(__('Your blog earned <b>$s of $s</b> security points.'),$this->earned_points, $this->total_possible_points);?><?php echo $result_messages[$letter]; ?> <br />
+        <?php _e('We have a service which can automate the fix of some of these. <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin_results_link">Click Here to try it.</a>'); ?></p>
         </div>
         <?php
     }
@@ -941,30 +941,30 @@ class SecurityCheck {
         global $wp_version;
         
         $patterns = array(
-		'/(\$wpdb->|mysql_).+DROP/siU' => 'Possible database table deletion',
-		'/(echo|print|<\?=).+(\$GLOBALS|\$_SERVER|\$_GET|\$_REQUEST|\$_POST)/siU' => 'Possible output of restricted variables',
-		'/ShellBOT/i' => 'This may be a script used by hackers to get control of your server',
-		'/uname -a/i' => 'Tells a hacker what operating system your server is running',
-		'/YW55cmVzdWx0cy5uZXQ=/i' => 'base64 encoded text found in Search Engine Redirect hack <a href="http://blogbuildingu.com/wordpress/wordpress-search-engine-redirect-hack">[1]</a>' ,
-		'/eval\s*\(/i' => 'Often used to execute malicious code',
-		'/\$_COOKIE\[\'yahg\'\]/i' => 'YAHG Googlerank.info exploit code <a href="http://creativebriefing.com/wordpress-hacked-googlerankinfo/">[1]</a>',
-		'/ekibastos/i' => 'Possible Ekibastos attack <a href="http://ocaoimh.ie/did-your-wordpress-site-get-hacked/">[1]</a>',
-		'/base64_decode\s*\(/i' => 'Used by malicious scripts to decode previously obscured data/programs',
-		'/<script>\/\*(GNU GPL|LGPL)\*\/ try\{window.onload.+catch\(e\) \{\}<\/script>/siU' => 'Possible "Gumblar" JavaScript attack <a href="http://threatinfo.trendmicro.com/vinfo/articles/securityarticles.asp?xmlfile=042710-GUMBLAR.xml">[1]</a> <a href="http://justcoded.com/article/gumblar-family-virus-removal-tool/">[2]</a>',
-		'/php \$[a-zA-Z]*=\'as\';/i' => 'Symptom of the "Pharma Hack" <a href="http://blog.sucuri.net/2010/07/understanding-and-cleaning-the-pharma-hack-on-wordpress.html">[1]</a>',
-		'/defined?\(\'wp_class_support/i' => 'Symptom of the "Pharma Hack" <a href="http://blog.sucuri.net/2010/07/understanding-and-cleaning-the-pharma-hack-on-wordpress.html">[1]</a>' ,
-		'/str_rot13/i' => 'Decodes/encodes text using ROT13. Could be used to hide malicious code.',
-		'/uudecode/i' => 'Decodes text using uuencoding. Could be used to hide malicious code.',
-		//'/[^_]unescape/i' => 'JavaScript function to decode encoded text. Could be used to hide malicious code.',
-		'/<!--[A-Za-z0-9]+--><\?php/i' => 'Symptom of a link injection attack <a href="http://www.kyle-brady.com/2009/11/07/wordpress-mediatemple-and-an-injection-attack/">[1]</a>',
-		'/<iframe/i' => 'iframes are sometimes used to load unwanted adverts and code on your site',
-        '/TimThumb script created by Ben Gillbanks/i' => 'Signature of timthumb hack',
-        '/Uploadify v/i' => 'Signature of Uploadify hack',
-        '/\$allowedSites\s*=\s*array\s*\(/i' => 'Signature of Uploadify hack',
-		'/String\.fromCharCode/i' => 'JavaScript sometimes used to hide suspicious code',
-		'/preg_replace\s*\(\s*(["\'])(.).*(?<!\\\\)(?>\\\\\\\\)*\\2([a-z]|\\\x[0-9]{2})*(e|\\\x65)([a-z]|\\\x[0-9]{2})*\\1/si' => 'The e modifier in preg_replace can be used to execute malicious code' ,
-        '/\\\x63\\\x72\\\x65\\\x61\\\x74\\\x65\\\x5f\\\x66/i'=>'Signature of UTF8GAT.PHP Backdoor <a href="http://blog.sucuri.net/2012/03/dangerous-backdoors-utf8gat.html">[1]</a>',
-        //'/(<a)(\\s+)(href(\\s*)=(\\s*)\"(\\s*)((http|https|ftp):\\/\\/)?)([[:alnum:]\-\.])+(\\.)([[:alnum:]]){2,4}([[:blank:][:alnum:]\/\+\=\%\&\_\\\.\~\?\-]*)(\"(\\s*)[[:blank:][:alnum:][:punct:]]*(\\s*)>)[[:blank:][:alnum:][:punct:]]*(<\\/a>)/is' => 'Hardcoded hyperlinks in code is not a real threat, but they may lead to phishing websites.',
+		'/(\$wpdb->|mysql_).+DROP/siU' => __('Possible database table deletion'),
+		'/(echo|print|<\?=).+(\$GLOBALS|\$_SERVER|\$_GET|\$_REQUEST|\$_POST)/siU' => __('Possible output of restricted variables'),
+		'/ShellBOT/i' => __('This may be a script used by hackers to get control of your server'),
+		'/uname -a/i' => __('Tells a hacker what operating system your server is running'),
+		'/YW55cmVzdWx0cy5uZXQ=/i' => __('base64 encoded text found in Search Engine Redirect hack <a href="http://blogbuildingu.com/wordpress/wordpress-search-engine-redirect-hack">[1]</a>') ,
+		'/eval\s*\(/i' => __('Often used to execute malicious code'),
+		'/\$_COOKIE\[\'yahg\'\]/i' => __('YAHG Googlerank.info exploit code <a href="http://creativebriefing.com/wordpress-hacked-googlerankinfo/">[1]</a>'),
+		'/ekibastos/i' => __('Possible Ekibastos attack <a href="http://ocaoimh.ie/did-your-wordpress-site-get-hacked/">[1]</a>'),
+		'/base64_decode\s*\(/i' => __('Used by malicious scripts to decode previously obscured data/programs'),
+		'/<script>\/\*(GNU GPL|LGPL)\*\/ try\{window.onload.+catch\(e\) \{\}<\/script>/siU' => __('Possible "Gumblar" JavaScript attack <a href="http://threatinfo.trendmicro.com/vinfo/articles/securityarticles.asp?xmlfile=042710-GUMBLAR.xml">[1]</a> <a href="http://justcoded.com/article/gumblar-family-virus-removal-tool/">[2]</a>'),
+		'/php \$[a-zA-Z]*=\'as\';/i' => __('Symptom of the "Pharma Hack" <a href="http://blog.sucuri.net/2010/07/understanding-and-cleaning-the-pharma-hack-on-wordpress.html">[1]</a>'),
+		'/defined?\(\'wp_class_support/i' => __('Symptom of the "Pharma Hack" <a href="http://blog.sucuri.net/2010/07/understanding-and-cleaning-the-pharma-hack-on-wordpress.html">[1]</a>') ,
+		'/str_rot13/i' => __('Decodes/encodes text using ROT13. Could be used to hide malicious code.'),
+		'/uudecode/i' => __('Decodes text using uuencoding. Could be used to hide malicious code.'),
+		//'/[^_]unescape/i' => __('JavaScript function to decode encoded text. Could be used to hide malicious code.'),
+		'/<!--[A-Za-z0-9]+--><\?php/i' => __('Symptom of a link injection attack <a href="http://www.kyle-brady.com/2009/11/07/wordpress-mediatemple-and-an-injection-attack/">[1]</a>'),
+		'/<iframe/i' => __('iframes are sometimes used to load unwanted adverts and code on your site'),
+        '/TimThumb script created by Ben Gillbanks/i' => __('Signature of timthumb hack'),
+        '/Uploadify v/i' => __('Signature of Uploadify hack'),
+        '/\$allowedSites\s*=\s*array\s*\(/i' => __('Signature of Uploadify hack'),
+		'/String\.fromCharCode/i' => __('JavaScript sometimes used to hide suspicious code'),
+		'/preg_replace\s*\(\s*(["\'])(.).*(?<!\\\\)(?>\\\\\\\\)*\\2([a-z]|\\\x[0-9]{2})*(e|\\\x65)([a-z]|\\\x[0-9]{2})*\\1/si' => __('The e modifier in preg_replace can be used to execute malicious code') ,
+        '/\\\x63\\\x72\\\x65\\\x61\\\x74\\\x65\\\x5f\\\x66/i' => __('Signature of UTF8GAT.PHP Backdoor <a href="http://blog.sucuri.net/2012/03/dangerous-backdoors-utf8gat.html">[1]</a>'),
+        //'/(<a)(\\s+)(href(\\s*)=(\\s*)\"(\\s*)((http|https|ftp):\\/\\/)?)([[:alnum:]\-\.])+(\\.)([[:alnum:]]){2,4}([[:blank:][:alnum:]\/\+\=\%\&\_\\\.\~\?\-]*)(\"(\\s*)[[:blank:][:alnum:][:punct:]]*(\\s*)>)[[:blank:][:alnum:][:punct:]]*(<\\/a>)/is' => __('Hardcoded hyperlinks in code is not a real threat, but they may lead to phishing websites.'),
         );
         $this->wp_files = get_transient('wp_ultimate_security_checker_wp_files');
         $this->wp_files_checks_result = get_transient('wp_ultimate_security_checker_files_issues');
@@ -1037,12 +1037,12 @@ class SecurityCheck {
 		global $wpdb;
 
 	   $suspicious_post_text = array(
-            'eval\(' => 'Often used by hackers to execute malicious code',
-    		'<iframe' => 'iframes are sometimes used to load unwanted adverts and code on your site',
-    		'<noscript' => 'Could be used to hide spam in posts/comments',
-    		'display:' => 'Could be used to hide spam in posts/comments',
-    		'visibility:' => 'Could be used to hide spam in posts/comments',
-    		'<script' => 'Malicious scripts loaded in posts by hackers perform redirects, inject spam, etc.',
+            'eval\(' => __('Often used by hackers to execute malicious code'),
+    		'<iframe' => __('iframes are sometimes used to load unwanted adverts and code on your site'),
+    		'<noscript' => __('Could be used to hide spam in posts/comments'),
+    		'display:' => __('Could be used to hide spam in posts/comments'),
+    		'visibility:' => __('Could be used to hide spam in posts/comments'),
+    		'<script' => __('Malicious scripts loaded in posts by hackers perform redirects, inject spam, etc.'),
     	);
 
 		foreach ( $suspicious_post_text as $text => $description ) {
