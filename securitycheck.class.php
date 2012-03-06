@@ -36,199 +36,9 @@ class SecurityCheck {
     public $wp_content_dir = '';
     public $wp_plugins_dir = '';
 
-    public $all_issues = array(
-        array(
-            'id' => 1,
-            'title' => __('Some installed plugins have updates.'),
-            'points' => 5,
-            'category' => 'updates',
-            'callback' => 'run_test_1'
-        ),
-        array(
-            'id' => 2,
-            'title' => __('Some installed themes have updates.'),
-            'points' => 5,
-            'category' => 'updates',
-            'callback' => 'run_test_2'
-        ),
-        array(
-            'id' => 3,
-            'title' => __('Your WordPress version is outdated.'),
-            'points' => 10,
-            'category' => 'updates',
-            'callback' => 'run_test_3'
-        ),
-        array(
-            'id' => 4,
-            'title' => __('Config file is located in an unsecured place.'),
-            'points' => 3,
-            'category' => 'config',
-            'callback' => 'run_test_4'
-        ),
-        array(
-            'id' => 5,
-            'title' => __('Some of keys AUTH_KEY, SECURE_AUTH_KEY, LOGGED_IN_KEY, NONCE_KEY are not set.'),
-            'points' => 5,
-            'category' => 'config',
-            'callback' => 'run_test_5'
-        ),
-        array(
-            'id' => 6,
-            'title' => __('It\'s better to turn off the file editor for plugins and themes in WordPress admin.'),
-            'points' => 2,
-            'category' => 'config',
-            'callback' => 'run_test_6'
-        ),
-        array(
-            'id' => 7,
-            'title' => __('WP_DEBUG option should be turned off on LIVE website.'),
-            'points' => 3,
-            'category' => 'config',
-            'callback' => 'run_test_7'
-        ),
-        array(
-            'id' => 8,
-            'title' => __('Users can see the version of WordPress you are running.'),
-            'points' => 3,
-            'category' => 'code',
-            'callback' => 'run_test_8'
-        ),
-        array(
-            'id' => 9,
-            'title' => __('Users can see the version of WordPress you are running from the readme.html file.'),
-            'points' => 3,
-            'category' => 'code',
-            'callback' => 'run_test_9'
-        ),
-        array(
-            'id' => 10,
-            'title' => __('Installation script is still available in your WordPress files.'),
-            'points' => 3,
-            'category' => 'code',
-            'callback' => 'run_test_10'
-        ),
-        array(
-            'id' => 11,
-            'title' => __('WordPress displays unnecessary error messages on failed log-ins.'),
-            'points' => 3,
-            'category' => 'code',
-            'callback' => 'run_test_11'
-        ),
-        array(
-            'id' => 12,
-            'title' => __('Your blog can be hacked with malicious URL requests.'),
-            'points' => 6,
-            'category' => 'code',
-            'callback' => 'run_test_12'
-        ),
-        array(
-            'id' => 13,
-            'title' => __('Your wp-config.php is readable\writeable by others!'),
-            'points' => 5,
-            'category' => 'files',
-            'callback' => 'run_test_13'
-        ),
-        array(
-            'id' => 14,
-            'title' => __('Your .htaccess is unsecured!'),
-            'points' => 5,
-            'category' => 'files',
-            'callback' => 'run_test_14'
-        ),
-        array(
-            'id' => 15,
-            'title' => __('Insufficient rights on wp-content folder!'),
-            'points' => 5,
-            'category' => 'files',
-            'callback' => 'run_test_15'
-        ),
-        array(
-            'id' => 16,
-            'title' => __('Insufficient rights on wp-content/themes folder!'),
-            'points' => 5,
-            'category' => 'files',
-            'callback' => 'run_test_16'
-        ),
-        array(
-            'id' => 17,
-            'title' => __('Insufficient rights on wp-content/plugins folder!'),
-            'points' => 5,
-            'category' => 'files',
-            'callback' => 'run_test_17'
-        ),
-        array(
-            'id' => 18,
-            'title' => __('Insufficient rights on core wordpress folders!'),
-            'points' => 5,
-            'category' => 'files',
-            'callback' => 'run_test_18'
-        ),
-        array(
-            'id' => 19,
-            'title' => __('Default admin login is not safe.'),
-            'points' => 5,
-            'category' => 'db',
-            'callback' => 'run_test_19'
-        ),
-        array(
-            'id' => 20,
-            'title' => __('Default database prefix is not safe.'),
-            'points' => 3,
-            'category' => 'db',
-            'callback' => 'run_test_20'
-        ),
-        array(
-            'id' => 21,
-            'title' => __('Your uploads directory is browsable from the web.'),
-            'points' => 5,
-            'category' => 'server',
-            'callback' => 'run_test_21'
-        ),
-        array(
-            'id' => 22,
-            'title' => __('Your server shows the PHP version in response.'),
-            'points' => 5,
-            'category' => 'server',
-            'callback' => 'run_test_22'
-        ),
-        array(
-            'id' => 23,
-            'title' => __('Your server shows too much information about installed software.'),
-            'points' => 5,
-            'category' => 'server',
-            'callback' => 'run_test_23'
-        ),
-        array(
-            'id' => 24,
-            'title' => __('Some of blog core files have been changed. <a href="?page=ultimate-security-checker&tab=core-files">View Report</a>'),
-            'points' => 5,
-            'category' => 'code',
-            'callback' => 'run_test_24'
-        ),
-        array(
-            'id' => 25,
-            'title' => __('You have some suspicious code in your posts and/or comments. <a href="?page=ultimate-security-checker&tab=wp-posts">View Report</a>'),
-            'points' => 5,
-            'category' => 'db',
-            'callback' => 'run_test_25'
-        ),
-        array(
-            'id' => 26,
-            'title' => __('Core files check cancelled. Please wait till update of this plugin.'),
-            'points' => 1,
-            'category' => 'code',
-            'callback' => 'run_test_26'
-        ),
-    );
+    public $all_issues = array();
     
-    public $categories = array(
-        'updates' => __('Check for updates'),
-        'config' => __('Check configuration file'),
-        'code' => __('Code check'),
-        'files' => __('Files & folders permission check'),
-        'db' => __('Database check'),
-        'server' => __('Server configuration check')
-    );
+    public $categories = array();
     
     public function __construct(){
         global $wp_version;
@@ -237,8 +47,204 @@ class SecurityCheck {
         $ver = $version[0].'.';
         array_shift($version);
         $ver = $ver . implode($version);
+        $this->set_vars();
         $this->_wp_version = floatval($ver);
         $this->get_defined_filesystem_constants();
+    }
+    
+    private function set_vars(){
+        $this->all_issues = array(
+            array(
+                'id' => 1,
+                'title' => __('Some installed plugins have updates.'),
+                'points' => 5,
+                'category' => 'updates',
+                'callback' => 'run_test_1'
+            ),
+            array(
+                'id' => 2,
+                'title' => __('Some installed themes have updates.'),
+                'points' => 5,
+                'category' => 'updates',
+                'callback' => 'run_test_2'
+            ),
+            array(
+                'id' => 3,
+                'title' => __('Your WordPress version is outdated.'),
+                'points' => 10,
+                'category' => 'updates',
+                'callback' => 'run_test_3'
+            ),
+            array(
+                'id' => 4,
+                'title' => __('Config file is located in an unsecured place.'),
+                'points' => 3,
+                'category' => 'config',
+                'callback' => 'run_test_4'
+            ),
+            array(
+                'id' => 5,
+                'title' => __('Some of keys AUTH_KEY, SECURE_AUTH_KEY, LOGGED_IN_KEY, NONCE_KEY are not set.'),
+                'points' => 5,
+                'category' => 'config',
+                'callback' => 'run_test_5'
+            ),
+            array(
+                'id' => 6,
+                'title' => __('It\'s better to turn off the file editor for plugins and themes in WordPress admin.'),
+                'points' => 2,
+                'category' => 'config',
+                'callback' => 'run_test_6'
+            ),
+            array(
+                'id' => 7,
+                'title' => __('WP_DEBUG option should be turned off on LIVE website.'),
+                'points' => 3,
+                'category' => 'config',
+                'callback' => 'run_test_7'
+            ),
+            array(
+                'id' => 8,
+                'title' => __('Users can see the version of WordPress you are running.'),
+                'points' => 3,
+                'category' => 'code',
+                'callback' => 'run_test_8'
+            ),
+            array(
+                'id' => 9,
+                'title' => __('Users can see the version of WordPress you are running from the readme.html file.'),
+                'points' => 3,
+                'category' => 'code',
+                'callback' => 'run_test_9'
+            ),
+            array(
+                'id' => 10,
+                'title' => __('Installation script is still available in your WordPress files.'),
+                'points' => 3,
+                'category' => 'code',
+                'callback' => 'run_test_10'
+            ),
+            array(
+                'id' => 11,
+                'title' => __('WordPress displays unnecessary error messages on failed log-ins.'),
+                'points' => 3,
+                'category' => 'code',
+                'callback' => 'run_test_11'
+            ),
+            array(
+                'id' => 12,
+                'title' => __('Your blog can be hacked with malicious URL requests.'),
+                'points' => 6,
+                'category' => 'code',
+                'callback' => 'run_test_12'
+            ),
+            array(
+                'id' => 13,
+                'title' => __('Your wp-config.php is readable\writeable by others!'),
+                'points' => 5,
+                'category' => 'files',
+                'callback' => 'run_test_13'
+            ),
+            array(
+                'id' => 14,
+                'title' => __('Your .htaccess is unsecured!'),
+                'points' => 5,
+                'category' => 'files',
+                'callback' => 'run_test_14'
+            ),
+            array(
+                'id' => 15,
+                'title' => __('Insufficient rights on wp-content folder!'),
+                'points' => 5,
+                'category' => 'files',
+                'callback' => 'run_test_15'
+            ),
+            array(
+                'id' => 16,
+                'title' => __('Insufficient rights on wp-content/themes folder!'),
+                'points' => 5,
+                'category' => 'files',
+                'callback' => 'run_test_16'
+            ),
+            array(
+                'id' => 17,
+                'title' => __('Insufficient rights on wp-content/plugins folder!'),
+                'points' => 5,
+                'category' => 'files',
+                'callback' => 'run_test_17'
+            ),
+            array(
+                'id' => 18,
+                'title' => __('Insufficient rights on core wordpress folders!'),
+                'points' => 5,
+                'category' => 'files',
+                'callback' => 'run_test_18'
+            ),
+            array(
+                'id' => 19,
+                'title' => __('Default admin login is not safe.'),
+                'points' => 5,
+                'category' => 'db',
+                'callback' => 'run_test_19'
+            ),
+            array(
+                'id' => 20,
+                'title' => __('Default database prefix is not safe.'),
+                'points' => 3,
+                'category' => 'db',
+                'callback' => 'run_test_20'
+            ),
+            array(
+                'id' => 21,
+                'title' => __('Your uploads directory is browsable from the web.'),
+                'points' => 5,
+                'category' => 'server',
+                'callback' => 'run_test_21'
+            ),
+            array(
+                'id' => 22,
+                'title' => __('Your server shows the PHP version in response.'),
+                'points' => 5,
+                'category' => 'server',
+                'callback' => 'run_test_22'
+            ),
+            array(
+                'id' => 23,
+                'title' => __('Your server shows too much information about installed software.'),
+                'points' => 5,
+                'category' => 'server',
+                'callback' => 'run_test_23'
+            ),
+            array(
+                'id' => 24,
+                'title' => __('Some of blog core files have been changed. <a href="?page=ultimate-security-checker&tab=core-files">View Report</a>'),
+                'points' => 5,
+                'category' => 'code',
+                'callback' => 'run_test_24'
+            ),
+            array(
+                'id' => 25,
+                'title' => __('You have some suspicious code in your posts and/or comments. <a href="?page=ultimate-security-checker&tab=wp-posts">View Report</a>'),
+                'points' => 5,
+                'category' => 'db',
+                'callback' => 'run_test_25'
+            ),
+            array(
+                'id' => 26,
+                'title' => __('Core files check cancelled. Please wait till update of this plugin.'),
+                'points' => 1,
+                'category' => 'code',
+                'callback' => 'run_test_26'
+            ),
+        );
+        $this->categories = array(
+            'updates' => __('Check for updates'),
+            'config' => __('Check configuration file'),
+            'code' => __('Code check'),
+            'files' => __('Files & folders permission check'),
+            'db' => __('Database check'),
+            'server' => __('Server configuration check')
+        );
     }
     
     private function gen_random_string($len) {
@@ -417,7 +423,7 @@ class SecurityCheck {
         ?>
         <p style="margin:0 10px 10px 70px;">
         <a style="float:right;margin-top:20px;font-weight:bold;" href="?page=ultimate-security-checker&tab=run-the-tests&dotest" class="button-primary"><?php _e('Run the tests again!'); ?></a>
-        <?php _e('The most recent test was taken on'); ?> <b><?php echo date('d M, Y', get_option( 'wp_ultimate_security_checker_lastcheck')); ?></b>. <br/><?php printf(__('Your blog earned <b>$s of $s</b> security points.'),$this->earned_points, $this->total_possible_points);?><?php echo $result_messages[$letter]; ?> <br />
+        <?php _e('The most recent test was taken on'); ?> <b><?php echo date('d M, Y', get_option( 'wp_ultimate_security_checker_lastcheck')); ?></b>. <br/><?php printf(__('Your blog earned <b>%s of %s</b> security points.'),$this->earned_points, $this->total_possible_points);?><?php echo $result_messages[$letter]; ?> <br />
         <?php _e('We have a service which can automate the fix of some of these. <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin_results_link">Click Here to try it.</a>'); ?></p>
         </div>
         <?php

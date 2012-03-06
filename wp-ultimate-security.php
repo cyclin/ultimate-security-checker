@@ -48,6 +48,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         /* Register our script. */
         // wp_register_script('myPluginScript', WP_PLUGIN_URL . '/myPlugin/script.js');
          // wp_enqueue_script('jquery');
+          $lang_dir = basename(dirname(__FILE__))."/languages";
+          load_plugin_textdomain( 'ultimate-security', false, $lang_dir );
          
     }
     
@@ -440,16 +442,16 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 14) echo 'checked="checked"';?> value="w" name="rescan" />2 weeks</li>
                     <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 30) echo 'checked="checked"';?> value="m" name="rescan" />1 month</li>
                     <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 0) echo 'checked="checked"';?> value="n" name="rescan" />Never remind me</li>
-                    <li><input type="submit" value="Save Settings" /></li>
+                    <li><input type="submit" value="<?php _e('Save Settings');?>" /></li>
                     </ul>
                     </form>
                     <div class="clear"></div>
                     
                     <!-- security-check -->
-	                <h3>Keep your blog secure with automated checks.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; <?php _e('Back');?></a></h3>
+	                <h3><?php _e('Keep your blog secure with automated checks.');?><a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; <?php _e('Back');?></a></h3>
 	                <p>
-	                    A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.</p>
-						<p>We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:<br> <a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
+	                    <?php _e('A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.');?></p>
+						<p><?php _e('We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:');?><br> <a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
 	                </p>
                     <!-- end security-check -->
                     <div class="clear"></div>
@@ -508,7 +510,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             </style>
 
             <h3 class="nav-tab-wrapper">
-                <a href="?page=ultimate-security-checker&tab=run-the-tests" style="text-decoration: none;">&lt;- Back to Test results</a>
+                <a href="?page=ultimate-security-checker&tab=run-the-tests" style="text-decoration: none;">&lt;- <?php _e('Back to Test results');?></a>
             </h3>
 
             <style>
@@ -527,14 +529,14 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             }
             </style>
                 <a name="#top"></a>
-                <h2>Your blog core files check results:</h2>
+                <h2><?php _e('Your blog core files check results:');?></h2>
                 <?php if ($core_tests_results['diffs']): ?>
-                <h3>Some files from the core of your blog have been changed. Files and lines different from original WordPress core files:</h3>
+                <h3><?php _e('Some files from the core of your blog have been changed. Files and lines different from original WordPress core files:');?></h3>
                 <?php
                     $i = 1; 
                     foreach($core_tests_results['diffs'] as $filename => $lines){
                         $li[]  .= "<li><a href=\"#$i\">$filename</a></li>\n";
-                        $out .= "<h4>$filename<a name=\"$i\"></a><a href=\"#top\" style=\"font-size:13px;margin-left:10px;\">&uarr; <?php _e('Back');?></a></h4>";
+                        $out .= "<h4>$filename<a name=\"$i\"></a><a href=\"#top\" style=\"font-size:13px;margin-left:10px;\">&uarr; ".__('Back')."</a></h4>";
                         $out .= implode("\n", $lines);
                         $i++;
                     }
@@ -547,13 +549,13 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 <div class="errors-found">
                 <p>
                 <?php echo $out; ?>
-                <?php else: echo '<h3>No code changes found in your blog core files!</h3>'; ?>
+                <?php else: _e('<h3>No code changes found in your blog core files!</h3>');?>; ?>
                 <?php endif;?>
                 </p>
                 </div>
                 <?php 
                 if ($core_tests_results['old_export']) {
-                    echo "<h5>This is old export files. You should delete them.</h5>";
+                    echo _e("<h5>This is old export files. You should delete them.</h5>");
                     echo "<ul>";
                     foreach($core_tests_results['old_export'] as $export){
                         echo "<li>".$static_url."</li>";
@@ -564,10 +566,10 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 <!-- end hashes -->
                 
                 <!-- security-check -->
-                <h3>Keep your blog secure with automated checks.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; <?php _e('Back');?></a></h3>
+                <h3><?php _e('Keep your blog secure with automated checks.');?><a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; <?php _e('Back');?></a></h3>
                 <p>
-                    A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.</p>
-					<p>We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:<br><a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
+                    <?php _e('A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.');?></p>
+					<p><?php _e('We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:');?><br><a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
                 </p>
                 <!-- end security-check -->
                 <div class="clear"></div>
@@ -597,7 +599,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 				complete: function(xhr,status) {
 					if ( status != 'success' ) {
 						$('#scan-loader img').hide();
-						$('#scan-loader span').html( 'An error occurred. Please try again later.' );
+						$('#scan-loader span').html( '<?php _e('An error occurred. Please try again later.');?>' );
 					}
 				}
 			});
@@ -624,11 +626,11 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 					// console.log( r );
 					jQuery('#scan-loader img').hide();
 					jQuery('#scan-loader span').html(
-						'An error occurred: <pre style="overflow:auto">' + r.toString() + '</pre>'
+						'<?php _e('An error occurred:');?> <pre style="overflow:auto">' + r.toString() + '</pre>'
 					);
 				} else {
 				    jQuery('#scan-loader img').hide();
-				    jQuery('#scan-loader span').html('Scan complete. Refresh the page to view the results.');
+				    jQuery('#scan-loader span').html('<?php _e('Scan complete. Refresh the page to view the results.');?>');
 				    window.location.reload(false);
 				}
 			}
@@ -677,18 +679,18 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                 <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
             <?php endif; ?>
             <h3 class="nav-tab-wrapper">
-                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab">Run the Tests</a>
-                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab nav-tab-active">Files Analysis</a>
-                    <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
-                    <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
+                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab"><?php _e('Run the Tests');?></a>
+                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab nav-tab-active"><?php _e('Files Analysis');?></a>
+                    <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab"><?php _e('How to Fix');?></a>
+                    <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab"><?php _e('Settings');?></a>
             </h3>
 <!--			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
 				Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
 				<a style="color:#e05b3c;text-decoration:underline;" href="http://wordpress.org/extend/plugins/wp-appstore/" target="_blank">Check it out!</a>
 			</p>-->
                 <a name="#top"></a>
-                <h2>Your blog files vulnerability scan results:</h2>
-                <span style="margin: 15xp; display: inline-block;">This scanner will test your blog on suspicious code patterns. Even if it finds something - it doesn't mean, that code is malicious code actually. Also, this test is in beta, so may stop responding. Results of this test <strong>DO NOT</strong> affect your blog security score. We provide it as additional scanning to find possible danger inclusions in your code.</span>
+                <h2><?php _e('Your blog files vulnerability scan results:');?></h2>
+                <span style="margin: 15xp; display: inline-block;"><?php _e("This scanner will test your blog on suspicious code patterns. Even if it finds something - it doesn't mean, that code is malicious code actually. Also, this test is in beta, so may stop responding. Results of this test <strong>DO NOT</strong> affect your blog security score. We provide it as additional scanning to find possible danger inclusions in your code.");?></span>
                 
                 <a style="float:left;margin-top:20px;font-weight:bold;" href="#" class="button-primary" id="run-scanner">Scan my blog files now!</a>
                 <div class="clear"></div>
@@ -698,12 +700,12 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                 </div>
                 <?php if ($files_tests_results): ?>
                 <div id="scan-results">
-                <h3>Some files from themes and plugins may have potential vulnerabilities:</h3>
+                <h3><?php _e("Some files from themes and plugins may have potential vulnerabilities:");?></h3>
                 <?php
                     $i = 1; 
                     foreach($files_tests_results as $filename => $lines){
                         $li[]  .= "<li><a href=\"#$i\">$filename</a></li>\n";
-                        $out .= "<h3>$filename<a name=\"$i\"></a><a href=\"#top\" style=\"font-size:13px;margin-left:10px;\">&uarr; <?php _e('Back');?></a></h3>";
+                        $out .= "<h3>$filename<a name=\"$i\"></a><a href=\"#top\" style=\"font-size:13px;margin-left:10px;\">&uarr; ".__('Back')."</a></h3>";
                         $out .= implode("\n", $lines);
                         $i++;
                     }
@@ -718,16 +720,16 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                 <?php echo $out; ?>
                 <?php elseif($files_tests_results[0]): ?>
                 <?php echo $files_tests_results[0];?>
-                <?php else: echo '<h3>No code changes found in your blog files!</h3>'; ?>
+                <?php else: _e('<h3>No code changes found in your blog files!</h3>'); ?>
                 <?php endif;?>
                 </p>
                 </div>
                 </div>
                 <!-- security-check -->
-                <h3>Keep your blog secure with automated checks.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; <?php _e('Back');?></a></h3>
+                <h3><?php _e('Keep your blog secure with automated checks.');?><a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; <?php _e('Back');?></a></h3>
                 <p>
-                    A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.</p>
-					<p>We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:<br><a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
+                    <?php _e('A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.');?></p>
+					<p><?php _e('We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:');?><br><a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
                 </p>
                 <!-- end security-check -->
                 <div class="clear"></div>
@@ -762,7 +764,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
             </style>
 
             <h3 class="nav-tab-wrapper">
-                <a href="?page=ultimate-security-checker&tab=run-the-tests" style="text-decoration: none;">&lt;- Back to Tests results</a>
+                <a href="?page=ultimate-security-checker&tab=run-the-tests" style="text-decoration: none;">&lt;- <?php _e('Back to Tests results');?></a>
             </h3>
 
             <style>
@@ -781,14 +783,14 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
             }
             </style>
                 <a name="#top"></a>
-                <h2>Your blog records scan results:</h2>
+                <h2><?php _e('Your blog records scan results:');?></h2>
                 
                 <?php if ($posts_tests_results['posts_found']){
-                    $postsHdr = "<h3>Some posts in your blog contains suspicious code:</h3>\n";
+                    $postsHdr = __("<h3>Some posts in your blog contains suspicious code:</h3>\n");
                     $i = 1; 
                     foreach($posts_tests_results['posts_found'] as $postId => $postData){
                         $postsList[] = "<li><a href=\"#p$i\">{$postData['post-title']}($postId)</a></li>\n";
-                        $pout .= "<h4>{$postData['post-title']}($postId) - <a href=\"".get_edit_post_link($postId)."\" title=\"Edit\">Edit</a><a name=\"p$i\"></a><a href=\"#top\" style=\"font-size:13px;margin-left:10px;\">&uarr; <?php _e('Back');?></a></h4>";
+                        $pout .= "<h4>{$postData['post-title']}($postId) - <a href=\"".get_edit_post_link($postId)."\" title=\"".__("Edit")."\">".__("Edit")."</a><a name=\"p$i\"></a><a href=\"#top\" style=\"font-size:13px;margin-left:10px;\">&uarr; ".__('Back').";?></a></h4>";
                         $pout .= implode("\n", $postData['content']);
                         $i++;
                     }
@@ -798,16 +800,16 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                     $postsOut .= "</p>\n</div>\n";
 
                 }else{
-                    $postsHdr = "<h3>No potential code vulnerabilities foud in your posts!</h3>\n";
+                    $postsHdr = __("<h3>No potential code vulnerabilities foud in your posts!</h3>\n");
                 }
                 ?>
                 
                 <?php if ($posts_tests_results['comments_found']){
-                    $commentsHdr = "<h3>Some comments in your blog contains suspicious code:</h3>\n";
+                    $commentsHdr = __("<h3>Some comments in your blog contains suspicious code:</h3>\n");
                     $i = 1; 
                     foreach($posts_tests_results['comments_found'] as $commentId => $commentData){
                         $commentsList[] = "<li><a href=\"#c$i\">{$commentData['comment-autor']}($commentId)</a></li>\n";
-                        $cout .= "<h4>{$commentData['comment-autor']}($commentId) - <a href=\"".get_edit_comment_link($commentId)."\" title=\"Edit\">Edit</a><a name=\"c$i\"></a><a href=\"#top\" style=\"font-size:13px;margin-left:10px;\">&uarr; <?php _e('Back');?></a></h4>";
+                        $cout .= "<h4>{$commentData['comment-autor']}($commentId) - <a href=\"".get_edit_comment_link($commentId)."\" title=\"".__("Edit")."\">".__("Edit")."</a><a name=\"c$i\"></a><a href=\"#top\" style=\"font-size:13px;margin-left:10px;\">&uarr; ".__('Back').";?></a></h4>";
                         $cout .= implode("\n", $commentData['content']);
                         $i++;
                     }
@@ -816,7 +818,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                     $commentsOut .= "</p>\n</div>\n";
 
                 }else{
-                    $commentsHdr = "<h3>No potential code vulnerabilities foud in your comments!</h3>\n";
+                    $commentsHdr = __("<h3>No potential code vulnerabilities foud in your comments!</h3>\n");
                 }
                 ?>
                 <?php echo $postsHdr; ?>
@@ -829,10 +831,10 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                 
                 
                 <!-- security-check -->
-                <h3>Keep your blog secure with automated checks.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; <?php _e('Back');?></a></h3>
+                <h3><?php _e('Keep your blog secure with automated checks.');?><a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; <?php _e('Back');?></a></h3>
                 <p>
-                    A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.</p>
-					<p>We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:<br><a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
+                    <?php _e('A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.');?></p>
+					<p><?php _e('We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:');?><br><a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
                 </p>
                 <!-- end security-check -->
                 </div>
@@ -866,10 +868,10 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                 }
             </style>
             <h3 class="nav-tab-wrapper">
-                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab nav-tab-active">Run the Tests</a>
-                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">Files Analysis</a>
-                    <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
-                    <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
+                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab nav-tab-active"><?php _e('Run the Tests');?></a>
+                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab"><?php _e('Files Analysis');?></a>
+                    <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab"><?php _e('How to Fix');?></a>
+                    <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab"><?php _e('Settings');?></a>
             </h3>
 <!--			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
 				Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
@@ -926,7 +928,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                                 break;
                 }
                 ?>
-                    <div class='update-nag'>You didn't check your security score more then <?php echo $out; ?>. <a href="<?php echo admin_url('tools.php') ?>?page=ultimate-security-checker">Do it now.</a></div>
+                    <div class='update-nag'><?php printf(__("You didn't check your security score more then %s."),$out);?> <a href="<?php echo admin_url('tools.php') ?>?page=ultimate-security-checker"><?php _e('Do it now.');?></a></div>
                 <?php
             }
         }           
