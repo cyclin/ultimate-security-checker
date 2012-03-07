@@ -1,0 +1,719 @@
+# Copyright (C) 2012 
+# This file is distributed under the same license as the  package.
+msgid ""
+msgstr ""
+"Project-Id-Version: ultimate-security-checker\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/ultimate-security-checker\n"
+"POT-Creation-Date: 2012-03-06 18:58:33+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2012-03-07 13:16+0200\n"
+"Last-Translator: Stanislav <stanislav.proshkin@gmail.com>\n"
+"Language-Team: Stanislav Proshkin <stanislav.proshkin@gmail.com>\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: D:\\xampp\\htdocs\\wordpress\\wp-content\\plugins\\ultimate-security-checker\n"
+
+#: securitycheck.class.php:59
+msgid "Some installed plugins have updates."
+msgstr ""
+
+#: securitycheck.class.php:66
+msgid "Some installed themes have updates."
+msgstr ""
+
+#: securitycheck.class.php:73
+msgid "Your WordPress version is outdated."
+msgstr ""
+
+#: securitycheck.class.php:80
+#: wp-ultimate-security.php:141
+#: wp-ultimate-security.php:178
+msgid "Config file is located in an unsecured place."
+msgstr ""
+
+#: securitycheck.class.php:87
+#: wp-ultimate-security.php:194
+msgid "Some of keys AUTH_KEY, SECURE_AUTH_KEY, LOGGED_IN_KEY, NONCE_KEY are not set."
+msgstr ""
+
+#: securitycheck.class.php:94
+msgid "It's better to turn off the file editor for plugins and themes in WordPress admin."
+msgstr ""
+
+#: securitycheck.class.php:101
+#: wp-ultimate-security.php:203
+msgid "WP_DEBUG option should be turned off on LIVE website."
+msgstr ""
+
+#: securitycheck.class.php:108
+msgid "Users can see the version of WordPress you are running."
+msgstr ""
+
+#: securitycheck.class.php:115
+msgid "Users can see the version of WordPress you are running from the readme.html file."
+msgstr ""
+
+#: securitycheck.class.php:122
+msgid "Installation script is still available in your WordPress files."
+msgstr ""
+
+#: securitycheck.class.php:129
+msgid "WordPress displays unnecessary error messages on failed log-ins."
+msgstr ""
+
+#: securitycheck.class.php:136
+msgid "Your blog can be hacked with malicious URL requests."
+msgstr ""
+
+#: securitycheck.class.php:143
+msgid "Your wp-config.php is readable\\writeable by others!"
+msgstr ""
+
+#: securitycheck.class.php:150
+msgid "Your .htaccess is unsecured!"
+msgstr ""
+
+#: securitycheck.class.php:157
+msgid "Insufficient rights on wp-content folder!"
+msgstr ""
+
+#: securitycheck.class.php:164
+msgid "Insufficient rights on wp-content/themes folder!"
+msgstr ""
+
+#: securitycheck.class.php:171
+msgid "Insufficient rights on wp-content/plugins folder!"
+msgstr ""
+
+#: securitycheck.class.php:178
+msgid "Insufficient rights on core wordpress folders!"
+msgstr ""
+
+#: securitycheck.class.php:185
+#: wp-ultimate-security.php:323
+msgid "Default admin login is not safe."
+msgstr ""
+
+#: securitycheck.class.php:192
+#: wp-ultimate-security.php:328
+msgid "Default database prefix is not safe."
+msgstr ""
+
+#: securitycheck.class.php:199
+#: wp-ultimate-security.php:150
+#: wp-ultimate-security.php:334
+msgid "Your uploads directory is browsable from the web."
+msgstr ""
+
+#: securitycheck.class.php:206
+msgid "Your server shows the PHP version in response."
+msgstr ""
+
+#: securitycheck.class.php:213
+#: wp-ultimate-security.php:151
+#: wp-ultimate-security.php:340
+msgid "Your server shows too much information about installed software."
+msgstr ""
+
+#: securitycheck.class.php:220
+msgid "Some of blog core files have been changed. <a href=\"?page=ultimate-security-checker&tab=core-files\">View Report</a>"
+msgstr ""
+
+#: securitycheck.class.php:227
+msgid "You have some suspicious code in your posts and/or comments. <a href=\"?page=ultimate-security-checker&tab=wp-posts\">View Report</a>"
+msgstr ""
+
+#: securitycheck.class.php:234
+msgid "Core files check cancelled. Please wait till update of this plugin."
+msgstr ""
+
+#: securitycheck.class.php:241
+msgid "Check for updates"
+msgstr ""
+
+#: securitycheck.class.php:242
+msgid "Check configuration file"
+msgstr ""
+
+#: securitycheck.class.php:243
+msgid "Code check"
+msgstr ""
+
+#: securitycheck.class.php:244
+msgid "Files & folders permission check"
+msgstr ""
+
+#: securitycheck.class.php:245
+msgid "Database check"
+msgstr ""
+
+#: securitycheck.class.php:246
+msgid "Server configuration check"
+msgstr ""
+
+#: securitycheck.class.php:285
+msgid "<p>Sorry, an error occured. This file might not exist!</p>"
+msgstr ""
+
+#: securitycheck.class.php:293
+msgid "<p>Sorry, an error occured. Please try again later.</p>"
+msgstr ""
+
+#: securitycheck.class.php:350
+msgid "<p>No test results yet</p>"
+msgstr ""
+
+#: securitycheck.class.php:417
+msgid "You're doing very well. Your blog is currently secure."
+msgstr ""
+
+#: securitycheck.class.php:418
+msgid "Some security issues. These issues are not critical, but leave you vulnerable. "
+msgstr ""
+
+#: securitycheck.class.php:419
+msgid "A few security issues. Fix them immediately to prevent attacks. "
+msgstr ""
+
+#: securitycheck.class.php:420
+msgid "Some medium sized security holes have been found in your blog. "
+msgstr ""
+
+#: securitycheck.class.php:421
+msgid "Fix your security issues immediately! "
+msgstr ""
+
+#: securitycheck.class.php:425
+msgid "Run the tests again!"
+msgstr ""
+
+#: securitycheck.class.php:426
+msgid "The most recent test was taken on"
+msgstr ""
+
+#: securitycheck.class.php:426
+msgid "Your blog earned <b>%s of %s</b> security points."
+msgstr ""
+
+#: securitycheck.class.php:427
+msgid "We have a service which can automate the fix of some of these. <a href=\"http://www.ultimateblogsecurity.com/?utm_campaign=plugin_results_link\">Click Here to try it.</a>"
+msgstr ""
+
+#: securitycheck.class.php:950
+msgid "Possible database table deletion"
+msgstr ""
+
+#: securitycheck.class.php:951
+msgid "Possible output of restricted variables"
+msgstr ""
+
+#: securitycheck.class.php:952
+msgid "This may be a script used by hackers to get control of your server"
+msgstr ""
+
+#: securitycheck.class.php:953
+msgid "Tells a hacker what operating system your server is running"
+msgstr ""
+
+#: securitycheck.class.php:954
+msgid "base64 encoded text found in Search Engine Redirect hack <a href=\"http://blogbuildingu.com/wordpress/wordpress-search-engine-redirect-hack\">[1]</a>"
+msgstr ""
+
+#: securitycheck.class.php:955
+msgid "Often used to execute malicious code"
+msgstr ""
+
+#: securitycheck.class.php:956
+msgid "YAHG Googlerank.info exploit code <a href=\"http://creativebriefing.com/wordpress-hacked-googlerankinfo/\">[1]</a>"
+msgstr ""
+
+#: securitycheck.class.php:957
+msgid "Possible Ekibastos attack <a href=\"http://ocaoimh.ie/did-your-wordpress-site-get-hacked/\">[1]</a>"
+msgstr ""
+
+#: securitycheck.class.php:958
+msgid "Used by malicious scripts to decode previously obscured data/programs"
+msgstr ""
+
+#: securitycheck.class.php:959
+msgid "Possible \"Gumblar\" JavaScript attack <a href=\"http://threatinfo.trendmicro.com/vinfo/articles/securityarticles.asp?xmlfile=042710-GUMBLAR.xml\">[1]</a> <a href=\"http://justcoded.com/article/gumblar-family-virus-removal-tool/\">[2]</a>"
+msgstr ""
+
+#: securitycheck.class.php:960
+#: securitycheck.class.php:961
+msgid "Symptom of the \"Pharma Hack\" <a href=\"http://blog.sucuri.net/2010/07/understanding-and-cleaning-the-pharma-hack-on-wordpress.html\">[1]</a>"
+msgstr ""
+
+#: securitycheck.class.php:962
+msgid "Decodes/encodes text using ROT13. Could be used to hide malicious code."
+msgstr ""
+
+#: securitycheck.class.php:963
+msgid "Decodes text using uuencoding. Could be used to hide malicious code."
+msgstr ""
+
+#: securitycheck.class.php:965
+msgid "Symptom of a link injection attack <a href=\"http://www.kyle-brady.com/2009/11/07/wordpress-mediatemple-and-an-injection-attack/\">[1]</a>"
+msgstr ""
+
+#: securitycheck.class.php:966
+#: securitycheck.class.php:1047
+msgid "iframes are sometimes used to load unwanted adverts and code on your site"
+msgstr ""
+
+#: securitycheck.class.php:967
+msgid "Signature of timthumb hack"
+msgstr ""
+
+#: securitycheck.class.php:968
+#: securitycheck.class.php:969
+msgid "Signature of Uploadify hack"
+msgstr ""
+
+#: securitycheck.class.php:970
+msgid "JavaScript sometimes used to hide suspicious code"
+msgstr ""
+
+#: securitycheck.class.php:971
+msgid "The e modifier in preg_replace can be used to execute malicious code"
+msgstr ""
+
+#: securitycheck.class.php:972
+msgid "Signature of UTF8GAT.PHP Backdoor <a href=\"http://blog.sucuri.net/2012/03/dangerous-backdoors-utf8gat.html\">[1]</a>"
+msgstr ""
+
+#: securitycheck.class.php:1046
+msgid "Often used by hackers to execute malicious code"
+msgstr ""
+
+#: securitycheck.class.php:1048
+#: securitycheck.class.php:1049
+#: securitycheck.class.php:1050
+msgid "Could be used to hide spam in posts/comments"
+msgstr ""
+
+#: securitycheck.class.php:1051
+msgid "Malicious scripts loaded in posts by hackers perform redirects, inject spam, etc."
+msgstr ""
+
+#: wp-ultimate-security.php:60
+#: wp-ultimate-security.php:61
+msgid "Ultimate Security Checker"
+msgstr ""
+
+#: wp-ultimate-security.php:113
+#: wp-ultimate-security.php:405
+#: wp-ultimate-security.php:682
+#: wp-ultimate-security.php:871
+msgid "Run the Tests"
+msgstr ""
+
+#: wp-ultimate-security.php:114
+#: wp-ultimate-security.php:406
+#: wp-ultimate-security.php:683
+#: wp-ultimate-security.php:872
+msgid "Files Analysis"
+msgstr ""
+
+#: wp-ultimate-security.php:115
+#: wp-ultimate-security.php:407
+#: wp-ultimate-security.php:684
+#: wp-ultimate-security.php:873
+msgid "How to Fix"
+msgstr ""
+
+#: wp-ultimate-security.php:116
+#: wp-ultimate-security.php:408
+#: wp-ultimate-security.php:685
+#: wp-ultimate-security.php:874
+msgid "Settings"
+msgstr ""
+
+#: wp-ultimate-security.php:139
+msgid "WordPress/Themes/Plugins Upgrades."
+msgstr ""
+
+#: wp-ultimate-security.php:140
+#: wp-ultimate-security.php:226
+msgid "Removing unneeded files."
+msgstr ""
+
+#: wp-ultimate-security.php:142
+#: wp-ultimate-security.php:192
+msgid "Editing global variables or keys in config file."
+msgstr ""
+
+#: wp-ultimate-security.php:143
+#: wp-ultimate-security.php:244
+msgid "Removing unnecessary error messages on failed log-ins."
+msgstr ""
+
+#: wp-ultimate-security.php:144
+msgid "Removing WordPress version from your website."
+msgstr ""
+
+#: wp-ultimate-security.php:145
+#: wp-ultimate-security.php:255
+msgid "Securing blog against malicious URL requests."
+msgstr ""
+
+#: wp-ultimate-security.php:146
+#: wp-ultimate-security.php:284
+msgid "Changing config file rights."
+msgstr ""
+
+#: wp-ultimate-security.php:147
+#: wp-ultimate-security.php:293
+msgid "Changing .htaccess file rights."
+msgstr ""
+
+#: wp-ultimate-security.php:148
+#: wp-ultimate-security.php:299
+msgid "Changing rights on WordPress folders."
+msgstr ""
+
+#: wp-ultimate-security.php:149
+msgid "Database changes."
+msgstr ""
+
+#: wp-ultimate-security.php:152
+msgid "How to keep everything secured?"
+msgstr ""
+
+#: wp-ultimate-security.php:157
+#: wp-ultimate-security.php:178
+#: wp-ultimate-security.php:192
+#: wp-ultimate-security.php:209
+#: wp-ultimate-security.php:226
+#: wp-ultimate-security.php:244
+#: wp-ultimate-security.php:255
+#: wp-ultimate-security.php:284
+#: wp-ultimate-security.php:293
+#: wp-ultimate-security.php:299
+#: wp-ultimate-security.php:321
+#: wp-ultimate-security.php:334
+#: wp-ultimate-security.php:340
+#: wp-ultimate-security.php:346
+#: wp-ultimate-security.php:451
+#: wp-ultimate-security.php:539
+#: wp-ultimate-security.php:569
+#: wp-ultimate-security.php:708
+#: wp-ultimate-security.php:729
+#: wp-ultimate-security.php:793
+#: wp-ultimate-security.php:812
+#: wp-ultimate-security.php:834
+msgid "Back"
+msgstr ""
+
+#: wp-ultimate-security.php:159
+msgid "You should upgrade your software often to keep it secure."
+msgstr ""
+
+#: wp-ultimate-security.php:160
+msgid "However, you shouldn't upgrade WordPress yourself if you don't know how to fix it if the upgrade process goes wrong."
+msgstr ""
+
+#: wp-ultimate-security.php:163
+msgid "Here's why you should be afraid to upgrade your WordPress:"
+msgstr ""
+
+#: wp-ultimate-security.php:165
+msgid "WordPress might run out of memory or have a network problem during the update"
+msgstr ""
+
+#: wp-ultimate-security.php:166
+msgid "There could be a permissions issue which causes problems with folder rights"
+msgstr ""
+
+#: wp-ultimate-security.php:167
+msgid "You could cause database problems which could cause you to lose data or take your entire site down"
+msgstr ""
+
+#: wp-ultimate-security.php:171
+msgid "Step-by-step explanations</a> are available at WordPress Codex."
+msgstr ""
+
+#: wp-ultimate-security.php:174
+msgid "You can let the professionals do the work for you and upgrade your blog with plugins. <a href=\"http://ultimateblogsecurity.com/blog-update\">See details</a>."
+msgstr ""
+
+#: wp-ultimate-security.php:180
+msgid "The most important information in your blog files is located in wp-config.php. It's good practice to keep it in the folder above your WordPress root."
+msgstr ""
+
+#: wp-ultimate-security.php:183
+msgid "Sometimes this is impossible to do because:"
+msgstr ""
+
+#: wp-ultimate-security.php:185
+msgid "you don't have access to folder above your WordPress root"
+msgstr ""
+
+#: wp-ultimate-security.php:186
+msgid "some plugins were developed incorrectly and look for the config file in your WordPress root"
+msgstr ""
+
+#: wp-ultimate-security.php:187
+msgid "there is another WordPress installation in the folder above"
+msgstr ""
+
+#: wp-ultimate-security.php:195
+msgid "Create secret keys from this link <a href=\"https://api.wordpress.org/secret-key/1.1/\">https://api.wordpress.org/secret-key/1.1/</a> and paste them into wp-config.php"
+msgstr ""
+
+#: wp-ultimate-security.php:198
+msgid "It's better to turn off file editor for plugins and themes in wordpress admin."
+msgstr ""
+
+#: wp-ultimate-security.php:199
+msgid "You're not often editing your theme or plugins source code in WordPress admin? Don't let potential hacker do this for you. Add <em>DISALLOW_FILE_EDIT</em> option to wp-config.php"
+msgstr ""
+
+#: wp-ultimate-security.php:204
+msgid "Sometimes developers use this option when debugging your blog and keep it after the website is done. It's very unsafe and allow hackers to see debug information and infect your site easily. Should be turned off."
+msgstr ""
+
+#: wp-ultimate-security.php:209
+msgid "Removing the WordPress version from your website."
+msgstr ""
+
+#: wp-ultimate-security.php:211
+#: wp-ultimate-security.php:231
+msgid "When WordPress version which is used in your blog is known, hacker can find proper exploit for exact version of WordPRess."
+msgstr ""
+
+#: wp-ultimate-security.php:214
+msgid "To remove WordPress version you should do two things:"
+msgstr ""
+
+#: wp-ultimate-security.php:216
+msgid "check if it's not hardcoded in header.php or index.php of your current theme(search for"
+msgstr ""
+
+#: wp-ultimate-security.php:218
+msgid "add few lines of code to functions.php in your current theme:"
+msgstr ""
+
+#: wp-ultimate-security.php:228
+msgid "Users can see version of WordPress you are running from readme.html file."
+msgstr ""
+
+#: wp-ultimate-security.php:234
+msgid ""
+"Remove readme.html file which is located in root folder of your blog. <br>\n"
+"                    <em>NOTE:</em> It will appear with next upgrade of WordPress."
+msgstr ""
+
+#: wp-ultimate-security.php:238
+msgid "Installation script is still available in your wordpress files."
+msgstr ""
+
+#: wp-ultimate-security.php:239
+msgid "Remove /wp-admin/install.php from your WordPress."
+msgstr ""
+
+#: wp-ultimate-security.php:246
+msgid "By default WordPress will show you what was wrong with your login credentials - login or password. This will allow hackers to start a brute force attack to get your password once they know the login."
+msgstr ""
+
+#: wp-ultimate-security.php:249
+msgid "Add few lines of code to functions.php in your current theme:"
+msgstr ""
+
+#: wp-ultimate-security.php:257
+msgid "Malicious URL requests are requests which may have SQL Injection inside and will allow hacker to broke your blog."
+msgstr ""
+
+#: wp-ultimate-security.php:260
+msgid "Paste the following code into a text file, and save it as blockbadqueries.php. Once done, upload it to your wp-content/plugins directory and activate it like any other plugins."
+msgstr ""
+
+#: wp-ultimate-security.php:286
+msgid "According to <a href=\"http://codex.wordpress.org/Hardening_WordPress#Securing_wp-config.php\">WordPress Codex</a> you should change rights to wp-config.php to 400 or 440 to lock it from other users."
+msgstr ""
+
+#: wp-ultimate-security.php:289
+msgid "In real life a lot of hosts won't allow you to set the last digit to 0, because they configured their webservers the wrong way. Be careful hosting on web hostings like this."
+msgstr ""
+
+#: wp-ultimate-security.php:295
+msgid ".htaccess rights should be set to 644 or 664(depending if you want wordpress to be able to edit .htaccess for you)."
+msgstr ""
+
+#: wp-ultimate-security.php:301
+msgid "According to <a href=\"http://codex.wordpress.org/Hardening_WordPress#File_permissions\">WordPress Codex</a> right for next folders should be set like this."
+msgstr ""
+
+#: wp-ultimate-security.php:303
+#: wp-ultimate-security.php:307
+#: wp-ultimate-security.php:311
+msgid "Insufficient rights on %s folder!"
+msgstr ""
+
+#: wp-ultimate-security.php:304
+msgid "<i>/wp-content/</i> should be writeable for all(777) - according to WordPress Codex. But better to set it 755 and change to 777(temporary) if some plugins asks you to do that."
+msgstr ""
+
+#: wp-ultimate-security.php:308
+#: wp-ultimate-security.php:312
+#: wp-ultimate-security.php:316
+#: wp-ultimate-security.php:317
+msgid "should have rights 755."
+msgstr ""
+
+#: wp-ultimate-security.php:321
+msgid "Changes in database."
+msgstr ""
+
+#: wp-ultimate-security.php:324
+msgid "Using MySQL frontend program(like phpmyadmin) change administrator username with command like this:"
+msgstr ""
+
+#: wp-ultimate-security.php:329
+msgid "Using MySQL frontend program(like phpmyadmin) change all tables prefixes from <i>wp_</i> to something different. And put the same into wp-confg.php"
+msgstr ""
+
+#: wp-ultimate-security.php:336
+msgid "Put an empty index.php to your uploads folder."
+msgstr ""
+
+#: wp-ultimate-security.php:342
+msgid "If you're using Apache web server and have root access(or can edit httpd.conf) - you can define <i>ServerTokens</i> directive with preffered options(less info - better). <a href=\"http://httpd.apache.org/docs/2.0/mod/core.html#servertokens\">See details</a>."
+msgstr ""
+
+#: wp-ultimate-security.php:346
+#: wp-ultimate-security.php:451
+#: wp-ultimate-security.php:569
+#: wp-ultimate-security.php:729
+#: wp-ultimate-security.php:834
+msgid "Keep your blog secure with automated checks."
+msgstr ""
+
+#: wp-ultimate-security.php:348
+#: wp-ultimate-security.php:453
+#: wp-ultimate-security.php:571
+#: wp-ultimate-security.php:731
+#: wp-ultimate-security.php:836
+msgid "A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href=\"http://www.ultimateblogsecurity.com/?utm_campaign=plugin\">register for our service</a> and we will check your blog for you weekly and email you the results."
+msgstr ""
+
+#: wp-ultimate-security.php:349
+#: wp-ultimate-security.php:454
+#: wp-ultimate-security.php:572
+#: wp-ultimate-security.php:732
+#: wp-ultimate-security.php:837
+msgid "We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:"
+msgstr ""
+
+#: wp-ultimate-security.php:430
+msgid "Plugin options"
+msgstr ""
+
+#: wp-ultimate-security.php:433
+msgid "Disable Facebook Like:"
+msgstr ""
+
+#: wp-ultimate-security.php:437
+msgid "Keep Facebook Like"
+msgstr ""
+
+#: wp-ultimate-security.php:438
+msgid "Disable it"
+msgstr ""
+
+#: wp-ultimate-security.php:445
+msgid "Save Settings"
+msgstr ""
+
+#: wp-ultimate-security.php:513
+msgid "Back to Test results"
+msgstr ""
+
+#: wp-ultimate-security.php:532
+msgid "Your blog core files check results:"
+msgstr ""
+
+#: wp-ultimate-security.php:534
+msgid "Some files from the core of your blog have been changed. Files and lines different from original WordPress core files:"
+msgstr ""
+
+#: wp-ultimate-security.php:552
+msgid "<h3>No code changes found in your blog core files!</h3>"
+msgstr ""
+
+#: wp-ultimate-security.php:558
+msgid "<h5>This is old export files. You should delete them.</h5>"
+msgstr ""
+
+#: wp-ultimate-security.php:602
+msgid "An error occurred. Please try again later."
+msgstr ""
+
+#: wp-ultimate-security.php:629
+msgid "An error occurred:"
+msgstr ""
+
+#: wp-ultimate-security.php:633
+msgid "Scan complete. Refresh the page to view the results."
+msgstr ""
+
+#: wp-ultimate-security.php:692
+msgid "Your blog files vulnerability scan results:"
+msgstr ""
+
+#: wp-ultimate-security.php:693
+msgid "This scanner will test your blog on suspicious code patterns. Even if it finds something - it doesn't mean, that code is malicious code actually. Also, this test is in beta, so may stop responding. Results of this test <strong>DO NOT</strong> affect your blog security score. We provide it as additional scanning to find possible danger inclusions in your code."
+msgstr ""
+
+#: wp-ultimate-security.php:703
+msgid "Some files from themes and plugins may have potential vulnerabilities:"
+msgstr ""
+
+#: wp-ultimate-security.php:723
+msgid "<h3>No code changes found in your blog files!</h3>"
+msgstr ""
+
+#: wp-ultimate-security.php:767
+msgid "Back to Tests results"
+msgstr ""
+
+#: wp-ultimate-security.php:786
+msgid "Your blog records scan results:"
+msgstr ""
+
+#: wp-ultimate-security.php:789
+msgid "<h3>Some posts in your blog contains suspicious code:</h3>\n"
+msgstr ""
+
+#: wp-ultimate-security.php:793
+#: wp-ultimate-security.php:812
+msgid "Edit"
+msgstr ""
+
+#: wp-ultimate-security.php:803
+msgid "<h3>No potential code vulnerabilities foud in your posts!</h3>\n"
+msgstr ""
+
+#: wp-ultimate-security.php:808
+msgid "<h3>Some comments in your blog contains suspicious code:</h3>\n"
+msgstr ""
+
+#: wp-ultimate-security.php:821
+msgid "<h3>No potential code vulnerabilities foud in your comments!</h3>\n"
+msgstr ""
+
+#: wp-ultimate-security.php:905
+msgid "<span style=\"color:#fadd3d;\">Check your blog's security</span>"
+msgstr ""
+
+#: wp-ultimate-security.php:931
+msgid "You didn't check your security score more then %s."
+msgstr ""
+
+#: wp-ultimate-security.php:931
+msgid "Do it now."
+msgstr ""
+
