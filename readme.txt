@@ -3,7 +3,7 @@ Contributors: bsndev
 Tags: security, administration, admin, database
 Requires at least: 2.8
 Tested up to: 3.3.1
-Stable tag: 2.7.5
+Stable tag: 2.7.6
 
 Plugin helps you identify security problems with your wordpress installation. It scans your blog and give a security grade based on passed tests.
 
@@ -128,3 +128,6 @@ Our plugin and service is designed to be used by anyone from a complete newbie t
 = 2.7.5 =
 * minor fixes
 * check for custom plugin / wp-admin paths
+
+= 2.7.6 =
+* added system information to display wordpress location for UBS users
