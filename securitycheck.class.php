@@ -1050,7 +1050,42 @@ class SecurityCheck {
     		'visibility:' => __('Could be used to hide spam in posts/comments'),
     		'<script' => __('Malicious scripts loaded in posts by hackers perform redirects, inject spam, etc.'),
     	);
-
+        if (function_exists('is_multisite') && is_multisite()) {
+            $blogids = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM $wpdb->blogs"));
+			if(count($blogids)>0)
+            foreach ($blogids as $blog_id) {
+			     		foreach ( $suspicious_post_text as $text => $description ) {
+	     		        $table_prefix = $wpdb->get_blog_prefix( $blog_id );
+            			$posts = $wpdb->get_results( "SELECT ID, post_title, post_content FROM {$table_prefix}_posts WHERE post_type<>'revision' AND post_content LIKE '%{$text}%'" );
+            			if ( $posts )
+            				foreach ( $posts as $post ) {
+                                
+                                $s = strpos( $post->post_content, $text ) - 25;
+                        		if ( $s < 0 ) $s = 0;
+                        
+                        		$content = preg_replace( '/('.$text.')/', '$#$#\1#$#$', $post->post_content );
+                        		$content = substr( $content, $s, 150 );
+                                $posts_found[$post->ID]['post-title'] = esc_html($post->post_title);
+                                $posts_found[$post->ID]['content'][] = "<pre>".$this->highlight_matches(esc_html($content))."</pre>".$description;
+            
+            				}
+            
+            			$comments = $wpdb->get_results( "SELECT comment_ID, comment_author, comment_content FROM {$table_prefix}_comments WHERE comment_content LIKE '%{$text}%'" );
+            			if ( $comments )
+            				foreach ( $comments as $comment ) {
+                                
+                                $s = strpos( $comment->comment_content, $text ) - 25;
+                        		if ( $s < 0 ) $s = 0;
+                        
+                        		$content = preg_replace( '/('.$text.')/', '$#$#\1#$#$', $comment->comment_content );
+                        		$content = substr( $content, $s, 150 );
+                                $comments_found[$comment->comment_ID]['comment-autor'] = esc_html($comment->comment_author);
+                                $comments_found[$comment->comment_ID]['content'][] = "<pre>".$this->highlight_matches(esc_html($content))."</pre>".$description;
+            
+            				}
+            		}
+            }
+        }else{
 		foreach ( $suspicious_post_text as $text => $description ) {
 			$posts = $wpdb->get_results( "SELECT ID, post_title, post_content FROM {$wpdb->posts} WHERE post_type<>'revision' AND post_content LIKE '%{$text}%'" );
 			if ( $posts )
@@ -1080,6 +1115,7 @@ class SecurityCheck {
 
 				}
 		}
+        }
         if (!isset($posts_found) && !isset($comments_found)) {
             return True;
         }

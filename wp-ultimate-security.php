@@ -33,8 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         delete_option( 'wp_ultimate_security_checker_issues');
         delete_option( 'wp_ultimate_security_checker_lastcheck');
     }
-
-    register_deactivation_hook( __FILE__, 'wp_ultimate_security_checker_activate' );
+    
+    register_deactivation_hook( __FILE__, 'wp_ultimate_security_checker_deactivate' );
     function wp_ultimate_security_checker_activate() {
         add_option( 'wp_ultimate_security_checker_color', 0 , null , 'yes' );
         add_option( 'wp_ultimate_security_checker_score', 0 , null , 'yes' );
@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         add_option( 'wp_ultimate_security_checker_lastcheck', '' , null , 'yes' );
     }
 
-    register_deactivation_hook( __FILE__, 'wp_ultimate_security_checker_activate' );
+    register_activation_hook( __FILE__, 'wp_ultimate_security_checker_activate' );
     function wp_ultimate_security_checker_admin_init()
     {
         /* Register our script. */
@@ -52,17 +52,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
           load_plugin_textdomain( 'ultimate-security', false, $lang_dir );
          
     }
-    
+    add_action( 'network_admin_menu', 'wp_ultimate_security_checker_setup_admin' );
+    function wp_ultimate_security_checker_setup_admin() {
+      /* Add the new options page to the Super Admin menu */
+      add_submenu_page(
+        $parent_slug = 'settings.php',
+        $page_title =  __('Ultimate Security Checker', 'wp_ultimate_security_checker'),
+        $menu_title =  __('Ultimate Security Checker', 'wp_ultimate_security_checker'),
+        $capability = 'manage_network_options',
+        $menu_slug = 'ultimate-security-checker',
+        $function = 'wp_ultimate_security_checker_main'
+      );
+    }
+
     function wp_ultimate_security_checker_admin_menu()
     {
-        /* Register our plugin page */
+        if (function_exists('is_multisite') && !is_multisite()) {
         $page = add_submenu_page( 'tools.php', 
                                   __('Ultimate Security Checker', 'wp_ultimate_security_checker'), 
                                   __('Ultimate Security Checker', 'wp_ultimate_security_checker'), 'manage_options',  'ultimate-security-checker', 
                                   'wp_ultimate_security_checker_main');
-   
-        /* Using registered $page handle to hook script load */
         add_action('admin_print_scripts-' . $page, 'wp_ultimate_security_checker_admin_styles');
+        }
     }
 
     function wp_ultimate_security_checker_admin_styles()
@@ -899,11 +910,16 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
         </div> 
         <?php
         
-
     }
     function wp_ultimate_security_checker_add_menu_admin_bar() {
         global $wp_admin_bar;
-        if(current_user_can('administrator')){
+        if (function_exists('is_multisite') && is_multisite() && current_user_can('manage_network_options')) {
+            if(get_option('wp_ultimate_security_checker_score') != 0){
+                $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( 'Security points <b style="color:'.get_option('wp_ultimate_security_checker_color').';">'.get_option('wp_ultimate_security_checker_score').'</b>', 'wp-ultimate-security-checker' ), 'href' => network_admin_url('settings.php')."?page=ultimate-security-checker" ) );
+            } else {
+                $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( '<span style="color:#fadd3d;">Check your blog\'s security</span>', 'wp-ultimate-security-checker' ), 'href' => network_admin_url('settings.php')."?page=ultimate-security-checker" ) );
+            } 
+        }elseif(function_exists('is_multisite') && !is_multisite() && current_user_can('administrator')){
             if(get_option('wp_ultimate_security_checker_score') != 0){
                 $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( 'Security points <b style="color:'.get_option('wp_ultimate_security_checker_color').';">'.get_option('wp_ultimate_security_checker_score').'</b>', 'wp-ultimate-security-checker' ), 'href' => admin_url('tools.php')."?page=ultimate-security-checker" ) );
             } else {
