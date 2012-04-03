@@ -84,7 +84,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         // wp_enqueue_script('myPluginScript');
     }
     function wp_ultimate_security_checker_main(){
-        $tabs  = array('run-the-tests', 'how-to-fix', 'core-files', 'wp-files', 'wp-posts', 'settings');
+        $tabs  = array('run-the-tests', 'how-to-fix', 'core-files', 'wp-files', 'wp-posts', 'settings', 'pro');
         $tab = '';
         if(!isset($_GET['tab']) || !in_array($_GET['tab'],$tabs)){
             $tab = 'run-the-tests';
@@ -474,6 +474,176 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     </div>
                     <?php
     }
+    
+    function wp_ultimate_security_checker_pro(){
+                global $current_user;
+                get_currentuserinfo();
+                $url = home_url();
+                if (is_multisite()) {
+                    $url = network_home_url();
+                }
+                $view = 'login';
+                switch ($_GET['view']) {
+                   case 'l' :
+                                $view = 'login';
+                                break;
+                   case 'r' :
+                                $view = 'register';
+                                break;
+                   case 'd' :
+                                $view = 'dashboard';
+                                break;
+                   case 'f' :
+                                $view = 'ftp';
+                                break;
+                }
+            ?>
+            
+            <div class="wrap">
+                <style>
+                #icon-security-check {
+                    background: transparent url(<?php echo plugins_url( 'img/shield_32.png', __FILE__ ); ?>) no-repeat;
+                }
+                </style>
+    
+                    <?php screen_icon( 'security-check' );?>
+                <h2 style="padding-left:5px;">Ultimate Security Checker
+                <span style="position:absolute;padding-left:25px;">
+                <a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
+                <a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
+                <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
+                </span>
+                </h2>
+                <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
+                <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+                <?php endif; ?>
+                <style>
+                    h3.nav-tab-wrapper .nav-tab {
+                        padding-top:7px;
+                    }
+                </style>
+    
+                <h3 class="nav-tab-wrapper">
+                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab"><?php _e('Run the Tests');?></a>
+                    <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab"><?php _e('Files Analysis');?></a>
+                    <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab"><?php _e('How to Fix');?></a>
+                    <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab"><?php _e('Settings');?></a>
+                    <a href="?page=ultimate-security-checker&tab=pro" class="nav-tab nav-tab-active"><?php _e('Fix Issues');?></a>
+                </h3>
+<!--    			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
+					Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
+					<a style="color:#e05b3c;text-decoration:underline;" href="http://wordpress.org/extend/plugins/wp-appstore/" target="_blank">Check it out!</a>
+				</p> -->
+                <style>
+                pre {
+                    padding:10px;
+                    background:#f3f3f3;
+                    margin-top:10px;
+                }
+                .answers p, .answers ul, .answers pre {
+                    margin-left:10px;
+                    line-height:19px;
+                }
+                .answers ul{
+                    list-style-type:disc !important;
+                    padding-left:17px !important;
+                }
+                .button-submit-wrapper{
+                    float: right;
+                }
+                .links-wrapper{
+                    float: left;
+                    width: 100px;
+                }
+                .login-controlls{
+                    width: 230px;
+                }
+                label{
+                    display: block;
+                }
+                </style>
+                <?php if($view == 'login'): ?>
+                    <h2><?php _e('Fix issues with Ultimate Blog Security');?></h2>
+                    <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
+                    <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-pro-login">
+                    <h4><?php _e('Login to Ultimate Blog Security service');?></h4>
+                    <input type="hidden" value="ultimate-security-checker" name="page" />
+                    <input type="hidden" value="pro" name="tab" />
+                    <ul>
+                    <li><label for="login"><?php _e('Email');?></label><input type="text" name="login" size="40" /></li>
+                    <li><label for="pwd"><?php _e('Password');?></label><input type="password" name="pwd" size="40" /></li>
+                    <li>
+                        <div class="login-controlls">
+                            <div class="links-wrapper">
+                            <a href="#"><?php _e('I forgot password');?></a>
+                            <a href="#"><?php _e("I don't have account");?></a>
+                            <div class="clear"></div>
+                            </div>
+                            <div class="button-submit-wrapper">
+                            <input type="submit" class="button" value="<?php _e('Submit');?>" />
+                            <div class="clear"></div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </li>
+                    </ul>
+                    </form>
+                <?php endif; ?>
+                <?php if($view == 'register'): ?>
+                    <h2><?php _e('Fix issues with Ultimate Blog Security');?></h2>
+                    <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
+                    <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-pro-login">
+                    <h4><?php _e('Register to Ultimate Blog Security service');?></h4>
+                    <input type="hidden" value="ultimate-security-checker" name="page" />
+                    <input type="hidden" value="pro" name="tab" />
+                    <ul>
+                    <li><label for="login"><?php _e('Email');?></label><input type="text" value="<?php echo $current_user->user_email; ?>" name="email" size="40" /></li>
+                    <li>
+                        <div class="login-controlls">
+                            <div class="button-submit-wrapper">
+                            <input type="submit" class="button" value="<?php _e('Submit');?>" />
+                            <div class="clear"></div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </li>
+                    </ul>
+                    </form>
+                <?php endif; ?>
+                <?php if($view == 'ftp'): ?>
+                    <h2><?php _e('FTP Information');?></h2>
+                    <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
+                    <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-pro-ftp">
+                    <h4><?php _e('Website details');?></h4>
+                    <input type="hidden" value="ultimate-security-checker" name="page" />
+                    <input type="hidden" value="pro" name="tab" />
+                    <ul>
+                    <li><label for="web_link"><?php _e('Website link');?></label><input type="text" value="<?php echo $url; ?>" name="web_link" size="40" /></li>
+                    <li><label for="ftp_host"><?php _e('FTP Host');?></label><input type="text" name="ftp_host" size="40" /></li>
+                    <li><label for="ftp_user"><?php _e('FTP User');?></label><input type="text" name="ftp_user" size="40" /></li>
+                    <li><label for="ftp_pwd"><?php _e('FTP Password');?></label><input type="password" name="ftp_pwd" size="40" /></li>
+                    <li>
+                        <input type="submit" class="button" value="<?php _e('Submit');?>" />
+                    </li>
+                    </ul>
+                    </form>
+                <?php endif; ?>
+                <?php if($view == 'dashboard'): ?>
+                    <h2><?php _e('Dashboard');?></h2>
+                    <p>Placeholder</p>
+                <?php endif; ?>
+                    <!-- security-check -->
+	                <h3><?php _e('Keep your blog secure with automated checks.');?><a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; <?php _e('Back');?></a></h3>
+	                <p>
+	                    <?php _e('A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.');?></p>
+						<p><?php _e('We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:');?><br> <a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
+	                </p>
+                    <!-- end security-check -->
+                    <div class="clear"></div>
+                    </div>
+                    <?php
+    }
+    
     function wp_ultimate_security_checker_core_files(){
         $core_tests_results = get_option('wp_ultimate_security_checker_hashes_issues');
         ?>
