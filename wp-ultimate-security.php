@@ -447,13 +447,13 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     
                     <h3>System Information.</h3>
                     <p>
-                        WordPress location:<br/>
+                        WordPress location (copy to <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">add site page</a> for <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">automated security checking service</a>):<br/>
                         <pre><?php echo ABSPATH; ?></pre>
                     </p>
                     <!-- security-check -->
 	                <h3>Keep your blog secure with automated checks.<a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; Back</a></h3>
 	                <p>
-	                    A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.</p>
+	                    A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="https://www.ultimateblogsecurity.com/pro/add/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.</p>
 						<p>We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:<br> <a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
 	                </p>
                     <!-- end security-check -->
