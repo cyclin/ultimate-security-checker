@@ -386,6 +386,9 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                                 break;
                 }
             }
+            if (isset($_GET['apikey'])) {
+				update_option('wp_ultimate_security_checker_apikey', $_GET['apikey']);
+			}
             ?>
             
             <div class="wrap">
@@ -440,6 +443,10 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <a name="#top"></a>
                     <h2><?php _e('Plugin options');?></h2>
                     
+                    <h4>API key from site's settings page:</h4>
+					<input type="text" style="width:300px" name="apikey" value="<?=htmlspecialchars(get_option('wp_ultimate_security_checker_apikey'))?>"/>
+					<input type="submit" value="Save"/>
+					
                     <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-settings">
                     <h4><?php _e('Disable Facebook Like:');?></h4>
                     <input type="hidden" value="ultimate-security-checker" name="page" />
@@ -1026,6 +1033,76 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                 </div>
         <?php
     }
+    add_action('admin_head', 'wp_ultimate_security_checker_get_status_js');
+    add_action('wp_ajax_get_status', 'wp_ultimate_security_checker_get_status');
+    
+    function wp_ultimate_security_checker_get_status()
+    {
+		check_admin_referer('ultimate-security-checker-ajaxrequest', 'csrfmiddlewaretoken' );
+		$apikey = get_option('wp_ultimate_security_checker_apikey');
+		
+		if ($apikey) {
+			$params['apikey'] = $apikey;
+			$params['blog_url'] = get_option('siteurl');
+			// $url = sprintf("http://10.0.2.2:8000/api/get_status/?%s", http_build_query($params));
+			$url = sprintf("http://beta.ultimateblogsecurity.com/api/get_status/?%s", http_build_query($params));
+			echo file_get_contents($url);
+		}
+		exit;
+	}
+	
+    function wp_ultimate_security_checker_get_status_js(){
+		$apikey = get_option('wp_ultimate_security_checker_apikey');
+		$ajax_nonce = wp_create_nonce('ultimate-security-checker-ajaxrequest');
+		if($apikey) { ?>
+			<script>				
+				jQuery(document).ready(function($) {
+					var data = {action: 'get_status', csrfmiddlewaretoken: '<?=$ajax_nonce?>'};
+					jQuery.post(ajaxurl, data, function(response) {
+						if (response && response.state == 'ok') {
+							var path_status = $('#path_status');
+							var login_status = $('#login_status');
+							if (response.data.path && response.data.verified) {
+								path_status.text(response.data.path +" was successfully verified").css('color', 'green');
+							} else if (!response.data.path) {
+								path_status.text(' was not providen yet').css('color', 'red');
+							} else {
+								path_status.text(response.data.path +" is not verified yet").css('color', 'redorange');
+							}
+							if (response.data.last_login) {	
+								var status = response.data.last_login_status;
+								var msg = status ? 'successful' : 'failed';
+								var color = status ? 'green' : 'orangered';
+								var d = new Date(response.data.last_login*1000);								
+								login_status.text(msg + ' at ' + d.toLocaleString()).css('color', color);
+							}						
+						} else if (response && response.state == 'error') {
+							var ajax_error = $('#ajax_error');
+							var err_message = '<p>Error: '+ response.message + '</p>';							
+							if (!ajax_error.length) {
+								$('#ajax_status').before('<div id="ajax_error" style="color:orangered">'+ err_message +'</div>');
+								var ajax_error = $('#ajax_error');
+							} else {
+								ajax_error.text(err_message);
+							}
+							if (response.data) {
+								err_message = '';
+								for (item in response.data) {
+									err_message += '<p>' + item + ': ' + response.data[item] + '</p>';
+								}
+								ajax_error.append(err_message);		
+							}
+							$('#path_status').html('');
+							$('#login_status').html('');
+						} else {
+							
+						}
+					}, "json");
+				});
+			</script>
+        <?php }
+	}
+	
     function wp_ultimate_security_checker_run_the_tests()
     {
         $security_check = new SecurityCheck();
@@ -1064,6 +1141,17 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 				<a style="color:#e05b3c;text-decoration:underline;" href="http://wordpress.org/extend/plugins/wp-appstore/" target="_blank">Check it out!</a>
 			</p>-->
             <!-- <p>We are checking your blog for security right now. We won't do anything bad to your blog, relax :)</p> -->
+            <h4>Current status</h4>
+            <div id="ajax_status">
+				<table>
+					<tr>
+						<td>Path</td><td id="path_status"></td>
+					</tr>
+					<tr>
+						<td>Last login</td><td id="login_status"></td>
+					</tr>
+				</table>
+            </div>
             <div id="test_results">
              <?php 
                 if(isset($_GET['dotest']) || get_option( 'wp_ultimate_security_checker_issues',0) == 0){
