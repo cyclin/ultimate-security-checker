@@ -393,7 +393,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
 			$apikey = get_option('wp_ultimate_security_checker_apikey');
 			$params['apikey'] = $apikey;
 			$params['blog_url'] = get_option('siteurl');
-			$status_url = sprintf("http://localhost:8000/api/%s/?%s", "get_status", http_build_query($params));
+			$status_url = sprintf("http://beta.ultimateblogsecurity.com/api/%s/?%s", "get_status", http_build_query($params));
 			?>
 			<script>
 				jQuery(document).ready(function($) {
@@ -1125,7 +1125,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 						$('#ajax_loading').fadeIn();
 						var formdata = $('#add_website').serialize();
 						$.ajax({
-							url: "http://localhost:8000/api/add_website/?"+ formdata +"&callback=?",
+							url: "http://beta.ultimateblogsecurity.com/api/add_website/?"+ formdata +"&callback=?",
 							dataType: "jsonp",
 							complete: function (){
 								$('#ajax_loading').fadeOut();
@@ -1204,8 +1204,8 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 		if ($linkedto) {
 			$params['blog_id'] = $linkedto;
 		}
-		$status_url = sprintf("http://localhost:8000/api/%s/?%s", "get_status", http_build_query($params));
-		$find_url = sprintf("http://localhost:8000/api/%s/?%s", "find_ftppath", http_build_query($params));
+		$status_url = sprintf("http://beta.ultimateblogsecurity.com/api/%s/?%s", "get_status", http_build_query($params));
+		$find_url = sprintf("http://beta.ultimateblogsecurity.com/api/%s/?%s", "find_ftppath", http_build_query($params));
         ?>
                 
         <script type="text/javascript">
