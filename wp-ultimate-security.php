@@ -388,8 +388,59 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             }
             if (isset($_GET['apikey'])) {
 				update_option('wp_ultimate_security_checker_apikey', $_GET['apikey']);
+				?><div id="message" class="updated"><p>API key is updated</p></div><?php
 			}
-            ?>
+			$apikey = get_option('wp_ultimate_security_checker_apikey');
+			$params['apikey'] = $apikey;
+			$params['blog_url'] = get_option('siteurl');
+			$status_url = sprintf("http://localhost:8000/api/%s/?%s", "get_status", http_build_query($params));
+			?>
+			<script>
+				jQuery(document).ready(function($) {
+					var linked_data_packed = "<?=get_option('wp_ultimate_security_checker_linked_data');?>";
+					var linked_data = linked_data_packed ? JSON.parse(linked_data_packed) : undefined;					
+					if (linked_data) {
+						var option = $('#blog_linked option:first');
+						$(option).attr('id', 'srvid_' + linked_data.id).attr('selected', true);				
+						$(option).text('server: ' + linked_data.ftphost +', WP location: ' + linked_data.ftppath).val(linked_data_packed);
+						$('#blog_linked').append(option);
+					}
+					$("#blog_unlink").live("click", function(e){
+						if ($('#blog_linked option:first').attr('id') != 'link_unavailable') {
+							var data = {action: 'unlink_blog', csrfmiddlewaretoken: ajax_token};
+							$('#ajax_loading').fadeIn();
+							jQuery.post(ajaxurl, data, function(response) {
+								$('#ajax_loading').fadeOut();
+								window.location.reload();
+							});
+						}						
+					});
+					
+					$("#blog_change_link").live("click", function(e){
+						var that = this;
+						$('#ajax_loading').fadeIn();
+						$.ajax({
+							url: "<?=$status_url?>&callback=?",
+							dataType: "jsonp",
+							complete: function (){
+								$('#ajax_loading').fadeOut();
+							},
+							success: function(response) {
+								if (response && response.state == 'error') {
+									switch (response.errno) {
+										case -3: // Multiple blogs found
+											$("#blog_link_ops").hide();
+											select_website(response.data);
+											return;
+									}
+								}
+							}
+						});
+					});
+						
+					$("#website_confirm").live("click", submit_selected_site);
+				});
+			</script>
             
             <div class="wrap">
                 <style>
@@ -1033,52 +1084,231 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                 </div>
         <?php
     }
-    add_action('admin_head', 'wp_ultimate_security_checker_get_status_js');
-    add_action('wp_ajax_get_status', 'wp_ultimate_security_checker_get_status');
+	
+	add_action('admin_head', 'wp_ultimate_security_checker_load_common_js');
+	add_action('wp_ajax_link_blog', 'wp_ultimate_security_checker_link_blog');
+    add_action('wp_ajax_unlink_blog', 'wp_ultimate_security_checker_unlink_blog');
     
-    function wp_ultimate_security_checker_get_status()
+    function wp_ultimate_security_checker_link_blog()
     {
-		check_admin_referer('ultimate-security-checker-ajaxrequest', 'csrfmiddlewaretoken' );
-		$apikey = get_option('wp_ultimate_security_checker_apikey');
-		
-		if ($apikey) {
-			$params['apikey'] = $apikey;
-			$params['blog_url'] = get_option('siteurl');
-			// $url = sprintf("http://10.0.2.2:8000/api/get_status/?%s", http_build_query($params));
-			$url = sprintf("http://beta.ultimateblogsecurity.com/api/get_status/?%s", http_build_query($params));
-			echo file_get_contents($url);
-		}
+		check_admin_referer('ultimate-security-checker-ajaxrequest', 'csrfmiddlewaretoken');		 
+		update_option('wp_ultimate_security_checker_linkedto', intval($_POST['blogid']));
+		update_option('wp_ultimate_security_checker_linked_data', $_POST['blogdata']);
 		exit;
 	}
 	
-    function wp_ultimate_security_checker_get_status_js(){
+	function wp_ultimate_security_checker_unlink_blog()
+    {
+		check_admin_referer('ultimate-security-checker-ajaxrequest', 'csrfmiddlewaretoken');		 
+		delete_option('wp_ultimate_security_checker_linkedto');
+		delete_option('wp_ultimate_security_checker_linked_data');
+		exit;
+	}	
+	
+    function wp_ultimate_security_checker_load_common_js(){
+		// TODO: replace jQuery.post with jQuery.ajax and add missing error messages
 		$apikey = get_option('wp_ultimate_security_checker_apikey');
-		$ajax_nonce = wp_create_nonce('ultimate-security-checker-ajaxrequest');
+		$linkedto = get_option('wp_ultimate_security_checker_linkedto', '');
+		
 		if($apikey) { ?>
-			<script>				
-				jQuery(document).ready(function($) {
-					var data = {action: 'get_status', csrfmiddlewaretoken: '<?=$ajax_nonce?>'};
+			<script>
+				var ajax_token = "<?=wp_create_nonce('ultimate-security-checker-ajaxrequest')?>";
+				var linked = "<?=$linkedto?>";
+				var $ = jQuery;
+				function add_website() 
+				{
+					var $ = jQuery;
+					$('#ajax_status').hide();
+					$('#add_website').show();
+					$('#add_website').submit(function(e) {
+						e.preventDefault();						
+						$('#ajax_loading').fadeIn();
+						var formdata = $('#add_website').serialize();
+						$.ajax({
+							url: "http://localhost:8000/api/add_website/?"+ formdata +"&callback=?",
+							dataType: "jsonp",
+							complete: function (){
+								$('#ajax_loading').fadeOut();
+							},						
+							success: function(response) {
+								if (response && response.state == 'ok') {
+									window.location.reload();								
+								} else {
+									var message;
+									if (response.state == 'error')
+										message = response.message ? response.message : "unknown error occured";
+									else
+										message = "can't connect to UBS server";
+									var err_message = '<p>Error: '+ message + '</p>';															
+									var ajax_error = $('#ajax_error');
+									if (!ajax_error.length) {
+										$('#ajax_status').before('<div id="ajax_error" style="color:orangered">'+ err_message +'</div>');
+										var ajax_error = $('#ajax_error');
+									} else {
+										ajax_error.text(err_message);
+									}
+									if (response.data) {
+										for (item in response.data) {
+											ajax_error.append('<p>' + item + ': ' + response.data[item] + '</p>');
+										}		
+									}
+								}
+							}
+						});
+					});
+				}
+				
+				function submit_selected_site (e) {
+					e.preventDefault();
+					var selector = "#select_website > select option:selected";
+					var blogid = $(selector).attr('id').match(/srvid_(\d+)/)[1];
+					var bdata  = $(selector).val();
+					var data = {action: 'link_blog', blogid: blogid, blogdata:bdata,
+								csrfmiddlewaretoken: ajax_token};
+					$('#ajax_loading').fadeIn();
 					jQuery.post(ajaxurl, data, function(response) {
+						$('#ajax_loading').fadeOut();
+						window.location.reload();
+					});
+				}		
+					
+				function select_website(data) 
+				{
+					var $ = jQuery;
+					$('#ajax_status').hide();
+					$('#select_website').empty();
+					var container = $(document.createElement('select'));
+					container.append("<option disabled selected>Choose website</option>");
+					for (key in data){
+						var item = data[key];
+						var option = document.createElement('option');
+						$(option).attr('id', 'srvid_' + item.id);				
+						$(option).text('server: ' + item.ftphost +', WP location: ' + item.ftppath).val(JSON.stringify(item));
+						container.append(option);
+					}
+					$('#select_website').append(container);
+					$('#select_website').append('<input id="website_confirm" type="submit" value="Confirm"/>');
+					$('#select_website').show();
+				}
+							
+			</script>
+        <?php }
+	}
+	
+    function wp_ultimate_security_checker_run_the_tests()
+    {
+        $apikey = get_option('wp_ultimate_security_checker_apikey');
+		$linkedto = get_option('wp_ultimate_security_checker_linkedto', '');
+		$params['apikey'] = $apikey;
+		$params['blog_url'] = get_option('siteurl');		
+		if ($linkedto) {
+			$params['blog_id'] = $linkedto;
+		}
+		$status_url = sprintf("http://localhost:8000/api/%s/?%s", "get_status", http_build_query($params));
+		$find_url = sprintf("http://localhost:8000/api/%s/?%s", "find_ftppath", http_build_query($params));
+        ?>
+                
+        <script type="text/javascript">
+		jQuery(document).ready(function($) {			
+			$('#select_website').submit(submit_selected_site);
+			
+			// auto start of info request
+			$('#ajax_loading').fadeIn();
+			// TODO: if linked and response is not found - reset state.
+			$.ajax({
+				url: "<?=$status_url?>&callback=?",
+				dataType: "jsonp",
+				complete: function (){
+					$('#ajax_loading').fadeOut();
+				},
+				success: function(response) {
+					if (response && response.state == 'ok') {
+						$('#ajax_status').show();
+						var path_status = $('#path_status');
+						var login_status = $('#login_status');
+						if (response.data.path && response.data.verified) {
+							path_status.text(response.data.path +" was successfully verified").css('color', 'green');
+						} else if (!response.data.path) {	
+							path_status.html('<span> was not providen yet - <a id="verify_path" href="#"> click to find</a></span>').css('color', 'red');
+						} else {
+							var span = document.createElement('span');
+							$(span).text(response.data.path +" is not verified yet").css('color', 'orangered');
+							path_status.append(span);
+							path_status.append('<span> - <a id="verify_path" href="#"> verify</a></span>');
+						}
+						if (response.data.last_login) {	
+							var status = response.data.last_login_status;
+							var msg = status ? 'successful' : 'failed';
+							var color = status ? 'green' : 'orangered';
+							var d = new Date(response.data.last_login*1000);								
+							login_status.text(msg + ' at ' + d.toLocaleString()).css('color', color);
+						}						
+					} else {
+						var message;
+						if (response.state == 'error')  {
+							switch (response.errno) {
+								case -2: // Blog not found
+									add_website();
+									return;
+								case -3: // Multiple blogs found
+									select_website(response.data);
+									return;
+								case -1: // Invalid API key									
+								case -4: // Bad request
+									message = response.message;
+									break;
+								default:
+									message = 'unknown error occured';
+									break;
+							}
+						} else {
+							message = "can't connect to UBS server";
+						}
+						var err_message = '<p>Error: '+ message + '</p>';															
+						var ajax_error = $('#ajax_error');
+						if (!ajax_error.length) {
+							$('#ajax_status').before('<div id="ajax_error" style="color:orangered">'+ err_message +'</div>');
+							var ajax_error = $('#ajax_error');
+						} else {
+							ajax_error.text(err_message);
+						}
+						if (response.data) {
+							for (item in response.data) {
+								ajax_error.append('<p>' + item + ': ' + response.data[item] + '</p>');
+							}		
+						}
+						$('#ajax_status').hide();
+					}
+				}
+			});
+			$("#verify_path").live("click", function(e){
+				e.preventDefault();
+				$('#ajax_loading').fadeIn();
+				$.ajax({
+					url: "<?=$find_url?>&callback=?&path=<?=ABSPATH?>",
+					dataType: "jsonp",
+					complete: function (){
+						$('#ajax_loading').fadeOut();
+					},						
+					success: function(response) {
 						if (response && response.state == 'ok') {
+							$('#ajax_status').show();
 							var path_status = $('#path_status');
 							var login_status = $('#login_status');
 							if (response.data.path && response.data.verified) {
 								path_status.text(response.data.path +" was successfully verified").css('color', 'green');
-							} else if (!response.data.path) {
+							} else if (!response.data.path) {	
 								path_status.text(' was not providen yet').css('color', 'red');
 							} else {
-								path_status.text(response.data.path +" is not verified yet").css('color', 'redorange');
-							}
-							if (response.data.last_login) {	
-								var status = response.data.last_login_status;
-								var msg = status ? 'successful' : 'failed';
-								var color = status ? 'green' : 'orangered';
-								var d = new Date(response.data.last_login*1000);								
-								login_status.text(msg + ' at ' + d.toLocaleString()).css('color', color);
-							}						
-						} else if (response && response.state == 'error') {
+								var span = document.createElement('span');
+								$(span).text(response.data.path +" is not verified yet").css('color', 'orangered');
+								path_status.append(span);
+								path_status.append('<span> - <a id="verify_path" href="#"> verify</a></span>');
+							}													
+						} else {
+							var msg = (response.state == 'error') ? response.message : "can't connect to UBS server";
+							var err_message = '<p>Error: '+ msg + ' (<a id="verify_path" href="#">retry</a>) </p>';															
 							var ajax_error = $('#ajax_error');
-							var err_message = '<p>Error: '+ response.message + '</p>';							
 							if (!ajax_error.length) {
 								$('#ajax_status').before('<div id="ajax_error" style="color:orangered">'+ err_message +'</div>');
 								var ajax_error = $('#ajax_error');
@@ -1086,27 +1316,18 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 								ajax_error.text(err_message);
 							}
 							if (response.data) {
-								err_message = '';
 								for (item in response.data) {
-									err_message += '<p>' + item + ': ' + response.data[item] + '</p>';
-								}
-								ajax_error.append(err_message);		
+									ajax_error.append('<p>' + item + ': ' + response.data[item] + '</p>');
+								}		
 							}
-							$('#path_status').html('');
-							$('#login_status').html('');
-						} else {
-							
+							$('#ajax_status').hide();
 						}
-					}, "json");
-				});
-			</script>
-        <?php }
-	}
-	
-    function wp_ultimate_security_checker_run_the_tests()
-    {
-        $security_check = new SecurityCheck();
-        ?>
+					}	
+				});				
+			});
+		});
+        </script>
+        
         <div class="wrap">
         <style>
         #icon-security-check {
