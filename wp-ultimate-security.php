@@ -84,7 +84,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         // wp_enqueue_script('myPluginScript');
     }
     function wp_ultimate_security_checker_main(){
-        $tabs  = array('run-the-tests', 'how-to-fix', 'core-files', 'wp-files', 'wp-posts', 'settings', 'pro');
+        $tabs  = array('run-the-tests', 'how-to-fix', 'core-files', 'wp-files', 'wp-posts', 'settings', 'pro', 'current-status');
         $tab = '';
         if(!isset($_GET['tab']) || !in_array($_GET['tab'],$tabs)){
             $tab = 'run-the-tests';
@@ -122,6 +122,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
             </style>
             <h3 class="nav-tab-wrapper">
                     <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab"><?php _e('Run the Tests');?></a>
+					<a href="?page=ultimate-security-checker&tab=current-status" class="nav-tab">Current Status</a>
                     <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab"><?php _e('Files Analysis');?></a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab nav-tab-active"><?php _e('How to Fix');?></a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab"><?php _e('Settings');?></a>
@@ -467,7 +468,8 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 </style>
     
                 <h3 class="nav-tab-wrapper">
-                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab"><?php _e('Run the Tests');?></a>
+                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab"><?php _e('Run the Tests');?></a>                    
+					<a href="?page=ultimate-security-checker&tab=current-status" class="nav-tab">Current Status</a>
                     <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab"><?php _e('Files Analysis');?></a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab"><?php _e('How to Fix');?></a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab nav-tab-active"><?php _e('Settings');?></a>
@@ -582,7 +584,8 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 </style>
     
                 <h3 class="nav-tab-wrapper">
-                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab"><?php _e('Run the Tests');?></a>
+                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab"><?php _e('Run the Tests');?></a>                    
+					<a href="?page=ultimate-security-checker&tab=current-status" class="nav-tab">Current Status</a>
                     <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab"><?php _e('Files Analysis');?></a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab"><?php _e('How to Fix');?></a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab"><?php _e('Settings');?></a>
@@ -923,7 +926,8 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                 <p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
             <?php endif; ?>
             <h3 class="nav-tab-wrapper">
-                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab"><?php _e('Run the Tests');?></a>
+                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab"><?php _e('Run the Tests');?></a>                    
+					<a href="?page=ultimate-security-checker&tab=current-status" class="nav-tab">Current Status</a>
                     <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab nav-tab-active"><?php _e('Files Analysis');?></a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab"><?php _e('How to Fix');?></a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab"><?php _e('Settings');?></a>
@@ -1106,7 +1110,6 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 	}	
 	
     function wp_ultimate_security_checker_load_common_js(){
-		// TODO: replace jQuery.post with jQuery.ajax and add missing error messages
 		$apikey = get_option('wp_ultimate_security_checker_apikey');
 		$linkedto = get_option('wp_ultimate_security_checker_linkedto', '');
 		
@@ -1117,47 +1120,50 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 				var $ = jQuery;
 				function add_website() 
 				{
-					var $ = jQuery;
 					$('#ajax_status').hide();
 					$('#add_website').show();
-					$('#add_website').submit(function(e) {
-						e.preventDefault();						
-						$('#ajax_loading').fadeIn();
-						var formdata = $('#add_website').serialize();
-						$.ajax({
-							url: "http://beta.ultimateblogsecurity.com/api/add_website/?"+ formdata +"&callback=?",
-							dataType: "jsonp",
-							complete: function (){
-								$('#ajax_loading').fadeOut();
-							},						
-							success: function(response) {
-								if (response && response.state == 'ok') {
-									window.location.reload();								
-								} else {
-									var message;
-									if (response.state == 'error')
-										message = response.message ? response.message : "unknown error occured";
-									else
-										message = "can't connect to UBS server";
-									var err_message = '<p>Error: '+ message + '</p>';															
-									var ajax_error = $('#ajax_error');
-									if (!ajax_error.length) {
-										$('#ajax_status').before('<div id="ajax_error" style="color:orangered">'+ err_message +'</div>');
-										var ajax_error = $('#ajax_error');
-									} else {
-										ajax_error.text(err_message);
-									}
-									if (response.data) {
-										for (item in response.data) {
-											ajax_error.append('<p>' + item + ': ' + response.data[item] + '</p>');
-										}		
-									}
-								}
-							}
-						});
-					});
+					if (linked.length > 0){						
+						$.post(ajaxurl, {csrfmiddlewaretoken: ajax_token, action:'unlink_blog'}, function() {});
+					}
 				}
 				
+				$("#add_website").live("submit", function(e){
+					e.preventDefault();						
+					$('#ajax_loading').fadeIn();
+					var formdata = $('#add_website').serialize();
+					$.ajax({
+						url: "http://beta.ultimateblogsecurity.com/api/add_website/?"+ formdata +"&callback=?",
+						dataType: "jsonp",
+						complete: function (){
+							$('#ajax_loading').fadeOut();
+						},						
+						success: function(response) {
+							if (response && response.state == 'ok') {
+								window.location.reload();								
+							} else {
+								var message;
+								if (response.state == 'error')
+									message = response.message ? response.message : "unknown error occured";
+								else
+									message = "can't connect to UBS server";
+								var err_message = '<p>Error: '+ message + '</p>';															
+								var ajax_error = $('#ajax_error');
+								if (!ajax_error.length) {
+									$('#ajax_status').before('<div id="ajax_error" style="color:orangered">'+ err_message +'</div>');
+									var ajax_error = $('#ajax_error');
+								} else {
+									ajax_error.text(err_message);
+								}
+								if (response.data) {
+									for (item in response.data) {
+										ajax_error.append('<p>' + item + ': ' + response.data[item] + '</p>');
+									}		
+								}
+							}
+						}
+					});
+				});
+					
 				function submit_selected_site (e) {
 					e.preventDefault();
 					var selector = "#select_website > select option:selected";
@@ -1166,9 +1172,16 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 					var data = {action: 'link_blog', blogid: blogid, blogdata:bdata,
 								csrfmiddlewaretoken: ajax_token};
 					$('#ajax_loading').fadeIn();
-					jQuery.post(ajaxurl, data, function(response) {
-						$('#ajax_loading').fadeOut();
-						window.location.reload();
+					$.ajax({
+						url: ajaxurl,
+						data:data,
+						type: "POST",
+						complete: function (){
+							$('#ajax_loading').fadeOut();
+						},						
+						success: function(response) {
+							window.location.reload();
+						}
 					});
 				}		
 					
@@ -1189,15 +1202,14 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 					$('#select_website').append(container);
 					$('#select_website').append('<input id="website_confirm" type="submit" value="Confirm"/>');
 					$('#select_website').show();
-				}
-							
+				}							
 			</script>
         <?php }
 	}
 	
-    function wp_ultimate_security_checker_run_the_tests()
+	function wp_ultimate_security_checker_current_status()
     {
-        $apikey = get_option('wp_ultimate_security_checker_apikey');
+		$apikey = get_option('wp_ultimate_security_checker_apikey');
 		$linkedto = get_option('wp_ultimate_security_checker_linkedto', '');
 		$params['apikey'] = $apikey;
 		$params['blog_url'] = get_option('siteurl');		
@@ -1207,7 +1219,13 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 		$status_url = sprintf("http://beta.ultimateblogsecurity.com/api/%s/?%s", "get_status", http_build_query($params));
 		$find_url = sprintf("http://beta.ultimateblogsecurity.com/api/%s/?%s", "find_ftppath", http_build_query($params));
         ?>
-                
+        <div id="images"></div>
+        <div class="wrap">
+        <style>
+        #icon-security-check {
+            background: transparent url(<?php echo plugins_url( 'img/shield_32.png', __FILE__ ); ?>) no-repeat;
+        }
+        </style>        
         <script type="text/javascript">
 		jQuery(document).ready(function($) {			
 			$('#select_website').submit(submit_selected_site);
@@ -1327,6 +1345,86 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 			});
 		});
         </script>
+        <?php screen_icon( 'security-check' );?>
+		<h2 style="padding-left:5px;">Ultimate Security Checker
+		<span style="position:absolute;padding-left:25px;">
+		<a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
+		<a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
+		<a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
+		</span>
+		</h2>
+		<?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
+			<p style="padding-left:5px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FUltimate-Blog-Security%2F141398339213582&amp;layout=standard&amp;show_faces=false&amp;width=550&amp;action=recommend&amp;font=lucida+grande&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:550px; height:35px;" allowTransparency="true"></iframe></p>
+		<?php endif; ?>
+		<style>
+			h3.nav-tab-wrapper .nav-tab {
+				padding-top:7px;
+			}
+		</style>
+		<h3 class="nav-tab-wrapper">
+				<a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab">Run the Tests</a>
+				<a href="?page=ultimate-security-checker&tab=current-status" class="nav-tab nav-tab-active">Current Status</a>
+				<a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab">Files Analysis</a>
+				<a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab">How to Fix</a>
+				<a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
+		</h3>
+		
+        <h4>Current status <img id="ajax_loading" style="margin-left:15px;" src="<?php echo plugins_url( 'img/loader.gif', __FILE__ ); ?>" alt="loading" /></h4>
+		<form id="add_website" style="display: none;" action="." method="GET">
+			<?php
+			$apikey = get_option('wp_ultimate_security_checker_apikey');
+			if ($apikey) { ?>
+				<p>Seems like you didn't added your blog at ultimateblogsecurity.com so far, you can do it right now: </p>
+				<input type="hidden" name="apikey" value="<?=htmlspecialchars($apikey)?>"/>
+				<input type="hidden" name="uri" value="<?=get_option('siteurl')?>"/>
+				<table>
+					<tr>
+						<td><label>What's the FTP address of your blog (example: ftp://myblog.com)?</label></td>
+						<td><input type="text" name="ftphost"/></td>
+					</tr>
+					<tr>
+						<td><label>WordPress location (see settings tab in plugin)</label></td>
+						<td><input type="text" name="ftppath" value="<?=ABSPATH?>"/></td>
+					</tr>
+					<tr>
+						<td><label>What's the FTP username for your blog's FTP account?</label></td>
+						<td><input type="text" name="ftpuser"/></td>
+					</tr>
+					<tr>
+						<td><label>What's the password for your blog's FTP account?</label></td>
+						<td><input type="password" name="ftppass"/></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><input type="submit" value="Submit" style="float:right"/></td>
+					</tr>
+				</table>
+			<?php } else { ?>
+				<p>If you already have account at ultimateblogsecurity.com - update APIKEY field in
+				plugin's settings with key displayed at account info page. Otherwise, create new account first.</p>
+			<?php } ?>
+		</form>
+		<form id="select_website" style="display:none">
+			<p>
+				You have multiple records in UBS dashboard for this blog.
+				Please choose one, guided by it's FTP info.
+			</p>
+		</form>
+		<table id="ajax_status">
+			<tr>
+				<td>Path</td><td id="path_status"></td>
+			</tr>
+			<tr>
+				<td>Last login</td><td id="login_status"></td>
+			</tr>
+		</table>			
+        <?php 
+	}
+	
+    function wp_ultimate_security_checker_run_the_tests()
+    {
+        $security_check = new SecurityCheck();
+        ?>
         
         <div class="wrap">
         <style>
@@ -1353,6 +1451,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
             </style>
             <h3 class="nav-tab-wrapper">
                     <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab nav-tab-active"><?php _e('Run the Tests');?></a>
+                    <a href="?page=ultimate-security-checker&tab=current-status" class="nav-tab">Current Status</a>
                     <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab"><?php _e('Files Analysis');?></a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab"><?php _e('How to Fix');?></a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab"><?php _e('Settings');?></a>
@@ -1362,17 +1461,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 				<a style="color:#e05b3c;text-decoration:underline;" href="http://wordpress.org/extend/plugins/wp-appstore/" target="_blank">Check it out!</a>
 			</p>-->
             <!-- <p>We are checking your blog for security right now. We won't do anything bad to your blog, relax :)</p> -->
-            <h4>Current status</h4>
-            <div id="ajax_status">
-				<table>
-					<tr>
-						<td>Path</td><td id="path_status"></td>
-					</tr>
-					<tr>
-						<td>Last login</td><td id="login_status"></td>
-					</tr>
-				</table>
-            </div>
+            
             <div id="test_results">
              <?php 
                 if(isset($_GET['dotest']) || get_option( 'wp_ultimate_security_checker_issues',0) == 0){
