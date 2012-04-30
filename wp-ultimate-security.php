@@ -495,12 +495,12 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 </style>
                     <a name="#top"></a>
                     <h2><?php _e('Plugin options');?></h2>
-                    
+					
+                    <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-settings">
                     <h4>API key from site's settings page:</h4>
 					<input type="text" style="width:300px" name="apikey" value="<?=htmlspecialchars(get_option('wp_ultimate_security_checker_apikey'))?>"/>
 					<input type="submit" value="Save"/>
-					
-                    <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-settings">
+                    
                     <h4><?php _e('Disable Facebook Like:');?></h4>
                     <input type="hidden" value="ultimate-security-checker" name="page" />
                     <input type="hidden" value="settings" name="tab" />
