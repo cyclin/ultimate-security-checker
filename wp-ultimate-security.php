@@ -84,7 +84,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         // wp_enqueue_script('myPluginScript');
     }
     function wp_ultimate_security_checker_main(){
-        $tabs  = array('run-the-tests', 'how-to-fix', 'core-files', 'wp-files', 'wp-posts', 'settings', 'pro', 'current-status');
+        $tabs  = array('run-the-tests', 'how-to-fix', 'core-files', 'wp-files',
+					   'wp-posts', 'settings', 'pro', 'current-status', 'register');
         $tab = '';
         if(!isset($_GET['tab']) || !in_array($_GET['tab'],$tabs)){
             $tab = 'run-the-tests';
@@ -93,7 +94,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         }
         $function_name = 'wp_ultimate_security_checker_' . str_replace('-','_',$tab);
         $function_name();
-    }
+    }    
     
     function wp_ultimate_security_checker_how_to_fix(){
         ?>
@@ -538,25 +539,28 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
     function wp_ultimate_security_checker_pro(){
                 global $current_user;
                 get_currentuserinfo();
+                preg_match_all("/([\._a-zA-Z0-9-]+)@[\._a-zA-Z0-9-]+/i", $current_user->user_email, $matches);
+				$email_name = $matches[1][0];					
                 $url = home_url();
                 if (is_multisite()) {
                     $url = network_home_url();
                 }
-                $view = 'login';
-                switch ($_GET['view']) {
-                   case 'l' :
-                                $view = 'login';
-                                break;
-                   case 'r' :
-                                $view = 'register';
-                                break;
-                   case 'd' :
-                                $view = 'dashboard';
-                                break;
-                   case 'f' :
-                                $view = 'ftp';
-                                break;
-                }
+                $view = 'register';
+                if (isset($_GET['view']))
+					switch ($_GET['view']) {
+					    case 'l':
+								$view = 'login';
+								break;
+					    case 'r':
+								$view = 'register';
+								break;
+					    case 'd':
+								$view = 'dashboard';
+								break;
+					    case 'f':
+								$view = 'ftp';
+								break;
+					}
             ?>
             
             <div class="wrap">
@@ -589,7 +593,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab"><?php _e('Files Analysis');?></a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab"><?php _e('How to Fix');?></a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab"><?php _e('Settings');?></a>
-                    <a href="?page=ultimate-security-checker&tab=pro" class="nav-tab nav-tab-active"><?php _e('Fix Issues');?></a>
+                    <a href="?page=ultimate-security-checker&tab=pro" class="nav-tab nav-tab-active"><?php _e('PRO Checks');?></a>
                 </h3>
 <!--    			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
 					Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
@@ -651,14 +655,85 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     </form>
                 <?php endif; ?>
                 <?php if($view == 'register'): ?>
-                    <h2><?php _e('Fix issues with Ultimate Blog Security');?></h2>
-                    <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
-                    <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-pro-login">
+					<script type="text/javascript" src="<?php echo plugins_url('js/easyXDM.min.js', __FILE__ );?>"></script>
+					<script type="text/javascript" src="<?php echo plugins_url('js/json2.js', __FILE__ );?>"></script>
+					<script type="text/javascript" charset="utf-8">
+						var regmsg = "Thanks for registering. A confirmation email was sent to your email address.";
+						regmsg += "Please check your email and click on the link to confirm your account and complete your registration.";
+						var blogurl = "<?php bloginfo('url'); ?>";
+						jQuery(document).ready(function($) {
+							var rpc = new easyXDM.Rpc({
+								remote: "http://beta.ultimateblogsecurity.com/api/cors/provider"
+							},
+							{
+								remote: {
+									request: {}
+								}
+							});		
+									
+							function ajax_apikey_upderr(errdata) {
+								$('#ubs_regerr').append("<p>Error while updating your API key. Please, do it manually in Settings tab.");	
+							}
+							$("#regform_toggle").live("click", function(){ 
+								$('#ubs_register').toggle();
+							});          
+							
+							$('#ubs_register').submit(function (event) {
+								event.preventDefault();
+								$('#ubs_regerr').text('');
+								var email = $('form#ubs_register input[name=email]').val();
+								var uname = $('form#ubs_register input[name=username]').val();
+								rpc.request({
+									url: "http://beta.ultimateblogsecurity.com/api/cors/register/",
+									method: "POST",
+									data: {email: email, blogurl: blogurl, username:uname}
+								}, function(response){
+									var resp_data = JSON.parse(response.data);
+									if (resp_data.state == 'ok') {
+										ajax_set_registration(1);
+										$('#ubs_regmsg').html('<p>'+regmsg+'</p>');
+										var apikey = resp_data.data.apikey;
+										if (apikey != undefined && apikey.length > 0) {
+											ajax_update_apikey(apikey, function(data){
+												if (data.state == 'error') {
+													ajax_apikey_upderr();
+												}
+											}, ajax_apikey_upderr);
+										}
+										$('#ubs_register').fadeOut(1000);
+									} else if (resp_data.data.errors) {
+										for (var item in resp_data.data.errors) {
+											var targ = $('form#ubs_register input[name='+item+']');
+											targ.after('<div style="color:red">'+resp_data.data.errors[item][0] +'</div>');
+										}
+									} else {
+										$('#ubs_regerr').text('Following error occured: "'+resp_data.message+'". Please try again later or contact support team.');
+									}
+								}, function(error){
+									$('#ubs_regerr').text("Sorry, unknow error occured. Please try again later or contact support team.");
+								});
+							});
+						});
+					</script>
+                    <div id="ubs_regmsg">
+						<?php if (get_option('wp_ultimate_security_checker_registered') && !get_option('wp_ultimate_security_checker_activated')) { ?>
+						<p>Thanks for registering. A confirmation email was sent to your email address.
+						Please check your email and click on the link to confirm your account and complete your registration.</p>
+						<p>This message will disappear after first PRO check. Also you can <a id="upd_activation_status" href="#">update current activation status</a> manually.</p
+						<?php } ?>
+                    </div>
+                    <div id="ubs_regactions"><p><a id="regform_toggle" href="#">Signup with another email</a> | <a id="apikey_resend" href="#">Send API key to provided email address</a></p></div>                    
+                    <div id="ubs_regerr"></div>
+                    
+                    <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="ubs_register" style="<?php if (get_option('wp_ultimate_security_checker_registered')) { ?>display:none<?php }?>">                    
                     <h4><?php _e('Register to Ultimate Blog Security service');?></h4>
+                    <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
+                    
                     <input type="hidden" value="ultimate-security-checker" name="page" />
                     <input type="hidden" value="pro" name="tab" />
                     <ul>
                     <li><label for="login"><?php _e('Email');?></label><input type="text" value="<?php echo $current_user->user_email; ?>" name="email" size="40" /></li>
+                    <li><label for="login"><?php _e('Username');?></label><input type="text" value="<?php echo $email_name; ?>" name="username" size="40" /></li>
                     <li>
                         <div class="login-controlls">
                             <div class="button-submit-wrapper">
@@ -669,7 +744,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                         </div>
                     </li>
                     </ul>
-                    </form>
+                    </form>                    
                 <?php endif; ?>
                 <?php if($view == 'ftp'): ?>
                     <h2><?php _e('FTP Information');?></h2>
@@ -693,8 +768,9 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <h2><?php _e('Dashboard');?></h2>
                     <p>Placeholder</p>
                 <?php endif; ?>
+					<h2><?php _e('Fix issues with Ultimate Blog Security');?></h2>
                     <!-- security-check -->
-	                <h3><?php _e('Keep your blog secure with automated checks.');?><a name="security-check"></a><a href="#top" style="font-size:13px;margin-left:10px;">&uarr; <?php _e('Back');?></a></h3>
+	                <h3><?php _e('Keep your blog secure with automated checks.');?><a name="security-check"></a><!--<a href="#top" style="font-size:13px;margin-left:10px;">&uarr; <?php _e('Back');?></a>--></h3>
 	                <p>
 	                    <?php _e('A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.');?></p>
 						<p><?php _e('We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:');?><br> <a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
@@ -1092,6 +1168,8 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 	add_action('admin_head', 'wp_ultimate_security_checker_load_common_js');
 	add_action('wp_ajax_link_blog', 'wp_ultimate_security_checker_link_blog');
     add_action('wp_ajax_unlink_blog', 'wp_ultimate_security_checker_unlink_blog');
+    add_action('wp_ajax_set_apikey', 'wp_ultimate_security_checker_set_apikey');
+    add_action('wp_ajax_set_registration', 'wp_ultimate_security_checker_set_registration');
     
     function wp_ultimate_security_checker_link_blog()
     {
@@ -1107,7 +1185,29 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 		delete_option('wp_ultimate_security_checker_linkedto');
 		delete_option('wp_ultimate_security_checker_linked_data');
 		exit;
-	}	
+	}
+	
+	function wp_ultimate_security_checker_set_apikey()
+    {
+		check_admin_referer('ultimate-security-checker-ajaxrequest', 'csrfmiddlewaretoken');	
+		if (isset($_POST['apikey'])) 	 
+			$ret = update_option('wp_ultimate_security_checker_apikey', htmlspecialchars($_POST['apikey'])) ? 'ok': 'error';
+		else
+			$ret = 'error';
+		echo json_encode(Array('state' => $ret));
+		exit;
+	}
+	
+	function wp_ultimate_security_checker_set_registration()
+    {
+		check_admin_referer('ultimate-security-checker-ajaxrequest', 'csrfmiddlewaretoken');	
+		if (isset($_POST['registered'])) 	 
+			$ret = update_option('wp_ultimate_security_checker_registered', (bool)$_POST['registered']) ? 'ok': 'error';
+		else
+			$ret = 'error';
+		echo json_encode(Array('state' => $ret));
+		exit;
+	}		
 	
     function wp_ultimate_security_checker_load_common_js(){
 		$apikey = get_option('wp_ultimate_security_checker_apikey');
@@ -1202,7 +1302,31 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 					$('#select_website').append(container);
 					$('#select_website').append('<input id="website_confirm" type="submit" value="Confirm"/>');
 					$('#select_website').show();
-				}							
+				}
+				
+				function ajax_update_apikey(apikey, success_cb, error_cb) 
+				{
+					$.ajax({
+						url: ajaxurl,
+						type: "POST",
+						data: {csrfmiddlewaretoken: ajax_token, action:'set_apikey', apikey:apikey},
+						dataType: "json",
+						success: success_cb,
+						error: error_cb
+					});
+				}
+				
+				function ajax_set_registration(val, success_cb, error_cb) 
+				{
+					$.ajax({
+						url: ajaxurl,
+						type: "POST",
+						data: {csrfmiddlewaretoken: ajax_token, action:'set_registration', registered:val},
+						dataType: "json",
+						success: success_cb,
+						error: error_cb
+					});
+				}
 			</script>
         <?php }
 	}
