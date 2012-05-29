@@ -399,7 +399,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
 			?>
 			<script>
 				jQuery(document).ready(function($) {
-					var linked_data_packed = "<?=get_option('wp_ultimate_security_checker_linked_data');?>";
+					var linked_data_packed = "<?php echo get_option('wp_ultimate_security_checker_linked_data');?>";
 					var linked_data = linked_data_packed ? JSON.parse(linked_data_packed) : undefined;					
 					if (linked_data) {
 						var option = $('#blog_linked option:first');
@@ -422,7 +422,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
 						var that = this;
 						$('#ajax_loading').fadeIn();
 						$.ajax({
-							url: "<?=$status_url?>&callback=?",
+							url: "<?php echo $status_url; ?>&callback=?",
 							dataType: "jsonp",
 							complete: function (){
 								$('#ajax_loading').fadeOut();
@@ -493,14 +493,17 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     list-style-type:disc !important;
                     padding-left:17px !important;
                 }
+                input[type="radio"] {
+                    margin-right: 5px;
+                }
                 </style>
                     <a name="#top"></a>
                     <h2><?php _e('Plugin options');?></h2>
 					
                     <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-settings">
                     <h4>API key from site's settings page:</h4>
-					<input type="text" style="width:300px" name="apikey" value="<?=htmlspecialchars(get_option('wp_ultimate_security_checker_apikey'))?>"/>
-					<input type="submit" value="Save"/>
+					<input type="text" style="width:300px" name="apikey" value="<?php echo htmlspecialchars(get_option('wp_ultimate_security_checker_apikey')); ?>"/>
+					<input type="submit" class="button-primary" value="Save"/>
                     
                     <h4><?php _e('Disable Facebook Like:');?></h4>
                     <input type="hidden" value="ultimate-security-checker" name="page" />
@@ -514,7 +517,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 14) echo 'checked="checked"';?> value="w" name="rescan" />2 weeks</li>
                     <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 30) echo 'checked="checked"';?> value="m" name="rescan" />1 month</li>
                     <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 0) echo 'checked="checked"';?> value="n" name="rescan" />Never remind me</li>
-                    <li><input type="submit" value="<?php _e('Save Settings');?>" /></li>
+                    <li><input type="submit" class="button-primary" value="<?php _e('Save Settings');?>" /></li>
                     </ul>
                     </form>
                     <div class="clear"></div>
@@ -627,8 +630,9 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     display: block;
                 }
                 </style>
+                <div class="wrap">
                 <?php if($view == 'login'): ?>
-                    <h2><?php _e('Fix issues with Ultimate Blog Security');?></h2>
+                    <h2 style="padding-left:5px;"><?php _e('Fix issues with Ultimate Blog Security');?></h2>
                     <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
                     <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-pro-login">
                     <h4><?php _e('Login to Ultimate Blog Security service');?></h4>
@@ -715,6 +719,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
 							});
 						});
 					</script>
+                    <h2 style="padding-left:5px;"><?php _e('Register to Ultimate Blog Security service');?></h2>
                     <div id="ubs_regmsg">
 						<?php if (get_option('wp_ultimate_security_checker_registered') && !get_option('wp_ultimate_security_checker_activated')) { ?>
 						<p>Thanks for registering. A confirmation email was sent to your email address.
@@ -726,7 +731,6 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <div id="ubs_regerr"></div>
                     
                     <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="ubs_register" style="<?php if (get_option('wp_ultimate_security_checker_registered')) { ?>display:none<?php }?>">                    
-                    <h4><?php _e('Register to Ultimate Blog Security service');?></h4>
                     <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
                     
                     <input type="hidden" value="ultimate-security-checker" name="page" />
@@ -768,15 +772,8 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <h2><?php _e('Dashboard');?></h2>
                     <p>Placeholder</p>
                 <?php endif; ?>
-					<h2><?php _e('Fix issues with Ultimate Blog Security');?></h2>
-                    <!-- security-check -->
-	                <h3><?php _e('Keep your blog secure with automated checks.');?><a name="security-check"></a><!--<a href="#top" style="font-size:13px;margin-left:10px;">&uarr; <?php _e('Back');?></a>--></h3>
-	                <p>
-	                    <?php _e('A lot of the security vulnerabilities are put back in place when themes and the WordPress core version is updated.  You need to run regular checks using this plugin, or <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">register for our service</a> and we will check your blog for you weekly and email you the results.');?></p>
-						<p><?php _e('We also have a paid service which automatically fixes these vulnerabilities. Try it by clicking the button:');?><br> <a href="http://www.ultimateblogsecurity.com/?utm_campaign=fix_issues_plugin_button"><img src="<?php echo plugins_url( 'img/fix_problems_now.png', __FILE__ ); ?>" alt="" /></a>
-	                </p>
-                    <!-- end security-check -->
                     <div class="clear"></div>
+                    </div>
                     </div>
                     <?php
     }
@@ -1215,8 +1212,8 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 		
 		if($apikey) { ?>
 			<script>
-				var ajax_token = "<?=wp_create_nonce('ultimate-security-checker-ajaxrequest')?>";
-				var linked = "<?=$linkedto?>";
+				var ajax_token = "<?php echo wp_create_nonce('ultimate-security-checker-ajaxrequest'); ?>";
+				var linked = "<?php echo $linkedto;?>";
 				var $ = jQuery;
 				function add_website() 
 				{
@@ -1358,7 +1355,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 			$('#ajax_loading').fadeIn();
 			// TODO: if linked and response is not found - reset state.
 			$.ajax({
-				url: "<?=$status_url?>&callback=?",
+				url: "<?php echo $status_url;?>&callback=?",
 				dataType: "jsonp",
 				complete: function (){
 					$('#ajax_loading').fadeOut();
@@ -1427,7 +1424,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 				e.preventDefault();
 				$('#ajax_loading').fadeIn();
 				$.ajax({
-					url: "<?=$find_url?>&callback=?&path=<?=ABSPATH?>",
+					url: "<?php echo $find_url;?>&callback=?&path=<?php echo ABSPATH;?>",
 					dataType: "jsonp",
 					complete: function (){
 						$('#ajax_loading').fadeOut();
@@ -1499,8 +1496,8 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 			$apikey = get_option('wp_ultimate_security_checker_apikey');
 			if ($apikey) { ?>
 				<p>Seems like you didn't added your blog at ultimateblogsecurity.com so far, you can do it right now: </p>
-				<input type="hidden" name="apikey" value="<?=htmlspecialchars($apikey)?>"/>
-				<input type="hidden" name="uri" value="<?=get_option('siteurl')?>"/>
+				<input type="hidden" name="apikey" value="<?php echo htmlspecialchars($apikey);?>"/>
+				<input type="hidden" name="uri" value="<?php echo get_option('siteurl');?>"/>
 				<table>
 					<tr>
 						<td><label>What's the FTP address of your blog (example: ftp://myblog.com)?</label></td>
@@ -1508,7 +1505,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 					</tr>
 					<tr>
 						<td><label>WordPress location (see settings tab in plugin)</label></td>
-						<td><input type="text" name="ftppath" value="<?=ABSPATH?>"/></td>
+						<td><input type="text" name="ftppath" value="<?php echo ABSPATH;?>"/></td>
 					</tr>
 					<tr>
 						<td><label>What's the FTP username for your blog's FTP account?</label></td>
