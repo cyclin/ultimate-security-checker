@@ -540,41 +540,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
     }
     
     function wp_ultimate_security_checker_pro(){
-                global $current_user;
-                get_currentuserinfo();
-                preg_match_all("/([\._a-zA-Z0-9-]+)@[\._a-zA-Z0-9-]+/i", $current_user->user_email, $matches);
-				$email_name = $matches[1][0];					
-                $url = home_url();
-                if (is_multisite()) {
-                    $url = network_home_url();
-                }
-                $view = 'register';
-                if (isset($_GET['view']))
-					switch ($_GET['view']) {
-					    case 'l':
-								$view = 'login';
-								break;
-					    case 'r':
-								$view = 'register';
-								break;
-					    case 'd':
-								$view = 'dashboard';
-								break;
-					    case 'f':
-								$view = 'ftp';
-								break;
-					}
-   		       $apikey = get_option('wp_ultimate_security_checker_apikey');
-		       $linkedto = get_option('wp_ultimate_security_checker_linkedto', '');
-               $params['apikey'] = $apikey;
-		       $params['blog_url'] = get_option('siteurl');		
-        	   if ($linkedto) {
-        			$params['blog_id'] = $linkedto;
-        	   }
-		       $status_url = sprintf("http://beta.ultimateblogsecurity.com/api/%s/?%s", "get_status", http_build_query($params));
-		       $find_url = sprintf("http://beta.ultimateblogsecurity.com/api/%s/?%s", "find_ftppath", http_build_query($params));
             ?>
-            
             <div class="wrap">
                 <style>
                 #icon-security-check {
@@ -639,312 +605,346 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 }
                 </style>
                 <div class="wrap">
-                <?php if($view == 'login'): ?>
-                    <h2 style="padding-left:5px;"><?php _e('Fix issues with Ultimate Blog Security');?></h2>
-                    <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
-                    <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-pro-login">
-                    <h4><?php _e('Login to Ultimate Blog Security service');?></h4>
-                    <input type="hidden" value="ultimate-security-checker" name="page" />
-                    <input type="hidden" value="pro" name="tab" />
-                    <ul>
-                    <li><label for="login"><?php _e('Email');?></label><input type="text" name="login" size="40" /></li>
-                    <li><label for="pwd"><?php _e('Password');?></label><input type="password" name="pwd" size="40" /></li>
-                    <li>
-                        <div class="login-controlls">
-                            <div class="links-wrapper">
-                            <a href="#"><?php _e('I forgot password');?></a>
-                            <a href="#"><?php _e("I don't have account");?></a>
-                            <div class="clear"></div>
-                            </div>
-                            <div class="button-submit-wrapper">
-                            <input type="submit" class="button" value="<?php _e('Submit');?>" />
-                            <div class="clear"></div>
-                            </div>
-                            <div class="clear"></div>
-                        </div>
-                    </li>
-                    </ul>
-                    </form>
-                <?php endif; ?>
-                <?php if($view == 'register'): ?>
-					<script type="text/javascript" src="<?php echo plugins_url('js/easyXDM.min.js', __FILE__ );?>"></script>
-					<script type="text/javascript" src="<?php echo plugins_url('js/json2.js', __FILE__ );?>"></script>
-					<script type="text/javascript" charset="utf-8">
-						var regmsg = "Thanks for registering. A confirmation email was sent to your email address.";
-						regmsg += "Please check your email and click on the link to confirm your account and complete your registration.";
-						var blogurl = "<?php bloginfo('url'); ?>";
-						jQuery(document).ready(function($) {
-							var rpc = new easyXDM.Rpc({
-								remote: "http://beta.ultimateblogsecurity.com/api/cors/provider"
-							},
-							{
-								remote: {
-									request: {}
-								}
-							});		
-									
-							function ajax_apikey_upderr(errdata) {
-								$('#ubs_regerr').append("<p>Error while updating your API key. Please, do it manually in Settings tab.");	
-							}
-							$("#regform_toggle").live("click", function(){ 
-								$('#ubs_register').toggle();
-							});          
-							
-							$('#ubs_register').submit(function (event) {
-								event.preventDefault();
-								$('#ubs_regerr').text('');
-								var email = $('form#ubs_register input[name=email]').val();
-								var uname = $('form#ubs_register input[name=username]').val();
-								rpc.request({
-									url: "http://beta.ultimateblogsecurity.com/api/cors/register/",
-									method: "POST",
-									data: {email: email, blogurl: blogurl, username:uname}
-								}, function(response){
-									var resp_data = JSON.parse(response.data);
-									if (resp_data.state == 'ok') {
-										ajax_set_registration(1);
-										$('#ubs_regmsg').html('<p>'+regmsg+'</p>');
-										var apikey = resp_data.data.apikey;
-										if (apikey != undefined && apikey.length > 0) {
-											ajax_update_apikey(apikey, function(data){
-												if (data.state == 'error') {
-													ajax_apikey_upderr();
-												}
-											}, ajax_apikey_upderr);
-										}
-										$('#ubs_register').fadeOut(1000);
-									} else if (resp_data.data.errors) {
-										for (var item in resp_data.data.errors) {
-											var targ = $('form#ubs_register input[name='+item+']');
-											targ.after('<div style="color:red">'+resp_data.data.errors[item][0] +'</div>');
-										}
-									} else {
-										$('#ubs_regerr').text('Following error occured: "'+resp_data.message+'". Please try again later or contact support team.');
-									}
-								}, function(error){
-									$('#ubs_regerr').text("Sorry, unknow error occured. Please try again later or contact support team.");
-								});
-							});
-						});
-					</script>
-                    <h2 style="padding-left:5px;"><?php _e('Register to Ultimate Blog Security service');?></h2>
-                    <div id="ubs_regmsg">
-						<?php if (get_option('wp_ultimate_security_checker_registered') && !get_option('wp_ultimate_security_checker_activated')) { ?>
-						<p>Thanks for registering. A confirmation email was sent to your email address.
-						Please check your email and click on the link to confirm your account and complete your registration.</p>
-						<p>This message will disappear after first PRO check. Also you can <a id="upd_activation_status" href="#">update current activation status</a> manually.</p
-						<?php } ?>
+                <div id="ajax-content"></div>
+                <div id="ajax-result"></div>
+                <ul>
+                    <li><a href="#" id="dashboard-link">Dashboard</a></li>
+                    <li><a href="#" id="login-link">login</a></li>
+                    <li><a href="#" id="register-link">reg</a></li>
+                    <li><a href="#" id="ftp-link">ftp</a></li>
+                </ul>
+                <div class="clear"></div>
+                </div>
+                </div>
+    <?php
+    }
+    
+    function wp_ultimate_security_checker_ajaxscreen_loader(){
+        check_admin_referer('ultimate-security-checker-ajaxrequest', 'csrfmiddlewaretoken');
+        $apikey = get_option('wp_ultimate_security_checker_apikey');
+        if (isset($_POST['screen'])){
+            switch ($_POST['screen']) {
+               case 'register' :
+                        return wp_ultimate_security_checker_ajaxscreen_register();
+            		    break;
+               case 'ftp' :
+                        if (!$apikey) {
+                            return wp_ultimate_security_checker_ajaxscreen_login();
+                        }
+                        return wp_ultimate_security_checker_ajaxscreen_ftp();
+            	  	    break;
+               case 'dashboard' :
+                        if (!$apikey) {
+                            return wp_ultimate_security_checker_ajaxscreen_login();
+                        }
+                        return wp_ultimate_security_checker_ajaxscreen_dashboard();
+            		    break;
+               default:
+                        return wp_ultimate_security_checker_ajaxscreen_login();
+                        break;
+            }
+        }else{
+            if (!$apikey) {
+                return wp_ultimate_security_checker_ajaxscreen_login();
+            }else{
+                return wp_ultimate_security_checker_ajaxscreen_dashboard();
+            }
+        }
+        exit;
+    }
+    
+    function wp_ultimate_security_checker_ajaxscreen_login(){
+        global $current_user;
+        get_currentuserinfo();
+        preg_match_all("/([\._a-zA-Z0-9-]+)@[\._a-zA-Z0-9-]+/i", $current_user->user_email, $matches);
+    	$email_name = $matches[1][0];	
+        $apikey = get_option('wp_ultimate_security_checker_apikey');        
+        ?>
+        <script type="text/javascript">
+        <!--
+        var apikey = "<?php echo $apikey;?>";
+        $(document).ready(function(){
+                    //login window
+                    $("#ajax-content").on("click", "#pro-login-submit", function(event){
+                            $('#ajax-result').text('');
+                            $(this).attr('disabled', 'disabled');
+                            var el = $(this);
+                            var post_data = {
+                                             username: $("#pro-login-email").val(),
+                                             password: $("#pro-login-password").val(),
+                                             };
+                        	
+                            $.post(get_apikey_url, post_data , function(data) {
+                              if(data.state == 'error'){
+                                if('data' in data){
+                                    if('errors' in data.data){
+                                        if('username' in data.data.errors)
+                                            $('#ajax-result').text(data.data.errors.username);
+                                        if('password' in data.data.errors)
+                                            $('#ajax-result').text(data.data.errors.password);
+                                    }    
+                                }else if('message' in data){
+                                    $('#ajax-result').text(data.message);
+                                }
+                                el.removeAttr('disabled');
+                              }
+                              if(data.state == 'ok'){
+                                ajax_update_apikey(
+                                    data.data.apikey,
+                                    false,
+                                    false,
+                                    function(local_resp){
+                                        ajax_get_screen('dashboard');
+                                        console.log(local_resp);  
+                                    },
+                                    function(local_resp){
+                                        $('#ajax-result').text('Can\'t update your site values');
+                                        console.log(local_resp);  
+                                    }
+                                );
+                              }
+                            }, 'json');
+                            //console.log(post_data);
+                    });
+            });	
+            -->
+            </script>            
+        <h2 style="padding-left:5px;"><?php _e('Fix issues with Ultimate Blog Security');?></h2>
+        <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
+        <h4><?php _e('Login to Ultimate Blog Security service');?></h4>
+        <ul>
+        <li><label for="login"><?php _e('Email');?></label><input id="pro-login-email" type="text" name="login" size="40" value="<?php echo $email_name; ?>" /></li>
+        <li><label for="pwd"><?php _e('Password');?></label><input id="pro-login-password" type="password" name="pwd" size="40" /></li>
+        <li>
+            <div class="login-controlls">
+                <div class="links-wrapper">
+                <a id="pro-login-reglink" href="#"><?php _e("I don't have account");?></a>
+                <div class="clear"></div>
+                </div>
+                <div class="button-submit-wrapper">
+                <input type="submit" id="pro-login-submit" class="button" value="<?php _e('Submit');?>" />
+                <div class="clear"></div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </li>
+        </ul>
+        <?php
+        exit;
+    }
+    
+    function wp_ultimate_security_checker_ajaxscreen_register(){
+        global $current_user;
+        get_currentuserinfo();
+        preg_match_all("/([\._a-zA-Z0-9-]+)@[\._a-zA-Z0-9-]+/i", $current_user->user_email, $matches);
+    	$email_name = $matches[1][0];					
+        $url = home_url();
+        if (is_multisite()) {
+            $url = network_home_url();
+        }
+        $apikey = get_option('wp_ultimate_security_checker_apikey');        
+        ?>
+        <script type="text/javascript">
+        <!--
+        var apikey = "<?php echo $apikey;?>";
+        $(document).ready(function(){
+                    //reg window
+                    $("#ajax-content").on("click", "#ajax-register-submit", function(event){
+                            $('#ajax-result').text('');
+                            $(this).attr('disabled', 'disabled');
+                            var el = $(this);
+                            var post_data = {
+                                             email: $("#ajax-register-email").val(),
+                                             username: $("#ajax-register-username").val(),
+                                             blogurl: blogurl
+                                             };
+                        	
+                            $.post(register_url, post_data , function(data) {
+                              if(data.state == 'error'){
+                                if('data' in data){
+                                    if('errors' in data.data){
+                                        if('username' in data.data.errors)
+                                            $('#ajax-result').text(data.data.errors.username);
+                                        if('email' in data.data.errors)
+                                            $('#ajax-result').text(data.data.errors.email);
+                                        if('blogurl' in data.data.errors)
+                                            $('#ajax-result').text(data.data.errors.blogurl);
+                                    }    
+                                }else if('message' in data){
+                                    $('#ajax-result').text(data.message);
+                                }
+                                el.removeAttr('disabled');
+                              }
+                              $('#ubs_regmsg').text('You sucessfully registered account in our service. Please - use this password for authentication in your plugin and our site: '+data.data.password);
+                              if(data.state == 'ok'){
+                                ajax_update_apikey(
+                                    data.data.apikey,
+                                    data.data.password,
+                                    1,
+                                    function(local_resp){
+                                        if (local_resp.state == 'ok') {
+                                            $('#pro-reg-form').css('display', 'none');
+                                            $("ubs_regmsg").append('<p>Apikey sucessfully stored in your wordpress</p>');    
+                                        }else{
+                                            $('#ubs_regerr').text('Can\'t update your site values'); 
+                                        }  
+                                    },
+                                    function(local_resp){
+                                        $('#ubs_regerr').text('Can\'t update your site values'); 
+                                    }
+                                );
+                              }
+                            }, 'json');
+                            //console.log(post_data);
+                    });
+            });	
+            -->
+            </script>
+            <h2 style="padding-left:5px;"><?php _e('Register to Ultimate Blog Security service');?></h2>
+            <div id="ubs_regmsg">
+				<?php if ($apikey) { ?>
+				<p>Thanks for registering. A confirmation email was sent to your email address.
+				Please check your email and click on the link to confirm your account and complete your registration.</p>
+				<?php } ?>
+            </div>              
+            <div id="ubs_regerr"></div>
+            
+            <div id="pro-reg-form" style="<?php if ($apikey) { ?>display:none<?php }?>">                    
+            <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
+            <ul>
+            <li><label for="login"><?php _e('Email');?></label><input type="text" id="ajax-register-email" value="<?php echo $current_user->user_email; ?>" name="email" size="40" /></li>
+            <li><label for="login"><?php _e('Username');?></label><input type="text" id="ajax-register-username" value="<?php echo $email_name; ?>" name="username" size="40" /></li>
+            <li>
+                <div class="login-controlls">
+                    <div class="button-submit-wrapper">
+                    <input type="submit" id="ajax-register-submit" class="button" value="<?php _e('Submit');?>" />
+                    <div class="clear"></div>
                     </div>
-                    <div id="ubs_regactions"><p><a id="regform_toggle" href="#">Signup with another email</a> | <a id="apikey_resend" href="#">Send API key to provided email address</a></p></div>                    
-                    <div id="ubs_regerr"></div>
-                    
-                    <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="ubs_register" style="<?php if (get_option('wp_ultimate_security_checker_registered')) { ?>display:none<?php }?>">                    
-                    <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
-                    
-                    <input type="hidden" value="ultimate-security-checker" name="page" />
-                    <input type="hidden" value="pro" name="tab" />
-                    <ul>
-                    <li><label for="login"><?php _e('Email');?></label><input type="text" value="<?php echo $current_user->user_email; ?>" name="email" size="40" /></li>
-                    <li><label for="login"><?php _e('Username');?></label><input type="text" value="<?php echo $email_name; ?>" name="username" size="40" /></li>
-                    <li>
-                        <div class="login-controlls">
-                            <div class="button-submit-wrapper">
-                            <input type="submit" class="button" value="<?php _e('Submit');?>" />
-                            <div class="clear"></div>
-                            </div>
-                            <div class="clear"></div>
-                        </div>
-                    </li>
-                    </ul>
-                    </form>                    
-                <?php endif; ?>
-                <?php if($view == 'ftp'): ?>
-                    <h2><?php _e('FTP Information');?></h2>
-                    <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
-                    <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-pro-ftp">
-                    <h4><?php _e('Website details');?></h4>
-                    <input type="hidden" value="ultimate-security-checker" name="page" />
-                    <input type="hidden" value="pro" name="tab" />
-                    <ul>
-                    <li><label for="web_link"><?php _e('Website link');?></label><input type="text" value="<?php echo $url; ?>" name="web_link" size="40" /></li>
-                    <li><label for="ftp_host"><?php _e('FTP Host');?></label><input type="text" name="ftp_host" size="40" /></li>
-                    <li><label for="ftp_user"><?php _e('FTP User');?></label><input type="text" name="ftp_user" size="40" /></li>
-                    <li><label for="ftp_pwd"><?php _e('FTP Password');?></label><input type="password" name="ftp_pwd" size="40" /></li>
-                    <li>
-                        <input type="submit" class="button" value="<?php _e('Submit');?>" />
-                    </li>
-                    </ul>
-                    </form>
-                <?php endif; ?>
-                <?php if($view == 'dashboard'): ?>
+                    <div class="clear"></div>
+                </div>
+            </li>
+            </ul>
+            </div>                    
+        <?php
+        exit;
+    }
+    
+    function wp_ultimate_security_checker_ajaxscreen_ftp(){
+        $url = home_url();
+        if (is_multisite()) {
+            $url = network_home_url();
+        }
+        $apikey = get_option('wp_ultimate_security_checker_apikey');        
+        ?>
+            <script type="text/javascript">
+            <!--
+            var apikey = "<?php echo $apikey;?>";
+            $(document).ready(function(){
+                $("#ajax-content").on("click", "#pro-ftp-submit", function(event){
+                    $('#ajax-result').text('');
+                    $(this).attr('disabled', 'disabled');
+                    var el = $(this);
+                    var post_data = {
+                                     apikey:apikey,
+                                     uri:$("#pro-ftp-web_link").val(),
+                                     ftphost:$("#pro-ftp-ftp_host").val(),
+                                     ftppath:$("#pro-ftp-ftp_path").val(),
+                                     ftpuser:$("#pro-ftp-ftp_user").val(),
+                                     ftppass:$("#pro-ftp-ftp_pwd").val()
+                                     };
+                    $.post(add_website_url, post_data , function(data) {
+                          console.log(data);
+                          if(data.state == 'error'){
+                            if('data' in data){
+                                if('errors' in data.data){
+                                    if('uri' in data.data.errors)
+                                        $('#ajax-result').text(data.data.errors.uri);
+                                    if('ftphost' in data.data.email)
+                                        $('#ajax-result').text(data.data.errors.ftphost);
+                                    if('ftppath' in data.data.email)
+                                        $('#ajax-result').text(data.data.errors.ftppath);
+                                    if('ftpuser' in data.data.email)
+                                        $('#ajax-result').text(data.data.errors.ftpuser);
+                                    if('ftppass' in data.data.email)
+                                        $('#ajax-result').text(data.data.errors.ftppass);
+                                }    
+                            }else if('message' in data){
+                                $('#ajax-result').text(data.message);
+                            }
+                            el.removeAttr('disabled');
+                          }
+                          if(data.state == 'ok'){
+                            ajax_get_screen('register');
+                            $('#ajax-result').text('Your blog has been sucessfully added to our system');
+                          }
+                    }, 'json');
+                });    
+            });	
+            -->
+            </script>
+            <h2><?php _e('FTP Information');?></h2>
+            <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
+            <h4><?php _e('Website details');?></h4>
+            <ul>
+            <li><label for="web_link"><?php _e('Website link');?></label><input id="pro-ftp-web_link" type="text" value="<?php echo $url; ?>" name="web_link" size="40" /></li>
+            <li><label for="ftp_host"><?php _e('FTP Host');?></label><input id="pro-ftp-ftp_host" type="text" name="ftp_host" size="40" /></li>
+            <li><label for="ftp_user"><?php _e('FTP User');?></label><input id="pro-ftp-ftp_user" type="text" name="ftp_user" size="40" /></li>
+            <li><label for="ftp_pwd"><?php _e('FTP Password');?></label><input id="pro-ftp-ftp_pwd" type="password" name="ftp_pwd" size="40" /></li>
+            <li><label for="ftp_path"><?php _e('Path to directory on your server (optional)');?></label><input id="pro-ftp-ftp_path" type="text" name="ftp_path" size="40" /></li>
+            <li>
+                <input type="submit" id="pro-ftp-submit" class="button" value="<?php _e('Submit');?>" />
+            </li>
+            </ul>
+        <?php
+        exit;
+    }
+    
+    function wp_ultimate_security_checker_ajaxscreen_dashboard(){
+        $apikey = get_option('wp_ultimate_security_checker_apikey');        
+       ?>
                     <script type="text/javascript">
+                        var apikey = "<?php echo $apikey;?>";
                 		jQuery(document).ready(function($) {			
-                			$('#select_website').submit(submit_selected_site);
-                			
-                			// auto start of info request
-                			$('#ajax_loading').fadeIn();
-                			// TODO: if linked and response is not found - reset state.
-                			$.ajax({
-                				url: "<?php echo $status_url;?>&callback=?",
-                				dataType: "jsonp",
-                				complete: function (){
-                					$('#ajax_loading').fadeOut();
-                				},
-                				success: function(response) {
-                					if (response && response.state == 'ok') {
-                						$('#ajax_status').show();
-                						var path_status = $('#path_status');
-                						var login_status = $('#login_status');
-                						if (response.data.path && response.data.verified) {
-                							path_status.text(response.data.path +" was successfully verified").css('color', 'green');
-                						} else if (!response.data.path) {	
-                							path_status.html('<span> was not providen yet - <a id="verify_path" href="#"> click to find</a></span>').css('color', 'red');
-                						} else {
-                							var span = document.createElement('span');
-                							$(span).text(response.data.path +" is not verified yet").css('color', 'orangered');
-                							path_status.append(span);
-                							path_status.append('<span> - <a id="verify_path" href="#"> verify</a></span>');
-                						}
-                						if (response.data.last_login) {	
-                							var status = response.data.last_login_status;
-                							var msg = status ? 'successful' : 'failed';
-                							var color = status ? 'green' : 'orangered';
-                							var d = new Date(response.data.last_login*1000);								
-                							login_status.text(msg + ' at ' + d.toLocaleString()).css('color', color);
-                						}						
-                					} else {
-                						var message;
-                						if (response.state == 'error')  {
-                							switch (response.errno) {
-                								case -2: // Blog not found
-                									add_website();
-                									return;
-                								case -3: // Multiple blogs found
-                									select_website(response.data);
-                									return;
-                								case -1: // Invalid API key									
-                								case -4: // Bad request
-                									message = response.message;
-                									break;
-                								default:
-                									message = 'unknown error occured';
-                									break;
-                							}
-                						} else {
-                							message = "can't connect to UBS server";
-                						}
-                						var err_message = '<p>Error: '+ message + '</p>';															
-                						var ajax_error = $('#ajax_error');
-                						if (!ajax_error.length) {
-                							$('#ajax_status').before('<div id="ajax_error" style="color:orangered">'+ err_message +'</div>');
-                							var ajax_error = $('#ajax_error');
-                						} else {
-                							ajax_error.text(err_message);
-                						}
-                						if (response.data) {
-                							for (item in response.data) {
-                								ajax_error.append('<p>' + item + ': ' + response.data[item] + '</p>');
-                							}		
-                						}
-                						$('#ajax_status').hide();
-                					}
-                				}
-                			});
-                			$("#verify_path").live("click", function(e){
-                				e.preventDefault();
-                				$('#ajax_loading').fadeIn();
-                				$.ajax({
-                					url: "<?php echo $find_url;?>&callback=?&path=<?php echo ABSPATH;?>",
-                					dataType: "jsonp",
-                					complete: function (){
-                						$('#ajax_loading').fadeOut();
-                					},						
-                					success: function(response) {
-                						if (response && response.state == 'ok') {
-                							$('#ajax_status').show();
-                							var path_status = $('#path_status');
-                							var login_status = $('#login_status');
-                							if (response.data.path && response.data.verified) {
-                								path_status.text(response.data.path +" was successfully verified").css('color', 'green');
-                							} else if (!response.data.path) {	
-                								path_status.text(' was not providen yet').css('color', 'red');
-                							} else {
-                								var span = document.createElement('span');
-                								$(span).text(response.data.path +" is not verified yet").css('color', 'orangered');
-                								path_status.append(span);
-                								path_status.append('<span> - <a id="verify_path" href="#"> verify</a></span>');
-                							}													
-                						} else {
-                							var msg = (response.state == 'error') ? response.message : "can't connect to UBS server";
-                							var err_message = '<p>Error: '+ msg + ' (<a id="verify_path" href="#">retry</a>) </p>';															
-                							var ajax_error = $('#ajax_error');
-                							if (!ajax_error.length) {
-                								$('#ajax_status').before('<div id="ajax_error" style="color:orangered">'+ err_message +'</div>');
-                								var ajax_error = $('#ajax_error');
-                							} else {
-                								ajax_error.text(err_message);
-                							}
-                							if (response.data) {
-                								for (item in response.data) {
-                									ajax_error.append('<p>' + item + ': ' + response.data[item] + '</p>');
-                								}		
-                							}
-                							$('#ajax_status').hide();
-                						}
-                					}	
-                				});				
-                			});
+                           ajax_get_status(
+                           function(data){
+                           if(data.state == 'ok')
+                           {
+                                $("#pro-dashboard-content").css("display", "block");
+                                $("#pro-dashboard-content-uri").text(data.data.uri);
+                                $("#pro-dashboard-content-ubs_url").html('<a href="'+data.data.ubs_url+'">Manage this blog on UBS site</a>');
+                                $("#pro-dashboard-content-latest_check_date").text(data.data.latest_check_date);
+                                $("#pro-dashboard-content-latest_check_result").text(data.data.latest_check_result);
+                           }else{
+                            $('#ajax-result').text('Ajax error occured. Please try again later.');
+                           }
+                           },
+                           function(data){
+                            $('#ajax-result').text('Ajax error occured. Please try again later.');
+                           }
+                           ); 
                 		});
                         </script>
                     <h2><?php _e('Dashboard');?></h2>
-                    <h4>Current status <img id="ajax_loading" style="margin-left:15px;" src="<?php echo plugins_url( 'img/loader.gif', __FILE__ ); ?>" alt="loading" /></h4>
-            		<form id="add_website" style="display: none;" action="." method="GET">
-            			<?php if ($apikey): ?>
-            				<p>Seems like you didn't added your blog at ultimateblogsecurity.com so far, you can do it right now: </p>
-            				<input type="hidden" name="apikey" value="<?php echo htmlspecialchars($apikey);?>"/>
-            				<input type="hidden" name="uri" value="<?php echo get_option('siteurl');?>"/>
-            				<table>
-            					<tr>
-            						<td><label>What's the FTP address of your blog (example: ftp://myblog.com)?</label></td>
-            						<td><input type="text" name="ftphost"/></td>
-            					</tr>
-            					<tr>
-            						<td><label>WordPress location (see settings tab in plugin)</label></td>
-            						<td><input type="text" name="ftppath" value="<?php echo ABSPATH;?>"/></td>
-            					</tr>
-            					<tr>
-            						<td><label>What's the FTP username for your blog's FTP account?</label></td>
-            						<td><input type="text" name="ftpuser"/></td>
-            					</tr>
-            					<tr>
-            						<td><label>What's the password for your blog's FTP account?</label></td>
-            						<td><input type="password" name="ftppass"/></td>
-            					</tr>
-            					<tr>
-            						<td></td>
-            						<td><input type="submit" value="Submit" style="float:right"/></td>
-            					</tr>
-            				</table>
-            			<?php else: ?>
-            				<p>If you already have account at ultimateblogsecurity.com - update APIKEY field in
-            				plugin's settings with key displayed at account info page. Otherwise, create new account first.</p>
-            			<?php endif; ?>
-            		</form>
-            		<form id="select_website" style="display:none">
-            			<p>
-            				You have multiple records in UBS dashboard for this blog.
-            				Please choose one, guided by it's FTP info.
-            			</p>
-            		</form>
-            		<table id="ajax_status">
-            			<tr>
-            				<td>Path</td><td id="path_status"></td>
-            			</tr>
-            			<tr>
-            				<td>Last login</td><td id="login_status"></td>
-            			</tr>
-            		</table>
+                    <div id="pro-dashboard-content" style="display: none;">
+                    <dl>
+                        <dt>Blog Url</dt>
+                        <dd id="pro-dashboard-content-uri"></dd>
+                        <dt>Link to our site</dt>
+                        <dd id="pro-dashboard-content-ubs_url">Manage this blog on UBS site</dd>
+                        <dt>latest_check_date</dt>
+                        <dd id="pro-dashboard-content-latest_check_date"></dd>
+                        <dt>latest_check_result</dt>
+                        <dd id="pro-dashboard-content-latest_check_result"></dd>
+                    </dl>
+                    </div>
+                    <h4>List of failed login attempts:</h4>
                     <table>
+                    <tr>
+                        <td>#</td>
+                        <td>Time</td>
+                        <td>login username</td>
+                        <td>IP address</td>
+                    </tr>
                     <?php
                     $failed_logins = get_option('wp_ultimate_security_checker_failed_login_attempts_log');
                     if (is_array($failed_logins)) {
@@ -956,11 +956,8 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     }
                     ?>
                     </table>			
-                <?php endif; ?>
-                    <div class="clear"></div>
-                    </div>
-                    </div>
-                    <?php
+       <?php
+       exit; 
     }
     
     function wp_ultimate_security_checker_core_files(){
@@ -1351,7 +1348,8 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 	add_action('wp_ajax_link_blog', 'wp_ultimate_security_checker_link_blog');
     add_action('wp_ajax_unlink_blog', 'wp_ultimate_security_checker_unlink_blog');
     add_action('wp_ajax_set_apikey', 'wp_ultimate_security_checker_set_apikey');
-    add_action('wp_ajax_set_registration', 'wp_ultimate_security_checker_set_registration');
+    add_action('wp_ajax_pro_logout', 'wp_ultimate_security_checker_pro_logout');
+    add_action('wp_ajax_ajaxscreen_loader', 'wp_ultimate_security_checker_ajaxscreen_loader');
     
     function wp_ultimate_security_checker_link_blog()
     {
@@ -1373,18 +1371,23 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
     {
 		check_admin_referer('ultimate-security-checker-ajaxrequest', 'csrfmiddlewaretoken');	
 		if (isset($_POST['apikey'])) 	 
-			$ret = update_option('wp_ultimate_security_checker_apikey', htmlspecialchars($_POST['apikey'])) ? 'ok': 'error';
+			$ret = update_site_option('wp_ultimate_security_checker_apikey', htmlspecialchars($_POST['apikey'])) ? 'ok': 'error';
 		else
 			$ret = 'error';
+        if (isset($_POST['registered'])) 	 
+			update_site_option('wp_ultimate_security_checker_registered', (bool)$_POST['registered']) ? 'ok': 'error';
+        if (isset($_POST['password']))
+            set_site_transient('wp_ultimate_security_checker_password', $_POST['password'], 60*60*24 ); 	 
+
 		echo json_encode(Array('state' => $ret));
 		exit;
 	}
 	
-	function wp_ultimate_security_checker_set_registration()
+	function wp_ultimate_security_checker_pro_logout()
     {
 		check_admin_referer('ultimate-security-checker-ajaxrequest', 'csrfmiddlewaretoken');	
-		if (isset($_POST['registered'])) 	 
-			$ret = update_option('wp_ultimate_security_checker_registered', (bool)$_POST['registered']) ? 'ok': 'error';
+		if (isset($_POST['logout'])) 	 
+			$ret = delete_site_option('wp_ultimate_security_checker_registered') ? 'ok': 'error';
 		else
 			$ret = 'error';
 		echo json_encode(Array('state' => $ret));
@@ -1392,125 +1395,122 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 	}		
 	
     function wp_ultimate_security_checker_load_common_js(){
-		$apikey = get_option('wp_ultimate_security_checker_apikey');
-		$linkedto = get_option('wp_ultimate_security_checker_linkedto', '');
-		
-		if($apikey) { ?>
+
+        global $current_user;
+        get_currentuserinfo();
+        preg_match_all("/([\._a-zA-Z0-9-]+)@[\._a-zA-Z0-9-]+/i", $current_user->user_email, $matches);
+    	$email_name = $matches[1][0];					
+        $url = home_url();
+        if (is_multisite()) {
+            $url = network_home_url();
+        }
+
+        $apikey = get_option('wp_ultimate_security_checker_apikey');
+        $linkedto = get_option('wp_ultimate_security_checker_linkedto', '');
+        $params['apikey'] = $apikey;
+        $params['blog_url'] = get_option('siteurl');		
+        if ($linkedto) {
+        	$params['blog_id'] = $linkedto;
+        }
+        $register_url = "http://beta.ultimateblogsecurity.com/api/register/";
+        $get_apikey_url = "http://beta.ultimateblogsecurity.com/api/get_apikey/";
+        $add_website_url = "http://beta.ultimateblogsecurity.com/api/add_website/";
+        $status_url = "http://beta.ultimateblogsecurity.com/api/get_status/";
+        
+		?>
 			<script>
 				var ajax_token = "<?php echo wp_create_nonce('ultimate-security-checker-ajaxrequest'); ?>";
 				var linked = "<?php echo $linkedto;?>";
+                var apikey = "<?php echo $apikey;?>";
+                var blogurl = "<?php echo $url;?>";
+                
+                var register_url = "<?php echo $register_url;?>";
+                var get_apikey_url = "<?php echo $get_apikey_url;?>";
+                var add_website_url = "<?php echo $add_website_url;?>";
+                var status_url = "<?php echo $status_url;?>";
+                
 				var $ = jQuery;
-				function add_website() 
-				{
-					$('#ajax_status').hide();
-					$('#add_website').show();
-					if (linked.length > 0){						
-						$.post(ajaxurl, {csrfmiddlewaretoken: ajax_token, action:'unlink_blog'}, function() {});
-					}
-				}
 				
-				$("#add_website").live("submit", function(e){
-					e.preventDefault();						
-					$('#ajax_loading').fadeIn();
-					var formdata = $('#add_website').serialize();
-					$.ajax({
-						url: "http://beta.ultimateblogsecurity.com/api/add_website/?"+ formdata +"&callback=?",
-						dataType: "jsonp",
-						complete: function (){
-							$('#ajax_loading').fadeOut();
-						},						
-						success: function(response) {
-							if (response && response.state == 'ok') {
-								window.location.reload();								
-							} else {
-								var message;
-								if (response.state == 'error')
-									message = response.message ? response.message : "unknown error occured";
-								else
-									message = "can't connect to UBS server";
-								var err_message = '<p>Error: '+ message + '</p>';															
-								var ajax_error = $('#ajax_error');
-								if (!ajax_error.length) {
-									$('#ajax_status').before('<div id="ajax_error" style="color:orangered">'+ err_message +'</div>');
-									var ajax_error = $('#ajax_error');
-								} else {
-									ajax_error.text(err_message);
-								}
-								if (response.data) {
-									for (item in response.data) {
-										ajax_error.append('<p>' + item + ': ' + response.data[item] + '</p>');
-									}		
-								}
-							}
-						}
-					});
-				});
-					
-				function submit_selected_site (e) {
-					e.preventDefault();
-					var selector = "#select_website > select option:selected";
-					var blogid = $(selector).attr('id').match(/srvid_(\d+)/)[1];
-					var bdata  = $(selector).val();
-					var data = {action: 'link_blog', blogid: blogid, blogdata:bdata,
-								csrfmiddlewaretoken: ajax_token};
-					$('#ajax_loading').fadeIn();
-					$.ajax({
+                
+                function ajax_get_screen(screen_name)
+                {
+				    $.ajax({
 						url: ajaxurl,
-						data:data,
 						type: "POST",
-						complete: function (){
-							$('#ajax_loading').fadeOut();
-						},						
-						success: function(response) {
-							window.location.reload();
+						data: {csrfmiddlewaretoken: ajax_token, action:'ajaxscreen_loader', screen:screen_name},
+						dataType: "html",
+						success: function(data){
+						  $("#ajax-content").html(data);
+						},
+						error: function(data){
+						  $("#ajax-content").html("Error occured while ajax processing");
 						}
 					});
-				}		
-					
-				function select_website(data) 
-				{
-					var $ = jQuery;
-					$('#ajax_status').hide();
-					$('#select_website').empty();
-					var container = $(document.createElement('select'));
-					container.append("<option disabled selected>Choose website</option>");
-					for (key in data){
-						var item = data[key];
-						var option = document.createElement('option');
-						$(option).attr('id', 'srvid_' + item.id);				
-						$(option).text('server: ' + item.ftphost +', WP location: ' + item.ftppath).val(JSON.stringify(item));
-						container.append(option);
-					}
-					$('#select_website').append(container);
-					$('#select_website').append('<input id="website_confirm" type="submit" value="Confirm"/>');
-					$('#select_website').show();
-				}
-				
-				function ajax_update_apikey(apikey, success_cb, error_cb) 
+                }
+                
+                function ajax_get_status(success_cb, error_cb)
+                {
+					$.ajax({
+						url: status_url,
+						type: "POST",
+						data: {apikey:apikey, blog_url:blogurl},
+						dataType: "json",
+						success: success_cb,
+						error: error_cb
+					});
+                }
+                
+				function ajax_pro_logout(success_cb, error_cb) 
 				{
 					$.ajax({
 						url: ajaxurl,
 						type: "POST",
-						data: {csrfmiddlewaretoken: ajax_token, action:'set_apikey', apikey:apikey},
+						data: {csrfmiddlewaretoken: ajax_token, action:'pro_logout', logout:true},
 						dataType: "json",
 						success: success_cb,
 						error: error_cb
 					});
 				}
-				
-				function ajax_set_registration(val, success_cb, error_cb) 
+                
+				function ajax_update_apikey(apikey, password, registered, success_cb, error_cb) 
 				{
 					$.ajax({
 						url: ajaxurl,
 						type: "POST",
-						data: {csrfmiddlewaretoken: ajax_token, action:'set_registration', registered:val},
+						data: {csrfmiddlewaretoken: ajax_token, action:'set_apikey', apikey:apikey, password:password, registered:registered },
 						dataType: "json",
 						success: success_cb,
 						error: error_cb
 					});
 				}
+                
+                $(document).ready(function(){
+                    ajax_get_screen();
+                    $("#register-link").click(function(event){
+                        event.preventDefault();
+                        ajax_get_screen('register');
+                    });
+                    $("#dashboard-link").click(function(event){
+                        event.preventDefault();
+                        ajax_get_screen('dashboard');
+                    });
+                    $("#login-link").click(function(event){
+                        event.preventDefault();
+                        ajax_get_screen('login');
+                    });
+                    $("#ftp-link").click(function(event){
+                        event.preventDefault();
+                        ajax_get_screen('ftp');
+                    });
+                    $("#logout-link").click(function(event){
+                        event.preventDefault();
+                        ajax_pro_logout(function(){
+                            window.location.reload( true );
+                        });
+                    });
+                });
 			</script>
-        <?php }
+    <?php
 	}
 	
 	function wp_ultimate_security_checker_current_status()

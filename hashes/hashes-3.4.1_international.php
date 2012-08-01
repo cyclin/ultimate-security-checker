@@ -20,4 +20,9 @@ $fr_FR = array(
 'wp-config-sample.php' => 'eb8258245200f17d67676c0f3beaf356',
 'wp-includes/version.php' => 'ea95492e745d95a5bbac57c0f8ab0e87',
 );
+$it_IT = array(
+'readme.html' => 'f83f498a387c13e0515ac80123251937',
+'wp-config-sample.php' => '9d58ffdbd22e9d26f89e2a54ecb8f3c7',
+'wp-includes/version.php' => '2325085a546e281803b88582a442f4cf',
+);
 ?>
