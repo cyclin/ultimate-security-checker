@@ -324,7 +324,8 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 </p>
                 <p>
                 <b>Default database prefix is not safe.</b><br>
-                    Using MySQL frontend program(like phpmyadmin) change all tables prefixes from <i>wp_</i> to something different. And put the same into wp-confg.php
+                    Using MySQL frontend program(like phpmyadmin) change all tables prefixes from <i>wp_</i> to something different. Change all field names from
+                    <i>wp_name_of_field</i> to <i>new_prefix_name_of_field</i> in tables <i>new_prefix_usermeta</i> and <i>new_prefix_options</i>. And put the same prefix into wp-confg.php
                     <pre><?php echo htmlentities('$table_prefix  = \'tableprefix_\';'); ?></pre>
                 </p>
                 <!-- end db -->
