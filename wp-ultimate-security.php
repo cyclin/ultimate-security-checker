@@ -3,7 +3,7 @@
 Plugin Name: Ultimate Security Checker
 Plugin URI: http://www.ultimateblogsecurity.com/
 Description: Security plugin which performs all set of security checks on your WordPress installation.<br>Please go to <a href="tools.php?page=wp-ultimate-security.php">Tools->Ultimate Security Checker</a> to check your website.
-Version: 2.7.9
+Version: 2.7.6
 Author: Eugene Pyvovarov
 Author URI: http://www.ultimateblogsecurity.com/
 License: GPL2
@@ -45,8 +45,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     register_activation_hook( __FILE__, 'wp_ultimate_security_checker_activate' );
     function wp_ultimate_security_checker_admin_init()
     {
-        /* Register our script. */
-        // wp_register_script('myPluginScript', WP_PLUGIN_URL . '/myPlugin/script.js');
          // wp_enqueue_script('jquery');
           $lang_dir = basename(dirname(__FILE__))."/languages";
           load_plugin_textdomain( 'ultimate-security', false, $lang_dir );
@@ -54,7 +52,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     }
     add_action( 'network_admin_menu', 'wp_ultimate_security_checker_setup_admin' );
     function wp_ultimate_security_checker_setup_admin() {
-      /* Add the new options page to the Super Admin menu */
       add_submenu_page(
         $parent_slug = 'settings.php',
         $page_title =  __('Ultimate Security Checker', 'wp_ultimate_security_checker'),
@@ -339,8 +336,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 </p>
                 <p>
                 <b><?php _e('Default database prefix is not safe.');?></b><br>
-                    <?php _e('Using MySQL frontend program(like phpmyadmin) change all tables prefixes from <i>wp_</i> to something different. Change all field names from
-                    <i>wp_name_of_field</i> to <i>new_prefix_name_of_field</i> in tables <i>new_prefix_usermeta</i> and <i>new_prefix_options</i>. And put the same prefix into wp-confg.php');?>
+                    <?php _e('Using MySQL frontend program(like phpmyadmin) change all tables prefixes from <i>wp_</i> to something different. And put the same into wp-confg.php');?>
                     <pre><?php echo htmlentities('$table_prefix  = \'tableprefix_\';'); ?></pre>
                 </p>
                 <!-- end db -->
@@ -547,6 +543,10 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 #icon-security-check {
                     background: transparent url(<?php echo plugins_url( 'img/shield_32.png', __FILE__ ); ?>) no-repeat;
                 }
+                #logout-link {
+                    float: right;
+                    display: none;
+                }
                 </style>
     
                     <?php screen_icon( 'security-check' );?>
@@ -608,12 +608,6 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 <div class="wrap">
                 <div id="ajax-content"></div>
                 <div id="ajax-result"></div>
-                <ul>
-                    <li><a href="#" id="dashboard-link">Dashboard</a></li>
-                    <li><a href="#" id="login-link">login</a></li>
-                    <li><a href="#" id="register-link">reg</a></li>
-                    <li><a href="#" id="ftp-link">ftp</a></li>
-                </ul>
                 <div class="clear"></div>
                 </div>
                 </div>
@@ -666,7 +660,8 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
         var apikey = "<?php echo $apikey;?>";
         $(document).ready(function(){
                     //login window
-                    $("#ajax-content").on("click", "#pro-login-submit", function(event){
+                    $("#ajax-content").delegate("#pro-login-submit", "click", function(event){
+                            $("#ajax_loading").css("display", "block");
                             $('#ajax-result').text('');
                             $(this).attr('disabled', 'disabled');
                             var el = $(this);
@@ -687,6 +682,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                                 }else if('message' in data){
                                     $('#ajax-result').text(data.message);
                                 }
+                                $("#ajax_loading").css("display", "none");
                                 el.removeAttr('disabled');
                               }
                               if(data.state == 'ok'){
@@ -699,6 +695,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                                         console.log(local_resp);  
                                     },
                                     function(local_resp){
+                                        $("#ajax_loading").css("display", "none");
                                         $('#ajax-result').text('Can\'t update your site values');
                                         console.log(local_resp);  
                                     }
@@ -714,20 +711,25 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
         <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
         <h4><?php _e('Login to Ultimate Blog Security service');?></h4>
         <ul>
-        <li><label for="login"><?php _e('Email');?></label><input id="pro-login-email" type="text" name="login" size="40" value="<?php echo $email_name; ?>" /></li>
+        <li><label for="login"><?php _e('Username or Email');?></label><input id="pro-login-email" type="text" name="login" size="40" value="<?php echo $email_name; ?>" /></li>
         <li><label for="pwd"><?php _e('Password');?></label><input id="pro-login-password" type="password" name="pwd" size="40" /></li>
         <li>
             <div class="login-controlls">
                 <div class="links-wrapper">
-                <a id="pro-login-reglink" href="#"><?php _e("I don't have account");?></a>
+                <a id="register-link" href="#"><?php _e("I don't have account");?></a>
                 <div class="clear"></div>
                 </div>
                 <div class="button-submit-wrapper">
-                <input type="submit" id="pro-login-submit" class="button" value="<?php _e('Submit');?>" />
+                <input type="submit" id="pro-login-submit" class="button-primary" value="<?php _e('Submit');?>" />
                 <div class="clear"></div>
                 </div>
                 <div class="clear"></div>
             </div>
+        </li>
+        <li>
+            <p id="ajax_loading" style="display: none;"><?php _e('Communicating with server...');?>
+            <img style="margin-left:15px;" src="<?php echo plugins_url( 'img/ajax-loader.gif', __FILE__ ); ?>" alt="loading" />
+            </p>
         </li>
         </ul>
         <?php
@@ -750,7 +752,8 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
         var apikey = "<?php echo $apikey;?>";
         $(document).ready(function(){
                     //reg window
-                    $("#ajax-content").on("click", "#ajax-register-submit", function(event){
+                    $("#ajax-content").delegate("#ajax-register-submit", "click", function(event){
+                            $("#ajax_loading").css("display", "block");
                             $('#ajax-result').text('');
                             $(this).attr('disabled', 'disabled');
                             var el = $(this);
@@ -774,9 +777,10 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                                 }else if('message' in data){
                                     $('#ajax-result').text(data.message);
                                 }
+                                $("#ajax_loading").css("display", "none");
                                 el.removeAttr('disabled');
                               }
-                              $('#ubs_regmsg').text('You sucessfully registered account in our service. Please - use this password for authentication in your plugin and our site: '+data.data.password);
+                              $('#ubs_regmsg').html('You sucessfully registered account in our service. Please - use this password for authentication in your plugin and our site: </br><strong>'+data.data.password+'</strong></br>We sent account activation details to your email. Please follow these instructions to complete registration.</br><a href="#" id="dashboard-link" class="button-primary">Go to dashboard -></a>');
                               if(data.state == 'ok'){
                                 ajax_update_apikey(
                                     data.data.apikey,
@@ -785,7 +789,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                                     function(local_resp){
                                         if (local_resp.state == 'ok') {
                                             $('#pro-reg-form').css('display', 'none');
-                                            $("ubs_regmsg").append('<p>Apikey sucessfully stored in your wordpress</p>');    
+                                            $("ubs_regmsg").append('<p>Apikey sucessfully stored in your wordpress blog</p>');    
                                         }else{
                                             $('#ubs_regerr').text('Can\'t update your site values'); 
                                         }  
@@ -794,6 +798,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                                         $('#ubs_regerr').text('Can\'t update your site values'); 
                                     }
                                 );
+                                $("#ajax_loading").css("display", "none");
                               }
                             }, 'json');
                             //console.log(post_data);
@@ -817,12 +822,21 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             <li><label for="login"><?php _e('Username');?></label><input type="text" id="ajax-register-username" value="<?php echo $email_name; ?>" name="username" size="40" /></li>
             <li>
                 <div class="login-controlls">
+                    <div class="links-wrapper">
+                    <a id="login-link" href="#"><?php _e("login");?></a>
+                    <div class="clear"></div>
+                    </div>
                     <div class="button-submit-wrapper">
-                    <input type="submit" id="ajax-register-submit" class="button" value="<?php _e('Submit');?>" />
+                    <input type="submit" id="ajax-register-submit" class="button-primary" value="<?php _e('Submit');?>" />
                     <div class="clear"></div>
                     </div>
                     <div class="clear"></div>
-                </div>
+                </div>  
+            </li>
+            <li>
+                <p id="ajax_loading" style="display: none;"> Communicating with server...
+                <img style="margin-left:15px;" src="<?php echo plugins_url( 'img/ajax-loader.gif', __FILE__ ); ?>" alt="loading" />
+                </p>
             </li>
             </ul>
             </div>                    
@@ -841,7 +855,8 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             <!--
             var apikey = "<?php echo $apikey;?>";
             $(document).ready(function(){
-                $("#ajax-content").on("click", "#pro-ftp-submit", function(event){
+                $("#ajax-content").delegate("#pro-ftp-submit", "click", function(event){
+                    $("#ajax_loading").css("display", "block");
                     $('#ajax-result').text('');
                     $(this).attr('disabled', 'disabled');
                     var el = $(this);
@@ -854,7 +869,6 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                                      ftppass:$("#pro-ftp-ftp_pwd").val()
                                      };
                     $.post(add_website_url, post_data , function(data) {
-                          console.log(data);
                           if(data.state == 'error'){
                             if('data' in data){
                                 if('errors' in data.data){
@@ -872,10 +886,11 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                             }else if('message' in data){
                                 $('#ajax-result').text(data.message);
                             }
+                            $("#ajax_loading").css("display", "none");
                             el.removeAttr('disabled');
                           }
                           if(data.state == 'ok'){
-                            ajax_get_screen('register');
+                            ajax_get_screen('dashboard');
                             $('#ajax-result').text('Your blog has been sucessfully added to our system');
                           }
                     }, 'json');
@@ -893,7 +908,12 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             <li><label for="ftp_pwd"><?php _e('FTP Password');?></label><input id="pro-ftp-ftp_pwd" type="password" name="ftp_pwd" size="40" /></li>
             <li><label for="ftp_path"><?php _e('Path to directory on your server (optional)');?></label><input id="pro-ftp-ftp_path" type="text" name="ftp_path" size="40" /></li>
             <li>
-                <input type="submit" id="pro-ftp-submit" class="button" value="<?php _e('Submit');?>" />
+                <input type="submit" id="pro-ftp-submit" class="button-primary" value="<?php _e('Submit');?>" />
+            </li>
+            <li>
+                <p id="ajax_loading" style="display: none;"> Communicating with server...
+                <img style="margin-left:15px;" src="<?php echo plugins_url( 'img/ajax-loader.gif', __FILE__ ); ?>" alt="loading" />
+                </p>
             </li>
             </ul>
         <?php
@@ -903,20 +923,74 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
     function wp_ultimate_security_checker_ajaxscreen_dashboard(){
         $apikey = get_option('wp_ultimate_security_checker_apikey');        
        ?>
+                    <style type="text/css">
+                    <!--
+                    dt{
+                        font-weight: bold;
+                    }
+                    dd{
+                         margin-left: 50px;
+                    }	
+                    -->
+                    </style>
                     <script type="text/javascript">
                         var apikey = "<?php echo $apikey;?>";
+                        
+                        var all_issues = {
+                            5 : '<div>Fix wp-config.php location - Wp-config.php in the document root makes it easier for hackers to access your configuration data.</div>',
+                            6 : '<div>Fix wp-config.php rights issue - Incorrect rights allows others to edit the wp-config file.</div>',
+                            8 : '<div>Do not display WordPress version in the code - Showing the version is on by default, and gives hackers clues on the best way to attack your blog.</div>',
+                            11 : '<div>Remove readme.html file - readme.html exposes Wordpress vesion to hackers, which they can then use to more easily hack into your blog.</div>',
+                            12 : '<div>Remove installation script - The install script can be used to damage your Wordpress blog.</div>',
+                            13 : '<div>Fix uploads folder from being accessed from the web - Your uploads should not be able to be accessed from the web.</div>',
+                            14 : '<div>WordPress displays unnecessary error messages on failed log-ins - With detailed error messages it\'s easy to brute force admin credentials.</div>',
+                            15 : '<div>WordPress core should be updated. - You should update to latest version of WordPress regularly.</div>',
+                            16 : '<div>Some of your plugins should be updated. - Outdated version of plugins may have unresolved security issues.</div>',
+                            17 : '<div>Some of your themes should be updated. - Outdated version of themes may have unresolved security issues.</div>',
+                            18 : '<div>Secure admin login. - Default admin login is not safe.</div>',
+                            19 : '<div>Secure database prefix. - Default database prefix is not safe.</div>',
+                            101 : '<div>Lock wp-config.php. Recommendation: On - <strong>Turn off only if wordpress needs access to this file.</strong> Keeping wp-config.php writeable makes it easier for hackers to access your configuration data.</div>',
+                            102 : '<div>Lock .htaccess file. Recommendation: On - The reason Wordpress needs to access your .htaccess file is to make your urls more user-friendly. Leave it turned off if you use canonical URLs.</div>',
+                            103 : '<div>Allow writing to wp-content folder. Recommendation: On - This folder is created to store your media content, like photos, music, etc. Also used by plugins for storing various data. It must be writeable.</div>',
+                            104 : '<div>Lock themes folder. Recommendation: On - Unlock if you\'re doing any changes to the themes files through wordpress admin or installing new themes.</div>',
+                            105 : '<div>Lock plugins folder. Recommendation: On - Unlock if you\'re installing or updating plugins.</div>',
+                            106 : '<div>Lock wordpress core folders. Recommendation: On - Should be always locked. Only turn off when updating your WordPress installation.</div>',
+                        };
+                        
                 		jQuery(document).ready(function($) {			
                            ajax_get_status(
                            function(data){
+                           $("#ajax_loading").css("display", "none"); 
                            if(data.state == 'ok')
                            {
                                 $("#pro-dashboard-content").css("display", "block");
                                 $("#pro-dashboard-content-uri").text(data.data.uri);
                                 $("#pro-dashboard-content-ubs_url").html('<a href="'+data.data.ubs_url+'">Manage this blog on UBS site</a>');
                                 $("#pro-dashboard-content-latest_check_date").text(data.data.latest_check_date);
-                                $("#pro-dashboard-content-latest_check_result").text(data.data.latest_check_result);
+                                if(data.data.latest_check_result){
+                                  var errors_text = data.data.latest_check_result;
+                                  errors_text = errors_text.replace(/[\[\],]/g, '');
+                                  console.log(errors_text);
+                                  $.each(all_issues, function(index, value) {
+                                      errors_text = errors_text.replace(new RegExp("'"+index+"'",'g'), value);
+                                  }); 
+                                }
+                                $("#pro-dashboard-content-latest_check_result").html(errors_text);
                            }else{
-                            $('#ajax-result').text('Ajax error occured. Please try again later.');
+                            if('message' in data){
+                                if(data.message == 'Invalid API key'){
+                                    $("#pro-dashboard-content").html('<div>You haven\'t activated your account, or your apikey blocked.</div>');
+                                }
+                                if(data.message == 'Blog not found'){
+                                    $("#pro-dashboard-content").html('<div>You haven\'t registered this blog in our service. <a href="#" id="ftp-link" class="button-primary">Add this blog to our service!</a></div>');
+                                }
+                            }
+                            if('data' in data){
+                                $("#pro-dashboard-content").css("display", "block");
+                                console.log(data);
+                            }
+                            $("#pro-dashboard-content").css("display", "block");
+                            console.log(data);
                            }
                            },
                            function(data){
@@ -925,36 +999,41 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                            ); 
                 		});
                         </script>
-                    <h2><?php _e('Dashboard');?></h2>
+                    <h2><?php _e('Dashboard');?><a id="logout-link" class="button-primary" <?php if($apikey){echo 'style="display: block;"';} ?> href="#">logout</a></h2>
+                    <p id="ajax_loading"> Communicating with server...
+                    <img style="margin-left:15px;" src="<?php echo plugins_url( 'img/ajax-loader.gif', __FILE__ ); ?>" alt="loading" />
+                    </p>
                     <div id="pro-dashboard-content" style="display: none;">
                     <dl>
-                        <dt>Blog Url</dt>
+                        <dt>Blog Url:</dt>
                         <dd id="pro-dashboard-content-uri"></dd>
-                        <dt>Link to our site</dt>
+                        <dt>Link to our site:</dt>
                         <dd id="pro-dashboard-content-ubs_url">Manage this blog on UBS site</dd>
-                        <dt>latest_check_date</dt>
+                        <dt>Latest check date:</dt>
                         <dd id="pro-dashboard-content-latest_check_date"></dd>
-                        <dt>latest_check_result</dt>
+                        <dt>Latest check result:</dt>
                         <dd id="pro-dashboard-content-latest_check_result"></dd>
                     </dl>
                     </div>
-                    <h4>List of failed login attempts:</h4>
-                    <table>
-                    <tr>
-                        <td>#</td>
-                        <td>Time</td>
-                        <td>login username</td>
-                        <td>IP address</td>
-                    </tr>
                     <?php
                     $failed_logins = get_option('wp_ultimate_security_checker_failed_login_attempts_log');
-                    if (is_array($failed_logins)) {
+                    if (is_array($failed_logins)):
+                    ?>
+                    <h4>List of failed login attempts:</h4>
+                    <table style="text-align: center;">
+                    <tr>
+                        <td style="width: 15px;">#</td>
+                        <td style="width: 150px;">Time</td>
+                        <td style="width: 200px;">login username</td>
+                        <td style="width: 120px;">IP address</td>
+                    </tr>
+                    <?php
                         foreach ($failed_logins as $key => $row) {
                         echo "<tr>";
                         echo ("<td>$key</td><td>{$row['time']}</td><td>{$row['username']}</td><td>{$row['ip']}</td>");
                         echo "</tr>";
                         }
-                    }
+                    endif;
                     ?>
                     </table>			
        <?php
@@ -1386,11 +1465,8 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 	
 	function wp_ultimate_security_checker_pro_logout()
     {
-		check_admin_referer('ultimate-security-checker-ajaxrequest', 'csrfmiddlewaretoken');	
-		if (isset($_POST['logout'])) 	 
-			$ret = delete_site_option('wp_ultimate_security_checker_registered') ? 'ok': 'error';
-		else
-			$ret = 'error';
+		check_admin_referer('ultimate-security-checker-ajaxrequest', 'csrfmiddlewaretoken');
+		$ret = delete_site_option('wp_ultimate_security_checker_apikey') ? 'ok': 'error';
 		echo json_encode(Array('state' => $ret));
 		exit;
 	}		
@@ -1466,7 +1542,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 					$.ajax({
 						url: ajaxurl,
 						type: "POST",
-						data: {csrfmiddlewaretoken: ajax_token, action:'pro_logout', logout:true},
+						data: {csrfmiddlewaretoken: ajax_token, action:'pro_logout'},
 						dataType: "json",
 						success: success_cb,
 						error: error_cb
@@ -1487,23 +1563,23 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                 
                 $(document).ready(function(){
                     ajax_get_screen();
-                    $("#register-link").click(function(event){
+                    $("#ajax-content").delegate("#register-link", "click", function(event){
                         event.preventDefault();
                         ajax_get_screen('register');
                     });
-                    $("#dashboard-link").click(function(event){
+                    $("#ajax-content").delegate("#dashboard-link", "click", function(event){
                         event.preventDefault();
                         ajax_get_screen('dashboard');
                     });
-                    $("#login-link").click(function(event){
+                    $("#ajax-content").delegate("#login-link", "click", function(event){
                         event.preventDefault();
                         ajax_get_screen('login');
                     });
-                    $("#ftp-link").click(function(event){
+                    $("#ajax-content").delegate("#ftp-link", "click", function(event){
                         event.preventDefault();
                         ajax_get_screen('ftp');
                     });
-                    $("#logout-link").click(function(event){
+                    $("#ajax-content").delegate("#logout-link", "click", function(event){
                         event.preventDefault();
                         ajax_pro_logout(function(){
                             window.location.reload( true );
@@ -1675,7 +1751,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 				<a href="?page=ultimate-security-checker&tab=settings" class="nav-tab">Settings</a>
 		</h3>
 		
-        <h4>Current status <img id="ajax_loading" style="margin-left:15px;" src="<?php echo plugins_url( 'img/loader.gif', __FILE__ ); ?>" alt="loading" /></h4>
+        <h4>Current status </h4>
 		<form id="add_website" style="display: none;" action="." method="GET">
 			<?php
 			$apikey = get_option('wp_ultimate_security_checker_apikey');
