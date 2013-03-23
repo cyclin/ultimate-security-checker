@@ -3,7 +3,7 @@
 Plugin Name: Ultimate Security Checker
 Plugin URI: http://www.ultimateblogsecurity.com/
 Description: Security plugin which performs all set of security checks on your WordPress installation.<br>Please go to <a href="tools.php?page=wp-ultimate-security.php">Tools->Ultimate Security Checker</a> to check your website.
-Version: 2.7.6
+Version: 2.7.9
 Author: Eugene Pyvovarov
 Author URI: http://www.ultimateblogsecurity.com/
 License: GPL2
@@ -107,7 +107,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
             <span style="position:absolute;padding-left:25px;">
             <a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
             <a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
-            <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
             </span>
             </h2>
             <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
@@ -453,7 +452,6 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 <span style="position:absolute;padding-left:25px;">
                 <a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
                 <a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
-                <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
                 </span>
                 </h2>
                 <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
@@ -554,7 +552,6 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 <span style="position:absolute;padding-left:25px;">
                 <a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
                 <a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
-                <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
                 </span>
                 </h2>
                 <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
@@ -1079,7 +1076,6 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             <span style="position:absolute;padding-left:25px;">
             <a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
             <a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
-            <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
             </span>
             </h2>
             <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
@@ -1254,7 +1250,6 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
             <span style="position:absolute;padding-left:25px;">
             <a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
             <a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
-            <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
             </span>
             </h2>
             <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
@@ -1334,7 +1329,6 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
             <span style="position:absolute;padding-left:25px;">
             <a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
             <a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
-            <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
             </span>
             </h2>
             <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
@@ -1733,7 +1727,6 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 		<span style="position:absolute;padding-left:25px;">
 		<a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
 		<a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
-		<a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
 		</span>
 		</h2>
 		<?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
@@ -1820,7 +1813,6 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
             <span style="position:absolute;padding-left:25px;">
             <a href="http://www.facebook.com/pages/Ultimate-Blog-Security/141398339213582" target="_blank"><img src="<?php echo plugins_url( 'img/facebook.png', __FILE__ ); ?>" alt="" /></a>
             <a href="http://twitter.com/BlogSecure" target="_blank"><img src="<?php echo plugins_url( 'img/twitter.png', __FILE__ ); ?>" alt="" /></a>
-            <a href="http://ultimateblogsecurity.posterous.com/" target="_blank"><img src="<?php echo plugins_url( 'img/rss.png', __FILE__ ); ?>" alt="" /></a>
             </span>
             </h2>
             <?php if (!get_option('wp_ultimate_security_checker_flike_deactivated')):?>
@@ -1899,7 +1891,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                                 break;
                 }
                 ?>
-                    <div class='update-nag'><?php printf(__("You didn't check your security score more then %s."),$out);?> <a href="<?php echo admin_url('tools.php') ?>?page=ultimate-security-checker"><?php _e('Do it now.');?></a></div>
+                    <div class='update-nag'><?php printf(__("It's been more than %s since you last scanned your blog for security issues."),$out);?> <a href="<?php echo admin_url('tools.php') ?>?page=ultimate-security-checker"><?php _e('Do it now.');?></a></div>
                 <?php
             }
         }           
