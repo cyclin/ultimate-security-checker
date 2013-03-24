@@ -1479,7 +1479,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
         $apikey = get_option('wp_ultimate_security_checker_apikey');
         $linkedto = get_option('wp_ultimate_security_checker_linkedto', '');
         $params['apikey'] = $apikey;
-        $params['blog_url'] = get_option('siteurl');		
+        $params['blog_url'] = get_option('siteurl');
         if ($linkedto) {
         	$params['blog_id'] = $linkedto;
         }
