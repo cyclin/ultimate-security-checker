@@ -981,7 +981,8 @@ class SecurityCheck {
             if ( file_exists( $hashes ) )
 				include( $hashes );
 			else{
-                return array('status'=>'error', 'data'=>'Hashes file not found!');
+				return array('status'=>'error', 'data'=>'I can\'t verify your wordpress files. Either your wordpress version is not yet supported or I can\' access plugin wordpress verification files. <br/>Contact us for details.');
+                //return array('status'=>'error', 'data'=>'Hashes file not found!');
 			}
 			$this->recurse_directory( ABSPATH );
 			foreach( $this->wp_files as $k => $file ) {

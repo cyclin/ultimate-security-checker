@@ -1204,7 +1204,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 					// console.log( r );
 					jQuery('#scan-loader img').hide();
 					jQuery('#scan-loader span').html(
-						'<?php _e('An error occurred:');?> <pre style="overflow:auto">' + r.toString() + '</pre>'
+						'<?php _e('An error occurred:');?> <pre style="overflow:auto">' + res.data + '</pre>'
 					);
 				} else {
 				    jQuery('#scan-loader img').hide();
