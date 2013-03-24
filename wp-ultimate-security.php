@@ -704,7 +704,6 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
             });	
             -->
             </script>            
-        <h2 style="padding-left:5px;"><?php _e('Fix issues with Ultimate Blog Security');?></h2>
         <p>If you don't want to spend time to deal with manual fixes, want professionals to take care of your website - register your website and get API key, so we can help you get those fixes done. Fill the form below to complete registration</p>
         <h4><?php _e('Login to Ultimate Blog Security service');?></h4>
         <ul>
