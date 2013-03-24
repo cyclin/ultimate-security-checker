@@ -422,7 +422,7 @@ class SecurityCheck {
             );
         ?>
         <p style="margin:0 10px 10px 70px;">
-        <a style="float:right;margin-top:20px;font-weight:bold;" href="?page=ultimate-security-checker&tab=run-the-tests&dotest" class="button-primary"><?php _e('Run the tests again!'); ?></a>
+        <a style="float:right;margin-top:20px;font-weight:bold;margin-left: 5px" href="?page=ultimate-security-checker&tab=run-the-tests&dotest" class="button-primary"><?php _e('Run the tests again!'); ?></a>
         <?php _e('The most recent test was taken on'); ?> <b><?php echo date('d M, Y', get_option( 'wp_ultimate_security_checker_lastcheck')); ?></b>. <br/><?php printf(__('Your blog earned <b>%s of %s</b> security points.'),$this->earned_points, $this->total_possible_points);?><?php echo $result_messages[$letter]; ?> <br />
         <?php _e('We have a service which can automate the fix of some of these. <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin_results_link">Click Here to try it.</a>'); ?></p>
         </div>
