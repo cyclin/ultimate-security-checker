@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         add_option( 'wp_ultimate_security_checker_score', 0 , null , 'yes' );
         add_option( 'wp_ultimate_security_checker_issues', '' , null, 'yes' );
         add_option( 'wp_ultimate_security_checker_lastcheck', '' , null , 'yes' );
+		add_option( 'wp_ultimate_security_checker_hide_header', 0 , null , 'yes' );
     }
 
     register_activation_hook( __FILE__, 'wp_ultimate_security_checker_activate' );
@@ -384,6 +385,12 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                                 break;
                 }
             }
+			// hide_header
+			if (isset($_GET['hide_header'])) {
+				update_option('wp_ultimate_security_checker_hide_header', 1);
+			} elseif (isset($_GET['flike']) || isset($_GET['rescan'])) {
+				update_option('wp_ultimate_security_checker_hide_header', 0);
+			}
             if (isset($_GET['apikey'])) {
 				update_option('wp_ultimate_security_checker_apikey', $_GET['apikey']);
 				?><div id="message" class="updated"><p>API key is updated</p></div><?php
@@ -512,11 +519,16 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 14) echo 'checked="checked"';?> value="w" name="rescan" />2 weeks</li>
                     <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 30) echo 'checked="checked"';?> value="m" name="rescan" />1 month</li>
                     <li><input type="radio" <?php if(get_option('wp_ultimate_security_checker_rescan_period') == 0) echo 'checked="checked"';?> value="n" name="rescan" />Never remind me</li>
-                    <li><input type="submit" class="button-primary" value="<?php _e('Save Settings');?>" /></li>
                     </ul>
+                    
+                    <p>
+                    	<input id="id_hide_header" type="checkbox" name="hide_header" value="1" <?php if(get_option('wp_ultimate_security_checker_hide_header') == 1) echo 'checked="checked"';?> /><label for="id_hide_header">Hide header security points</label> 
+                    </p>
+                    
+                    <p><input type="submit" class="button-primary" value="<?php _e('Save Settings');?>" /></p>
+                    
                     </form>
                     <div class="clear"></div>
-                    
                     <h3>System Information.</h3>
                     <p>
                         WordPress location (copy to <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">add site page</a> for <a href="http://www.ultimateblogsecurity.com/?utm_campaign=plugin">automated security checking service</a>):<br/>
@@ -1849,25 +1861,34 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
             </div>
             <div style="clear:both;"></div>
         </div> 
-        <?php
-        
+        <?php        
     }
     function wp_ultimate_security_checker_add_menu_admin_bar() {
         global $wp_admin_bar;
         if (function_exists('is_multisite') && is_multisite() && current_user_can('manage_network_options')) {
-            if(get_option('wp_ultimate_security_checker_score') != 0){
-                $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( 'Security points <b style="color:'.get_option('wp_ultimate_security_checker_color').';">'.get_option('wp_ultimate_security_checker_score').'</b>', 'wp-ultimate-security-checker' ), 'href' => network_admin_url('settings.php')."?page=ultimate-security-checker" ) );
-            } else {
-                $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( '<span style="color:#fadd3d;">Check your blog\'s security</span>', 'wp-ultimate-security-checker' ), 'href' => network_admin_url('settings.php')."?page=ultimate-security-checker" ) );
-            } 
+        	// Many sites, check settings to hide bar
+        	if (get_option('wp_ultimate_security_checker_hide_header')) {
+        		// Have multisite and setting hide_header checked
+				$wp_admin_bar->add_menu( array( 'id' => 'ubs_header', 'title' =>__( 'Secured by Ultimate Blog Security'), 'href' => FALSE ));
+        	} else {
+        		// Have multisite and setting hide_header not checked
+	            if(get_option('wp_ultimate_security_checker_score') != 0){
+	                $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( 'Security points <b style="color:'.get_option('wp_ultimate_security_checker_color').';">'.get_option('wp_ultimate_security_checker_score').'</b>', 'wp-ultimate-security-checker' ), 'href' => network_admin_url('settings.php')."?page=ultimate-security-checker" ) );
+	            } else {
+	                $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( '<span style="color:#fadd3d;">Check your blog\'s security</span>', 'wp-ultimate-security-checker' ), 'href' => network_admin_url('settings.php')."?page=ultimate-security-checker" ) );
+	            }
+        	}
         }elseif(function_exists('is_multisite') && !is_multisite() && current_user_can('administrator')){
+        	// Not multisite and user is admin
             if(get_option('wp_ultimate_security_checker_score') != 0){
                 $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( 'Security points <b style="color:'.get_option('wp_ultimate_security_checker_color').';">'.get_option('wp_ultimate_security_checker_score').'</b>', 'wp-ultimate-security-checker' ), 'href' => admin_url('tools.php')."?page=ultimate-security-checker" ) );
             } else {
                 $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( '<span style="color:#fadd3d;">Check your blog\'s security</span>', 'wp-ultimate-security-checker' ), 'href' => admin_url('tools.php')."?page=ultimate-security-checker" ) );
             }
+        } else {
+        	// We display the 'Secured by Ultimate Blog Security' header
+        	$wp_admin_bar->add_menu( array( 'id' => 'ubs_header', 'title' =>__( 'Secured by Ultimate Blog Security'), 'href' => FALSE ));
         }
-        
     }
     function wp_ultimate_security_checker_old_check(){
         /*if(isset($_GET['page'])){
