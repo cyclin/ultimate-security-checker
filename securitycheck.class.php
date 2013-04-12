@@ -840,7 +840,7 @@ class SecurityCheck {
         if ( ! class_exists('WP_Http') )
             require( ABSPATH . WPINC . '/class-http.php' );
         $http = new WP_Http();
-        $response = (array)$http->request(get_bloginfo( 'wpurl' ).'/wp-content/uploads/');
+        $response = (array)$http->request(get_bloginfo( 'wpurl' ).$this->wp_content_dir.'/uploads/');
         if(!$response['body'] || strpos('Index of',$response['body']) == false){
             return True;
         } 
@@ -916,8 +916,8 @@ class SecurityCheck {
 					}
 				}
                 //for avoiding false alerts in 25 test
-                if ($file == "wp-content/plugins/ultimate-security-checker/securitycheck.class.php" || $file == "wp-content/plugins/ultimate-security-checker/wp-ultimate-security.php") {
-                    unset( $this->wp_files[$k] );
+                if (strpos($file, "/plugins/ultimate-security-checker/securitycheck.class.php") || strpos($file, "/plugins/ultimate-security-checker/wp-ultimate-security.php")) {
+                	unset( $this->wp_files[$k] );
                 }
 
 				// don't scan files larger than 400 KB
@@ -990,7 +990,7 @@ class SecurityCheck {
 				   unset( $this->wp_files[$k] );
 				   continue;
 				}
-                if ($file == "wp-content/plugins/ultimate-security-checker/securitycheck.class.php" || $file == "wp-content/plugins/ultimate-security-checker/wp-ultimate-security.php") {
+                if (strpos($file, "/plugins/ultimate-security-checker/securitycheck.class.php") || strpos($file, "/plugins/ultimate-security-checker/wp-ultimate-security.php")) {
                     unset( $this->wp_files[$k] );
                     continue;
                 }
