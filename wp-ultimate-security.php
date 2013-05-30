@@ -3,12 +3,12 @@
 Plugin Name: Ultimate Security Checker
 Plugin URI: http://www.ultimateblogsecurity.com/
 Description: Security plugin which performs all set of security checks on your WordPress installation.<br>Please go to <a href="tools.php?page=wp-ultimate-security.php">Tools->Ultimate Security Checker</a> to check your website.
-Version: 2.7.9
+Version: 2.7.10
 Author: Eugene Pyvovarov
 Author URI: http://www.ultimateblogsecurity.com/
 License: GPL2
 
-Copyright 2010  Eugene Pyvovarov  (email : bsn.dev@gmail.com)
+Copyright 2013  Eugene Pyvovarov  (email : bsn.dev@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License, version 2, as 
@@ -123,7 +123,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                     <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab"><?php _e('Files Analysis');?></a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab nav-tab-active"><?php _e('How to Fix');?></a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab"><?php _e('Settings');?></a>
-                    <a href="?page=ultimate-security-checker&tab=pro" class="nav-tab"><?php _e('PRO Checks');?></a>
+                    <!--<a href="?page=ultimate-security-checker&tab=pro" class="nav-tab"><?php _e('PRO Checks');?></a>-->
             </h3>
 <!--			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
 				Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
@@ -391,10 +391,10 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
 			} elseif (isset($_GET['flike']) || isset($_GET['rescan'])) {
 				update_option('wp_ultimate_security_checker_hide_header', 0);
 			}
-            if (isset($_GET['apikey'])) {
+            /*if (isset($_GET['apikey'])) {
 				update_option('wp_ultimate_security_checker_apikey', $_GET['apikey']);
 				?><div id="message" class="updated"><p>API key is updated</p></div><?php
-			}
+			}*/
 			$apikey = get_option('wp_ultimate_security_checker_apikey');
 			$params['apikey'] = $apikey;
 			$params['blog_url'] = get_option('siteurl');
@@ -471,11 +471,11 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                 </style>
     
                 <h3 class="nav-tab-wrapper">
-                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab"><?php _e('Run the Tests');?></a>                    
+                    <a href="?page=ultimate-security-checker&tab=run-the-tests" class="nav-tab"><?php _e('Run the Tests');?></a>
 					<a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab"><?php _e('Files Analysis');?></a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab"><?php _e('How to Fix');?></a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab nav-tab-active"><?php _e('Settings');?></a>
-                    <a href="?page=ultimate-security-checker&tab=pro" class="nav-tab"><?php _e('PRO Checks');?></a>
+                    <!--<a href="?page=ultimate-security-checker&tab=pro" class="nav-tab"><?php _e('PRO Checks');?></a>-->
                 </h3>
 <!--    			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
 					Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
@@ -503,9 +503,9 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
                     <h2><?php _e('Plugin options');?></h2>
 					
                     <form method="get" action="<?php echo admin_url( 'tools.php' ); ?>" enctype="text/plain" id="wp-ultimate-security-settings">
-                    <h4>API key from site's settings page:</h4>
+                    <!--<h4>API key from site's settings page:</h4>
 					<input type="text" style="width:300px" name="apikey" value="<?php echo htmlspecialchars(get_option('wp_ultimate_security_checker_apikey')); ?>"/>
-					<input type="submit" class="button-primary" value="Save"/>
+					<input type="submit" class="button-primary" value="Save"/>-->
                     
                     <h4><?php _e('Disable Facebook Like:');?></h4>
                     <input type="hidden" value="ultimate-security-checker" name="page" />
@@ -580,7 +580,7 @@ if (strpos($_SERVER[\'REQUEST_URI\'], "eval(") ||
 					<a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab"><?php _e('Files Analysis');?></a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab"><?php _e('How to Fix');?></a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab"><?php _e('Settings');?></a>
-                    <a href="?page=ultimate-security-checker&tab=pro" class="nav-tab nav-tab-active"><?php _e('PRO Checks');?></a>
+                    <!--<a href="?page=ultimate-security-checker&tab=pro" class="nav-tab nav-tab-active"><?php _e('PRO Checks');?></a>-->
                 </h3>
 <!--    			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
 					Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
@@ -1271,7 +1271,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 					<a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab nav-tab-active"><?php _e('Files Analysis');?></a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab"><?php _e('How to Fix');?></a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab"><?php _e('Settings');?></a>
-                    <a href="?page=ultimate-security-checker&tab=pro" class="nav-tab"><?php _e('PRO Checks');?></a>
+                    <!--<a href="?page=ultimate-security-checker&tab=pro" class="nav-tab"><?php _e('PRO Checks');?></a>-->
             </h3>
 <!--			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
 				Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
@@ -1839,7 +1839,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
                     <a href="?page=ultimate-security-checker&tab=wp-files" class="nav-tab"><?php _e('Files Analysis');?></a>
                     <a href="?page=ultimate-security-checker&tab=how-to-fix" class="nav-tab"><?php _e('How to Fix');?></a>
                     <a href="?page=ultimate-security-checker&tab=settings" class="nav-tab"><?php _e('Settings');?></a>
-                    <a href="?page=ultimate-security-checker&tab=pro" class="nav-tab"><?php _e('PRO Checks');?></a>
+                    <!--<a href="?page=ultimate-security-checker&tab=pro" class="nav-tab"><?php _e('PRO Checks');?></a>-->
             </h3>
 <!--			<p style="border:2px solid #eee;margin-left:3px;background:#f5f5f5;padding:10px;width:706px;font-size:14px;color:green;font-family:helvetica;">
 				Please check out our new idea: <strong>WP AppStore</strong>. 1-click install best plugins and themes.
@@ -1867,7 +1867,7 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
         global $wp_admin_bar;
         if (function_exists('is_multisite') && is_multisite() && current_user_can('manage_network_options')) {
         	// Many sites, check settings to hide bar
-        	if (get_option('wp_ultimate_security_checker_hide_header')) {
+        	if (get_option('wp_ultimate_security_checker_hide_header') == 1) {
         		// Have multisite and setting hide_header checked
 				$wp_admin_bar->add_menu( array( 'id' => 'ubs_header', 'title' =>__( 'Secured by Ultimate Blog Security'), 'href' => FALSE ));
         	} else {
@@ -1879,12 +1879,17 @@ add_action( 'wp_ajax_ultimate_security_checker_ajax_handler', 'wp_ultimate_secur
 	            }
         	}
         }elseif(function_exists('is_multisite') && !is_multisite() && current_user_can('administrator')){
-        	// Not multisite and user is admin
-            if(get_option('wp_ultimate_security_checker_score') != 0){
-                $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( 'Security points <b style="color:'.get_option('wp_ultimate_security_checker_color').';">'.get_option('wp_ultimate_security_checker_score').'</b>', 'wp-ultimate-security-checker' ), 'href' => admin_url('tools.php')."?page=ultimate-security-checker" ) );
-            } else {
-                $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( '<span style="color:#fadd3d;">Check your blog\'s security</span>', 'wp-ultimate-security-checker' ), 'href' => admin_url('tools.php')."?page=ultimate-security-checker" ) );
-            }
+        	if (get_option('wp_ultimate_security_checker_hide_header') == 1) {
+        		// Have multisite and setting hide_header checked
+				$wp_admin_bar->add_menu( array( 'id' => 'ubs_header', 'title' =>__( 'Secured by Ultimate Blog Security'), 'href' => FALSE ));
+        	} else {
+	        	// Not multisite and user is admin
+	            if(get_option('wp_ultimate_security_checker_score') != 0){
+	                $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( 'Security points <b style="color:'.get_option('wp_ultimate_security_checker_color').';">'.get_option('wp_ultimate_security_checker_score').'</b>', 'wp-ultimate-security-checker' ), 'href' => admin_url('tools.php')."?page=ultimate-security-checker" ) );
+	            } else {
+	                $wp_admin_bar->add_menu( array( 'id' => 'theme_options', 'title' =>__( '<span style="color:#fadd3d;">Check your blog\'s security</span>', 'wp-ultimate-security-checker' ), 'href' => admin_url('tools.php')."?page=ultimate-security-checker" ) );
+	            }
+	        }
         } else {
         	// We display the 'Secured by Ultimate Blog Security' header
         	$wp_admin_bar->add_menu( array( 'id' => 'ubs_header', 'title' =>__( 'Secured by Ultimate Blog Security'), 'href' => FALSE ));
